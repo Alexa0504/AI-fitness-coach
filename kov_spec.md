@@ -16,3 +16,11 @@ További problémát jelent, hogy a statikus, előre rögzített edzéstervek ne
 Az AI alapú motivációs rendszer folyamatosan személyre szabott üzeneteket, emlékeztetőket és statisztikai visszajelzéseket biztosít. Emellett a rendszer integrálja a táplálkozási javaslatokat, amelyek összhangban vannak az edzéstervekkel, figyelembe véve a napi energiaszükségletet és az étkezési preferenciákat. A haladás nyomon követhető grafikonok és kimutatások segítségével, miközben a játékos elemek, mint például a célkitűzések, ranglisták és jelvények, fokozzák a motivációt. Mindez egy felhasználóbarát, React alapú felületen keresztül érhető el, amely reszponzív és könnyen navigálható.
 
 ## 4. Funkcionális követelmények
+
+A rendszer fő funkciói a felhasználói élmény maximalizálására és az interakciók zökkenőmentessé tételére összpontosítanak. Az egyik legfontosabb elem az AI-alapú edzésterv generálás, amely a felhasználó profilja és céljai alapján készül, és módosul a teljesítmény vagy a kihagyott edzések függvényében. A táplálkozási tanácsadás szintén AI által generált, és napi illetve heti szinten biztosít személyre szabott étrendet, figyelembe véve az allergiákat, preferenciákat és kalóriacélokat.  
+
+A rendszer haladást követő modulja részletes statisztikákat és grafikonokat nyújt az edzések, teljesítmény és étkezések tekintetében, miközben az AI folyamatosan értékeli a fejlődést és motivációs üzeneteket küld a felhasználónak. Emellett a ranglisták és a célkitűzések segítik a versenyszellem és a motiváció fenntartását. Az AI-vezérelt elemzés a naplózott adatokat feldolgozva szöveges visszajelzéseket ad az edzések hatékonyságáról.
+
+A felhasználói felület React technológiára épül, biztosítva a könnyű kezelhetőséget és a valós idejű adatfrissítést. A navigáció egyszerűen történik a profil, az edzéstervek, az étkezési tervek és a statisztikák között, így a felhasználó mindig naprakész információkhoz juthat.
+
+Összességében ezek a funkciók biztosítják, hogy az alkalmazás személyre szabott, motiváló és könnyen kezelhető legyen minden felhasználó számára.
