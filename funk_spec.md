@@ -426,6 +426,9 @@ A **költséghatékonyság** kulcsfontosságú üzleti előny: a platform automa
 Ezen felül a skálázható architektúra lehetővé teszi a gyors bővítést és a felhasználói szám növelését.  
 A **valós idejű visszajelzés** és az **AI-alapú motiváció** versenyelőnyt biztosít a piacon, mivel a legtöbb fitneszalkalmazás nem kínál ilyen mélységű személyre szabást.
 
+## Használati esetek
+
+
 ## Felhasználói Folyamatok (User Flow)
 
 A rendszer célja, hogy a felhasználó egy **egyszerű, átlátható és interaktív** folyamat során érje el a céljait, egy **személyes, digitális edző** támogatásával. A következőkben bemutatjuk a felhasználói folyamatokat a belépéstől a napi terv adaptálásáig.
