@@ -449,6 +449,19 @@ Ezek a szerepkörök egy jól strukturált, biztonságos és átlátható műkö
 
 ## AI Logika és Működési Szabályok
 
+A rendszer intelligens működését a **Gemini API** biztosítja, amely a természetes nyelvfeldolgozást és a személyre szabott edzési tanácsadást valósítja meg.  
+A rendszer **nem használ kép- vagy mozgáselemzést**, így **TensorFlow vagy más ML-keretrendszer** alkalmazására **nincs** szükség.  
+A hangsúly a **szöveges adatelemzésen** és a **valós idejű döntéstámogatáson** van.
+
+A **Gemini API** helyzetfüggő prompt-sablonokat használ: az AI az aktuális edzéstervek, célok és naplóadatok alapján ad visszajelzéseket.  
+Ha a felhasználó például azt írja, hogy „fáradt vagyok”, az AI pihenőnapot javasol, enyhébb edzést kínál, vagy motivációs üzenetet küld.  
+A logika képes felismerni a hosszú távú mintákat (pl. inaktivitás, javuló teljesítmény), és ehhez igazítja a javaslatokat.
+
+A **haladáskövetés** szabályai szerint a rendszer minden interakció után mentést végez, és 24 óránként teljes adatmentést hajt végre.  
+A statisztikák heti, havi és éves bontásban készülnek, a fejlődés pedig grafikonokon és AI-elemzésekben jelenik meg.  
+
+A **játékosítás (gamification)** növeli a motivációt: a felhasználók pontokat, jelvényeket és szinteket gyűjthetnek, amelyek a profiljukban láthatók.  
+A ranglisták és kihívások dinamikusan frissülnek, az AI pedig a felhasználó teljesítménye alapján módosítja a nehézségi szinteket és ajánlásokat.
 
 ## Felhasználói Folyamatok (User Flow)
 
