@@ -464,3 +464,5 @@ A felhasználói felület és a különböző funkciók szoros kapcsolatban áll
 
 -   **Adatkezelés és Integráció:**
     * A Naplózó képernyőn az adatok azonnal mentésre kerülnek a **PostgreSQL** adatbázisba (**K6, K1**).
+
+## Képernyő Tervek
