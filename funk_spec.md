@@ -447,6 +447,9 @@ Az alábbiakban bemutatjuk az egyes szerepkörök engedélyeit és feladatait.
 
 Ezek a szerepkörök egy jól strukturált, biztonságos és átlátható működési modellt alkotnak.
 
+## AI Logika és Működési Szabályok
+
+
 ## Felhasználói Folyamatok (User Flow)
 
 A rendszer célja, hogy a felhasználó egy **egyszerű, átlátható és interaktív** folyamat során érje el a céljait, egy **személyes, digitális edző** támogatásával. A következőkben bemutatjuk a felhasználói folyamatokat a belépéstől a napi terv adaptálásáig.
