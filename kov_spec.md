@@ -40,3 +40,5 @@ A felhasználói felület megvalósításához frontendhez **HTML**, **CSS** és
 **Felhasználóbarát UI**: A felületnek intuitívnak és könnyen kezelhetőnek kell lennie, biztosítva a felhasználói élmény maximalizálását. A **React** keretrendszer használata biztosítja, hogy a design letisztult és a navigáció egyszerű legyen a profil, a személyre szabott edzések, a táplálkozási tervek és a haladási statisztikák között. A React komponens-alapú felépítése garantálja a gyors valós idejű adatfrissítést a Gemini API-ból érkező AI-válaszok és grafikonok esetében, ami létfontosságú az adaptív rendszernél.
 
 **Korlátok**: Mivel a felhasználók személyes profiladatait, edzésnaplóit, étkezési céljait és a célkitűzéseket a **PostgreSQL adatbázisban** tároljuk, az adatok tartósan megmaradnak, és a felhasználók visszatérő munkamenetek során is elérhetik a korábbi eredményeiket. A rendszer lehetővé teszi, hogy a felhasználó progressziója (súly, teljesítmény) és a motivációs jelvények folyamatosan frissüljenek.
+
+## Követelménylista
