@@ -429,3 +429,38 @@ A rendszer célja, hogy a felhasználó egy **egyszerű, átlátható és intera
 
 ## Forgatókönyv
 
+-   A felhasználó megnyitja az alkalmazást, bejelentkezik, és a **Dashboardon** látja az **AI-generált** napi tervét.
+
+-   Elvégzi az edzést, majd a **Naplózó Képernyőn** rögzíti a vacsoráját (pl. "saláta csirkével").
+
+-   A rendszer a **Nutritionix API** segítségével lekéri a tápértékeket, majd a **Gemini AI** elemzi, hogy a felhasználó túllépte-e a napi kalóriakeretét.
+
+-   A **Gemini AI** azonnali **szöveges visszajelzést** küld a felhasználónak a Dashboardon (pl. "Nagyszerű edzés! Ügyelj a holnapi vízfogyasztásra!").
+
+-   A felhasználó a **Chatben** felteszi a kérdését: "Mit egyek vacsorára?", amire a **Gemini API** azonnal válaszol.
+
+-   A **Statisztika** nézetben a felhasználó látja, hogy új **jelvényt** szerzett (K6).
+
+-   Ezután frissíti a profilját, és a rendszer **adaptálja** a tervet, majd kilép.
+
+Ez a felhasználói folyamat biztosítja, hogy az edzés és a táplálkozás követése **egyszerű, intuitív és motiváló** legyen, miközben valós idejű, személyre szabott segítséget nyújt.
+
+## Megfeleltetés, hogyan fedik le a használati esetek a követelményeket
+
+A felhasználói felület és a különböző funkciók szoros kapcsolatban állnak a követelményekkel. A fő cél a személyre szabott fitnesz- és táplálkozási támogatás nyújtása.
+
+-   **Felhasználói Felület (**K7**):**
+    * A **Dashboard** megjeleníti a **Gemini AI** által generált tervek és a haladási adatok összefoglalóját (**K2, K4**).
+    * A navigációs sáv biztosítja az egyszerű átjárást a Naplózó (**K18**) és a Statisztika (**K4**) nézetek között.
+    * A **React** reszponzivitása támogatja a **letisztult dizájnt**.
+
+-   **AI Terv Képernyő:**
+    * Az edzés- és étrendterv megjelenítése a **Gemini API** funkcionalitását testesíti meg (**K2, K3**).
+    * A terv folyamatos **adaptálása** a felhasználói adatok alapján biztosítja az optimális fejlődést.
+
+-   **Visszajelzés és Motiváció:**
+    * A **Szöveges visszajelzés** azonnali, személyre szabott megerősítést ad a felhasználónak a rögzített adatok elemzése alapján (**K5**).
+    * A **Jelvények** (K6) megjelenítése és az elért célkitűzések státusza fokozza a **motivációt**.
+
+-   **Adatkezelés és Integráció:**
+    * A Naplózó képernyőn az adatok azonnal mentésre kerülnek a **PostgreSQL** adatbázisba (**K6, K1**).
