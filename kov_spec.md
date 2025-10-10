@@ -24,3 +24,5 @@ A rendszer haladást követő modulja részletes statisztikákat és grafikonoka
 A felhasználói felület React technológiára épül, biztosítva a könnyű kezelhetőséget és a valós idejű adatfrissítést. A navigáció egyszerűen történik a profil, az edzéstervek, az étkezési tervek és a statisztikák között, így a felhasználó mindig naprakész információkhoz juthat.
 
 Összességében ezek a funkciók biztosítják, hogy az alkalmazás személyre szabott, motiváló és könnyen kezelhető legyen minden felhasználó számára.
+
+## 5. Nem funkcionális követelmények
