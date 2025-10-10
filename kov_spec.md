@@ -25,4 +25,18 @@ A felhasználói felület React technológiára épül, biztosítva a könnyű k
 
 Összességében ezek a funkciók biztosítják, hogy az alkalmazás személyre szabott, motiváló és könnyen kezelhető legyen minden felhasználó számára.
 
-## 5. Nem funkcionális követelmények
+## 5. Nem funkcionális követelmények és technológia
+
+Ez a szakasz részletezi a Fitness Coach AI alkalmazásunk technológiai döntéseit és nem funkcionális követelményeit. A célunk egy olyan termék létrehozása, amely hatékony, megbízható, személyre szabott és skálázható.
+
+A felhasználói felület megvalósításához frontendhez **HTML**, **CSS** és **JavaScript** nyelveket használunk, illetve **React**-et, backendhez pedig **Pythont**, ezen belül **Flask** keretrendszert. Adatbázisnak pedig **PostgreSQL**-adatbázit használunk.
+
+**Teljesítmény**:  Az alkalmazásnak gyors válaszidőt kell produkálnia, különösen az AI-alapú funkcióknál. A Python/Flask backend optimalizálásával a tervgenerálás maximális válaszideje 5 másodperc lehet. Az alapvető adatbázis-lekérdezések (pl. naplóbejegyzések, statisztikák) válaszideje nem haladhatja meg a 200 ms-ot.
+
+**Megbízhatóság**: A személyes adatok védelme és a rendszer stabilitása kiemelt. A jelszavak hashelése és az adatok titkosítása a PostgreSQL-ben kötelező. Minden adatforgalom a frontend és a backend között HTTPS/TLS protokollon keresztül, titkosítva történik.
+
+**Karbantarthatóság**: A seed.py szkript használatával biztosítjuk, hogy a fejlesztőcsapat minden tagja egységes adatbázis-struktúrával és tesztadatokkal dolgozzon, ami csökkenti a hibák esélyét.
+
+**Felhasználóbarát UI**: A felületnek intuitívnak és könnyen kezelhetőnek kell lennie, biztosítva a felhasználói élmény maximalizálását. A **React** keretrendszer használata biztosítja, hogy a design letisztult és a navigáció egyszerű legyen a profil, a személyre szabott edzések, a táplálkozási tervek és a haladási statisztikák között. A React komponens-alapú felépítése garantálja a gyors valós idejű adatfrissítést a Gemini API-ból érkező AI-válaszok és grafikonok esetében, ami létfontosságú az adaptív rendszernél.
+
+**Korlátok**: Mivel a felhasználók személyes profiladatait, edzésnaplóit, étkezési céljait és a célkitűzéseket a **PostgreSQL adatbázisban** tároljuk, az adatok tartósan megmaradnak, és a felhasználók visszatérő munkamenetek során is elérhetik a korábbi eredményeiket. A rendszer lehetővé teszi, hogy a felhasználó progressziója (súly, teljesítmény) és a motivációs jelvények folyamatosan frissüljenek.
