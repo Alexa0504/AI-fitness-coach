@@ -393,8 +393,25 @@
 
 
 
-## 3. Követelménylista
+## Követelménylista
 
+A projekt sikeres megvalósításához elengedhetetlen a funkcionális modulok világos definiálása.  
+A rendszer hét fő modulra épül (K1–K7), amelyek együtt biztosítják a személyre szabott, adatvezérelt működést.  
+Az alábbi táblázat bemutatja mindegyik modul fő célját, működését és a hozzájuk tartozó logikai kapcsolatokat.
+
+| Modul ID | Név és Kifejtés |
+|-----------|-----------------|
+| **K1** | **Adatkezelés és Profil**<br>A rendszer a felhasználói adatokat — például testsúly, életkor, nem, edzési célok és korábbi tevékenységek — a **PostgreSQL adatbázisban** tárolja. Az AI ezen adatok alapján készít személyre szabott javaslatokat, és ellenőrzi a célok elérését. Ha a profil hiányos, a felhasználót egy interaktív regisztrációs űrlap irányítja a kiegészítéshez, biztosítva, hogy minden releváns információ rendelkezésre álljon. |
+| **K2** | **AI Tervgenerálás Logika**<br>A modul a felhasználó céljai, preferenciái és eddigi teljesítménye alapján kéri le a **Gemini API-tól** a személyre szabott edzésterveket és étrendi javaslatokat. Az algoritmus képes dinamikusan módosítani a terveket, ha a felhasználó új célokat ad meg, vagy ha az AI elemzése szerint a jelenlegi terv hatékonysága csökkenne. |
+| **K3** | **Haladás Elemzés**<br>Az AI folyamatosan elemzi a felhasználó naplózott tevékenységeit és étkezési adatait. A rendszer **részletes statisztikákat**, grafikonokat és szöveges értékeléseket készít, amelyek segítik a felhasználót a fejlődés nyomon követésében. Az elemzések figyelembe veszik az adott felhasználó teljesítményét és a kitűzött célokhoz viszonyított hatékonyságot. |
+| **K4** | **Felhasználói Felület**<br>A React-alapú frontend biztosítja a felhasználó számára az interaktív élményt. A felhasználó egyszerűen beviheti adatait, frissítheti profilját és céljait, valamint áttekintheti a **személyre szabott edzésterveket, étrendjavaslatokat**, és a fejlődési grafikonokat. A felület lehetővé teszi az AI Coach-csal való közvetlen kommunikációt, kérdések feltételét és az edzéstervek valós idejű módosítását. Emellett motivációs jelvények, ranglisták és értesítések segítik a folyamatos aktivitás fenntartását. |
+| **K5** | **Naplózó Képernyő**<br>A felhasználó manuálisan vagy külső szolgáltatások (pl. Nutritionix API) segítségével rögzítheti az étkezési és edzési adatait. A napló modul lehetőséget biztosít a részletes kalóriaszámlálásra, a tápanyagok nyomon követésére és az edzésterhelés optimalizálására, így az AI pontosabb visszajelzést tud adni. |
+| **K6** | **Adatbázisba Mentés**<br>Az összes felhasználói bevitel, valamint az AI által generált tervek és tanácsok biztonságosan kerülnek mentésre a **PostgreSQL adatbázisba**. Az adatátvitel titkosított, és minden új adatrögzítés után automatikus biztonsági mentés történik, biztosítva az adatok tartósságát és integritását. |
+| **K7** | **Motivációs Modul**<br>A modul a felhasználói célokat, elért eredményeket és a megszerzett **jelvényeket** kezeli. Az AI személyre szabott értesítéseket és motivációs üzeneteket küld, hogy a felhasználó folyamatosan elkötelezett maradjon. Emellett a ranglisták és kihívások vizuálisan is követhetők, elősegítve a közösségi interakciót és az egészséges versenyszellemet. |
+
+
+A modulok egymással szoros logikai kapcsolatban állnak: az adatkezelés biztosítja az alapokat, az AI logika feldolgozza az információkat, majd az eredmények a felhasználói felületen jelennek meg.  
+A rendszer működése ciklikus — a felhasználói adatok folyamatosan frissülnek, az AI pedig valós időben reagál a változásokra.
 
 
 
