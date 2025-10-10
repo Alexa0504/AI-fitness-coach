@@ -42,3 +42,15 @@ A felhasználói felület megvalósításához frontendhez **HTML**, **CSS** és
 **Korlátok**: Mivel a felhasználók személyes profiladatait, edzésnaplóit, étkezési céljait és a célkitűzéseket a **PostgreSQL adatbázisban** tároljuk, az adatok tartósan megmaradnak, és a felhasználók visszatérő munkamenetek során is elérhetik a korábbi eredményeiket. A rendszer lehetővé teszi, hogy a felhasználó progressziója (súly, teljesítmény) és a motivációs jelvények folyamatosan frissüljenek.
 
 ## Követelménylista
+
+## 4. Funkcionális követelmények (AI Fitness Coach) 🏋️‍♀️
+
+| Modul ID | Név és Kifejtés |
+| :--- | :--- |
+| **K1** | **Adatkezelés és Profil**<br>A program a felhasználói adatokat (súly, nem, célok), az edzésnaplókat és az AI által generált terveket egy **PostgreSQL adatbázisból** olvassa be. Ha a felhasználói profil hiányos, a program regisztrációs űrlappal reagál. |
+| **K2** | **AI Tervgenerálás Logika**<br>A program a felhasználó céljai és profiladatai alapján kéri le a **Gemini API-tól** a személyre szabott edzés- és étrendtervet. A tervet a rendszer eltárolja, és szükség esetén módosítja a felhasználó új céljai alapján. |
+| **K3** | **Haladás Elemzés**<br>Az AI algoritmus folyamatosan értékeli a felhasználó naplózott teljesítményét és étkezését. **Szöveges visszajelzéseket** és statisztikai elemzéseket biztosít, amelyek a felhasználói teljesítmény **hatékonyságától** is függenek. |
+| **K4** | **Felhasználói Felület**<br>A felhasználó beírhatja adatait (regisztráció), majd **megjeleníti** a Coach elemeit: **személyre szabott étrend**, **adaptív edzésterv**, fejlődési **grafikonok**, és az AI-tanácsadó Chat gombját. |
+| **K5** | **Naplózó Képernyő**<br>A felhasználó **megjeleníti** az étkezési és edzési naplót. Lehetővé teszi az adatok manuális rögzítését, valamint a **Nutritionix API-val** való kiegészítését a pontos kalóriaszámlálás érdekében. |
+| **K6** | **Adatbázisba mentés**<br>A felhasználó által rögzített napi edzés- és étkezési adatokat, valamint a Gemini által generált hosszú szöveges tanácsokat a program elküldi a backendnek, amely az adatokat a **PostgreSQL adatbázisba** menti a tartós tárolás érdekében. |
+| **K7** | **Motivációs Modul**<br>A főmenüből megtekinthető a célkitűzések státusza és a megszerzett **jelvények** listája. A rendszer **személyre szabott emlékeztetőket** és motivációs üzeneteket küld. |
