@@ -413,6 +413,7 @@ Az alábbi táblázat bemutatja mindegyik modul fő célját, működését és 
 A modulok egymással szoros logikai kapcsolatban állnak: az adatkezelés biztosítja az alapokat, az AI logika feldolgozza az információkat, majd az eredmények a felhasználói felületen jelennek meg.  
 A rendszer működése ciklikus — a felhasználói adatok folyamatosan frissülnek, az AI pedig valós időben reagál a változásokra.
 
+## Igényelt üzleti folyamatok modellje
 
 
 ## Felhasználói Folyamatok (User Flow)
