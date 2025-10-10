@@ -415,6 +415,16 @@ A rendszer működése ciklikus — a felhasználói adatok folyamatosan frissü
 
 ## Igényelt üzleti folyamatok modellje
 
+Az AI Coach működését egy dinamikus, **adatvezérelt üzleti modell** támogatja.  
+A cél egy 24/7 elérhető digitális személyi edző, amely valós időben képes reagálni a felhasználó állapotára, motivációjára és teljesítményére.
+
+A folyamat középpontjában a **felhasználói adatok elemzése és visszacsatolása** áll.  
+Az AI a naplózott adatokból kiindulva javaslatokat készít, majd a felhasználó visszajelzései alapján tovább finomítja az ajánlásokat.  
+Ez az interaktív körforgás biztosítja, hogy a rendszer mindig releváns, aktuális és személyre szabott legyen.
+
+A **költséghatékonyság** kulcsfontosságú üzleti előny: a platform automatizálja a személyi edzői feladatokat, így a felhasználó jóval kedvezőbb áron kap teljes körű támogatást.  
+Ezen felül a skálázható architektúra lehetővé teszi a gyors bővítést és a felhasználói szám növelését.  
+A **valós idejű visszajelzés** és az **AI-alapú motiváció** versenyelőnyt biztosít a piacon, mivel a legtöbb fitneszalkalmazás nem kínál ilyen mélységű személyre szabást.
 
 ## Felhasználói Folyamatok (User Flow)
 
