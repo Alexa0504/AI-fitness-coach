@@ -426,3 +426,6 @@ A rendszer célja, hogy a felhasználó egy **egyszerű, átlátható és intera
 
 6.  **AI Tanácsadás és Kilépés**
     A felhasználó a Chat ablakon keresztül (**K19**) azonnali tanácsot kérhet a **Gemini API-tól**. A program bezárható, a **PostgreSQL adatbázisban** tárolt adatok (**K9**) megőrződnek.
+
+## Forgatókönyv
+
