@@ -467,7 +467,6 @@ A ranglisták és kihívások dinamikusan frissülnek, az AI pedig a felhasznál
 
 A rendszer célja, hogy a felhasználó egy **egyszerű, átlátható és interaktív** folyamat során érje el a céljait, egy **személyes, digitális edző** támogatásával. A következőkben bemutatjuk a felhasználói folyamatokat a belépéstől a napi terv adaptálásáig.
 
-### Használati esetek
 
 1.  **Alkalmazás Indítása és Profil Frissítése**
     A felhasználó megnyitja a webalkalmazást a böngészőben. A kezdőképernyőn a Bejelentkezés/Regisztráció történik. Ez kötelező lépés, mivel az adatok (célok, nem, súly) a **személyre szabott tervek** generálásához szükségesek (**K1**). A belépés után azonnal betöltődik a **React Dashboard** (**K4**).
