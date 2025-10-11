@@ -19,6 +19,10 @@ A rendszer a Gemini API segítségével kínál valós idejű, személyre szabot
 
 A rendszer a manuális, drága és merev edzői/dietetikusi folyamatokat váltja ki egy adatvezérelt, automatizált ciklussal, amely a felhasználói teljesítmény alapján folyamatosan optimalizálja a beavatkozásokat.
 
+## Projektterv és projektszerepkörök
+
+A háromfős csapat a projekt fázisainak és a fő technológiai területeknek megfelelően osztja meg a szerepköröket.
+
 ## Üzleti folyamatok modellje
 
 Az **AI Fitness Coach** rendszer célja, hogy egy intelligens, személyre szabott edzési és életmódtámogató platformot biztosítson a felhasználók számára. A folyamat középpontjában az AI-alapú tervgenerálás és a valós idejű visszajelzés áll, amely lehetővé teszi, hogy minden felhasználó saját igényeihez igazított támogatást kapjon.
