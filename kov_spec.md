@@ -2,16 +2,16 @@
 
 ## Bevezetés és Projektcél
 
-Az AI-Driven Fitness Coach projekt célja egy forradalmi, személyre szabott webalkalmazás létrehozása, amely az adatok és a gépi tanulás erejét használva optimalizálja a felhasználók edzés- és táplálkozási terveit.
+Az **AI-Driven Fitness Coach** projekt célja egy forradalmi, személyre szabott webalkalmazás létrehozása, amely az adatok és a gépi tanulás erejét használva optimalizálja a felhasználók edzés- és táplálkozási terveit.
 
-A rendszer definiálása: egy dinamikusan adaptív, adatvezérelt fitnesz és wellness asszisztens, amely megfizethető és széles körben elérhető alternatívát kínál a tradicionális, drága személyi edzői szolgáltatásokkal szemben.
+**A rendszer definiálása**: egy dinamikusan adaptív, adatvezérelt fitness és wellness asszisztens, amely megfizethető és széles körben elérhető alternatívát kínál a tradicionális, drága személyi edzői szolgáltatásokkal szemben.
 
-Projektcél: A felhasználók fitnesz céljainak (súlyvesztés, izomnövekedés, erőnlét, stb.) hatékonyabb elérése, miközben minimalizálja a sérülések kockázatát a technika és a regenerálódás precíz monitorozásával.
+**Projektcél**: A felhasználók fitnesz céljainak (súlyvesztés, izomnövekedés, erőnlét, stb.) hatékonyabb elérése, miközben minimalizálja a sérülések kockázatát a technika és a regenerálódás precíz monitorozásával.
 
-Célközönség: 
-Két fő csoport: a kezdők és az átlagfelhasználók (akik iránymutatást és motivációt igényelnek), valamint a haladók (akik optimalizálni szeretnék teljesítményüket a stagnálás elkerülése végett).
+**Célközönség**: 
+**Két** fő csoport: a kezdők és az átlagfelhasználók (akik iránymutatást és motivációt igényelnek), valamint a haladók (akik optimalizálni szeretnék teljesítményüket a stagnálás elkerülése végett).
 
-Az AI/Gépi Tanulás (ML) kulcsfontosságú szerepe abban rejlik, hogy képes folyamatosan elemezni az egyéni teljesítményt, a biometrikus adatokat és a visszajelzéseket, biztosítva ezzel a terv valós idejű adaptálását.
+Az **AI/Gépi Tanulás** (ML) kulcsfontosságú szerepe abban rejlik, hogy képes folyamatosan elemezni az egyéni teljesítményt, a biometrikus adatokat és a visszajelzéseket, biztosítva ezzel a terv valós idejű adaptálását.
 
 Az alkalmazás platformja elsődlegesen egy modern webes alkalmazás lesz (React alapon), amely a skálázhatóságot és az elérhetőséget helyezi előtérbe, és megalapozza a későbbi mobil (React Native) kiterjesztés lehetőségét.
 
@@ -21,17 +21,17 @@ A rendszernek stabil, tudományos alapot kell biztosítania minden edzési dönt
 
 #### A jelenlegi piacot a személyi edzés szektorban két szélsőség jellemzi:
 
-- Hagyományos, emberi edzők: Ez a szolgáltatás magas költségeket és korlátozott elérhetőséget jelent, ami jelentős pénzügyi akadályt gördít az átlagos vásárlók elé. 
+- **Hagyományos, emberi edzők:** Ez a szolgáltatás magas költségeket és korlátozott elérhetőséget jelent, ami jelentős pénzügyi akadályt gördít az átlagos vásárlók elé. 
 A minőség nagymértékben függ az edző egyéni tapasztalatától és szubjektív ítéletétől.
 
-- Meglévő statikus fitnesz appok: Az elérhető digitális megoldások többsége előre beállított, merev edzésterveket kínál, melyek nem reagálnak a felhasználó egyedi, valós idejű változóira.
+- **Meglévő statikus fitnesz appok:** Az elérhető digitális megoldások többsége előre beállított, merev edzésterveket kínál, melyek nem reagálnak a felhasználó egyedi, valós idejű változóira.
 
 #### Korlátok és Fájdalompontok:
 
 - Ezek az appok nem érzékelik a felhasználó aktuális fáradtsági szintjét, az alvás minőségét vagy a rossz edzéstechnikát.
-Egy rosszul végzett feladat esetében nincs automatikus figyelmeztetés, ami növeli a sérülésveszélyt.
+Egy rosszul végzett feladat esetében nincs automatikus figyelmeztetés, ami növeli a **sérülésveszélyt**.
 
-- A statikus tervek nem képesek automatikusan adaptálódni az elmaradt edzésekhez vagy a hirtelen teljesítménybeli változásokhoz. 
+- A **statikus** tervek nem képesek automatikusan adaptálódni az elmaradt edzésekhez vagy a hirtelen teljesítménybeli változásokhoz. 
 Ez gyakran a felhasználói motiváció csökkenéséhez és magas lemorzsolódáshoz vezet.
 
 - Hiányzik a nagy adathalmazokból történő kollektív tanulás lehetősége, amely finomhangolhatná a legoptimálisabb edzési protokollokat.
@@ -46,21 +46,21 @@ Ez gyakran a felhasználói motiváció csökkenéséhez és magas lemorzsolód�
 
 #### Üzleti Érték:
 
-- Megfizethető Skálázhatóság: A rendszer alacsonyabb áron biztosít professzionális minőségű edzéstervezést (előfizetéses modellben), széles tömegek számára elérhetővé téve a személyi edzés előnyeit.
+- **Megfizethető Skálázhatóság:** A rendszer alacsonyabb áron biztosít professzionális minőségű edzéstervezést (előfizetéses modellben), széles tömegek számára elérhetővé téve a személyi edzés előnyeit.
 
-- Dinamikus Adaptáció: Az AI motor a felhasználói visszajelzések, az edzésadatok és biometrikus bemenetek (pl. pulzus, alvás) alapján folyamatosan finomhangolja az edzés nehézségét, volumenét és a táplálkozási javaslatokat.
+- **Dinamikus Adaptáció:** Az **AI** motor a felhasználói visszajelzések, az edzésadatok és biometrikus bemenetek (pl. pulzus, alvás) alapján folyamatosan finomhangolja az edzés nehézségét, volumenét és a táplálkozási javaslatokat.
 
 #### Főbb Fókuszpontok:
 
-- Valós idejű, Adatvezérelt Tervezés: A felhasználó teljesítménye és regenerációs állapota alapján automatikusan változó edzéstervek. 
+- **Valós idejű, Adatvezérelt Tervezés:** A felhasználó teljesítménye és regenerációs állapota alapján automatikusan változó edzéstervek. 
 Ha valaki fáradt, a rendszer alacsonyabb intenzitást javasol. 
 Ha kirobbanó formában van, optimalizáltan növeli a terhelést.
 
-- Sérülésmegelőzés és Technikai Korrekció: Az ML algoritmusok képesek előre jelezni a túledzés kockázatát, vagy (a későbbiekben bevezethető, egyszerűsített bemenetek segítségével) azonnali visszajelzést adni a rossz gyakorlat végrehajtásról.
+- **Sérülésmegelőzés és Technikai Korrekció:** Az ML algoritmusok képesek előre jelezni a túledzés kockázatát, vagy (a későbbiekben bevezethető, egyszerűsített bemenetek segítségével) azonnali visszajelzést adni a rossz gyakorlat végrehajtásról.
 
-- Hatékonyságnövelés: Az AI által generált terv precízebb és hatékonyabb, mint a statikus vagy szubjektív emberi tervek, mivel objektív, nagyszámú adatra épül.
+- **Hatékonyságnövelés:** Az AI által generált terv precízebb és hatékonyabb, mint a statikus vagy szubjektív emberi tervek, mivel objektív, nagyszámú adatra épül.
 
-- Magasabb Felhasználói Megtartás: A folyamatos, releváns adaptáció növeli az elkötelezettséget, csökkentve a lemorzsolódási arányt.
+- **Magasabb Felhasználói Megtartás:** A folyamatos, releváns adaptáció növeli az elkötelezettséget, csökkentve a lemorzsolódási arányt.
 
 ### Az igényelt folyamat egy folyamatos optimalizálási ciklusra épül: Adatgyűjtés -> Elemzés -> Tervadaptáció -> Végrehajtás -> Visszacsatolás -> Ismétlés. Ez biztosítja a maximális hatékonyságot és a felhasználói elégedettséget.
 

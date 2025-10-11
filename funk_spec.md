@@ -2,16 +2,16 @@
 
 ## Projektvízió
 
-Az AI-Driven Fitness Coach projekt célja egy forradalmi, személyre szabott webalkalmazás létrehozása, amely az adatok és a gépi tanulás erejét használva optimalizálja a felhasználók edzés- és táplálkozási terveit.
+Az **AI-Driven Fitness Coach** projekt célja egy forradalmi, személyre szabott webalkalmazás létrehozása, amely az adatok és a gépi tanulás erejét használva optimalizálja a felhasználók edzés- és táplálkozási terveit.
 
-A rendszer definiálása: egy dinamikusan adaptív, adatvezérelt fitnesz és wellness asszisztens, amely megfizethető és széles körben elérhető alternatívát kínál a tradicionális, drága személyi edzői szolgáltatásokkal szemben.
+**A rendszer definiálása:** egy dinamikusan adaptív, adatvezérelt fitnesz és wellness asszisztens, amely megfizethető és széles körben elérhető alternatívát kínál a tradicionális, drága személyi edzői szolgáltatásokkal szemben.
 
-Projektcél: A felhasználók fitnesz céljainak (súlyvesztés, izomnövekedés, erőnlét, stb.) hatékonyabb elérése, miközben minimalizálja a sérülések kockázatát a technika és a regenerálódás precíz monitorozásával.
+**Projektcél:** A felhasználók fitnesz céljainak (súlyvesztés, izomnövekedés, erőnlét, stb.) hatékonyabb elérése, miközben minimalizálja a sérülések kockázatát a technika és a regenerálódás precíz monitorozásával.
 
-Célközönség: 
-Két fő csoport: a kezdők és az átlagfelhasználók (akik iránymutatást és motivációt igényelnek), valamint a haladók (akik optimalizálni szeretnék teljesítményüket a stagnálás elkerülése végett).
+**Célközönség:**
+**Két** fő csoport: a kezdők és az átlagfelhasználók (akik iránymutatást és motivációt igényelnek), valamint a haladók (akik optimalizálni szeretnék teljesítményüket a stagnálás elkerülése végett).
 
-Az AI/Gépi Tanulás (ML) kulcsfontosságú szerepe abban rejlik, hogy képes folyamatosan elemezni az egyéni teljesítményt, a biometrikus adatokat és a visszajelzéseket, biztosítva ezzel a terv valós idejű adaptálását.
+Az **AI/Gépi Tanulás** (ML) kulcsfontosságú szerepe abban rejlik, hogy képes folyamatosan elemezni az egyéni teljesítményt, a biometrikus adatokat és a visszajelzéseket, biztosítva ezzel a terv valós idejű adaptálását.
 
 Az alkalmazás platformja elsődlegesen egy modern webes alkalmazás lesz (React alapon), amely a skálázhatóságot és az elérhetőséget helyezi előtérbe, és megalapozza a későbbi mobil (React Native) kiterjesztés lehetőségét.
 
@@ -19,7 +19,7 @@ A rendszernek stabil, tudományos alapot kell biztosítania minden edzési dönt
 
 ## Jelenlegi helyzet (Piaci Rések)
 
-A jelenlegi fitneszpiac több kritikus réssel küzd, amelyek indokolják az AI-Driven Fitness Coach rendszer szükségességét.
+A jelenlegi fitneszpiac több kritikus réssel küzd, amelyek indokolják az **AI-Driven Fitness Coach** rendszer szükségességét.
 
 ### A hagyományos edzés korlátai
 
@@ -28,7 +28,7 @@ A tervek minősége gyakran szubjektív, az edző egyéni tapasztalatától füg
 
 ### A statikus appok kudarca
 
-A piacon lévő fitnesz appok többsége merev, előre rögzített terveket használ, amelyek nem képesek a valós idejű adaptációra. 
+A piacon lévő fitness appok többsége merev, előre rögzített terveket használ, amelyek nem képesek a valós idejű adaptációra. 
 Ezek a tervek nem reagálnak a felhasználó aktuális állapotára (fáradtság, rossz alvás, stressz), ami túledzéshez vagy hatékonyságvesztéshez vezethet.
 
 ### Minőségellenőrzés és Adatrögzítés
@@ -60,19 +60,19 @@ A rendszer működése ciklikus — a felhasználói adatok folyamatosan frissü
 
 ## Jelenlegi üzleti folyamatok modellje
 
-A meglévő üzleti modellek folyamatai súrlódásokat okoznak, főleg a manuális és nem adaptív lépések miatt.
+A meglévő üzleti modellek folyamatai **súrlódásokat** okoznak, főleg a manuális és nem adaptív lépések miatt.
 
 ### Hagyományos edzői folyamat
 
-A folyamat a rugalmatlan, manuális időpont egyeztetéssel kezdődik. 
-A kezdeti adatfelvétel (célok, étrend) szubjektív és statikus dokumentumokban rögzül. Az edzésterv kézzel, fix ciklusokra készül, és nem módosítható automatikusan a felhasználó állapotváltozásai (pl. sérülés vagy kipihentség) szerint. 
+A folyamat a rugalmatlan, **manuális** időpont egyeztetéssel kezdődik. 
+A kezdeti adatfelvétel (célok, étrend) szubjektív és **statikus** dokumentumokban rögzül. Az edzésterv kézzel, fix ciklusokra készül, és nem módosítható automatikusan a felhasználó állapotváltozásai (pl. sérülés vagy kipihentség) szerint. 
 A dietetikai követés és az étrend ellenőrzése is nehézkes, mivel a naplózás a felhasználó pontosságától függ.
 
 ### Statikus appos folyamat
 
-A felhasználó kiválaszt egy fix kategóriájú tervet, amely innentől kezdve nem adaptív. 
+A felhasználó kiválaszt egy **fix** kategóriájú tervet, amely innentől kezdve nem adaptív. 
 Az edzésrögzítés csak mennyiségi adatokat (ismétlés, súly) gyűjt, de a mozgás minőségét nem ellenőrzi. 
-Ha a felhasználó eltér a tervtől, a rendszer nem indít automatikus korrekciót (pl. regenerációs nap beiktatását). 
+Ha a felhasználó eltér a tervtől, a rendszer nem indít automatikus korrekciót. (pl. regenerációs nap beiktatását) 
 A visszajelzések pusztán számokból állnak, hiányzik az AI által generált értelmező szöveges elemzés.
 
 ### Funkcionális követelmények törése
@@ -81,35 +81,35 @@ A funkciók hierarchikus bontása mutatja, hogyan épül fel a rendszer almodulo
 
 #### I. AI-vezérelt edzéstervezés és korrekció
 
-- Dinamikus Tervgenerálás (K2): Gemini API hívás, amely a felhasználói profil (K1) és a teljesítmény adatok (K6) alapján személyre szabott tervet állít elő.
+- **Dinamikus Tervgenerálás (K2):** Gemini API hívás, amely a felhasználói profil (K1) és a teljesítmény adatok (K6) alapján személyre szabott tervet állít elő.
 
-- Adaptív Logika (K2): Az MI folyamatosan újraértékeli a tervet a napi edzés- és biometrikus adatok (K6) alapján, biztosítva a Regeneráció Kezelését (túlterhelés elkerülése).
+- **Adaptív Logika (K2):** Az MI folyamatosan újraértékeli a tervet a napi edzés- és biometrikus adatok (K6) alapján, biztosítva a Regeneráció Kezelését (túlterhelés elkerülése).
 
-- Edzésnapló Rögzítése (K6): Felület a sorozatok, ismétlések és súlyok bevitelére, a Progressziós Menedzsment (K3) adatalapja.
+- **Edzésnapló Rögzítése (K6):** Felület a sorozatok, ismétlések és súlyok bevitelére, a Progressziós Menedzsment (K3) adatalapja.
 
 #### II. Táplálkozás és életmód menedzsment
 
-- AI Étrendtervezés (K2): A Gemini API-n keresztül generálja az étrendet a K1 adatok és az edzési energiaigény alapján.
+- **AI Étrendtervezés (K2):** A Gemini API-n keresztül generálja az étrendet a K1 adatok és az edzési energiaigény alapján.
 
-- Táplálkozási Napló (K5): Képernyő az étkezési adatok bejegyzésére. A felhasználó a bevitt ételekhez rögzíti a mennyiségeket.
+- **Táplálkozási Napló (K5):** Képernyő az étkezési adatok bejegyzésére. A felhasználó a bevitt ételekhez rögzíti a mennyiségeket.
 
-- Adatfeldolgozás és Számítás (K5, K3): A rendszer (K5, K3) a rögzített ételek és mennyiségek alapján makrók és kalóriák becslését végzi el az AI logika (K2) utasításainak megfelelően.
+- **Adatfeldolgozás és Számítás (K5, K3):** A rendszer (K5, K3) a rögzített ételek és mennyiségek alapján makrók és kalóriák becslését végzi el az AI logika (K2) utasításainak megfelelően.
 
 #### III. Haladáskövetés és motiváció
 
-- Részletes Statisztikák (K4): Grafikonok és kimutatások megjelenítése (React komponens) a fejlődésről.
+- **Részletes Statisztikák (K4):** Grafikonok és kimutatások megjelenítése (React komponens) a fejlődésről.
 
-- Szöveges Elemzés (K3): Az MI (Gemini) értelmező szöveges összefoglalót ad a heti teljesítményről, növelve a felhasználói tudatosságot.
+- **Szöveges Elemzés (K3):** Az MI (Gemini) értelmező szöveges összefoglalót ad a heti teljesítményről, növelve a felhasználói tudatosságot.
 
-- Motivációs Modul (K7): Rendszer a célok státuszának és a megszerzett jelvények kiosztására, valamint személyre szabott emlékeztetők küldésére.
+- **Motivációs Modul (K7):** Rendszer a célok státuszának és a megszerzett jelvények kiosztására, valamint személyre szabott emlékeztetők küldésére.
 
 #### IV. Felhasználói felület és adatintegráció
 
-- React Felület (K4): Biztosítja a felhasználóbarát, moduláris felépítést és a gyors adatfrissítést.
+- **React Felület (K4):** Biztosítja a felhasználóbarát, moduláris felépítést és a gyors adatfrissítést.
 
-- Adatbázis Kapcsolat (K1, K6): Flask backend felelős a frontend (React) és a PostgreSQL adatbázis közötti biztonságos adatátvitelért és tárolásért.
+- **Adatbázis Kapcsolat (K1, K6):** Flask backend felelős a frontend (React) és a PostgreSQL adatbázis közötti biztonságos adatátvitelért és tárolásért.
 
-- Gemini API Kapcsolat (K2): Backend szerviz a Gemini hívások kezelésére.
+- **Gemini API Kapcsolat (K2):** Backend szerviz a Gemini hívások kezelésére.
 
 ## Igényelt üzleti folyamatok modellje
 
@@ -147,19 +147,19 @@ Ezek a szerepkörök egy jól strukturált, biztonságos és átlátható műkö
 
 ## Hogyan fedik le a használati esetek a követelményeket
 
-A követelmények (K1-K7) szoros kapcsolatban állnak a felhasználási esetekkel, igazolva, hogy a tervezett funkciók valóban megoldják a jelenlegi üzleti hiányosságokat.
+A követelmények **(K1-K7)** szoros kapcsolatban állnak a felhasználási esetekkel, igazolva, hogy a tervezett funkciók valóban megoldják a jelenlegi üzleti hiányosságokat.
 
 #### Probléma: Sérülésveszély és Statikus Tervek
 
-- Megoldás (K2, K3): A K2 (AI Logika) és a K3 (Elemzés) fedezi az Edzés Technika Elemzése használati esetet. Az MI feldolgozza a mozgás adatokat, és szöveges korrekciós visszajelzést ad, ami a sérülésmegelőzés és a statikus appok legnagyobb hibája ellen hat.
+- **Megoldás (K2, K3):** A K2 (AI Logika) és a K3 (Elemzés) fedezi az Edzés Technika Elemzése használati esetet. Az MI feldolgozza a mozgás adatokat, és szöveges korrekciós visszajelzést ad, ami a sérülésmegelőzés és a statikus appok legnagyobb hibája ellen hat.
 
-- Megoldás (K2, K6): A K2 és K6 (Adatbázis mentés) fedezi a Dinamikus Terv Módosítás használati esetet. A K6 tárolt valós idejű adatok alapján a K2 automatikusan optimalizálja a terhelést, megszüntetve a statikus tervezés problémáját.
+- **Megoldás (K2, K6):** A K2 és K6 (Adatbázis mentés) fedezi a Dinamikus Terv Módosítás használati esetet. A K6 tárolt valós idejű adatok alapján a K2 automatikusan optimalizálja a terhelést, megszüntetve a statikus tervezés problémáját.
 
 #### Probléma: Pontatlan Adatrögzítés és Alacsony Megtartás
 
-- Megoldás (K5): A K5 (Naplózó Képernyő) fedezi a Pontos Étrend Naplózás használati esetet. A K5 lehetővé teszi a felhasználó számára, hogy részletes adatokat adjon meg az elfogyasztott ételekről, amelyeket a K2/K3 logika elemzésre használ fel ahelyett, hogy külső API-ra támaszkodna.
+- **Megoldás (K5):** A K5 (Naplózó Képernyő) fedezi a Pontos Étrend Naplózás használati esetet. A K5 lehetővé teszi a felhasználó számára, hogy részletes adatokat adjon meg az elfogyasztott ételekről, amelyeket a K2/K3 logika elemzésre használ fel ahelyett, hogy külső API-ra támaszkodna.
 
-- Megoldás (K7, K4, K3): A K7 (Motiváció), K4 (UI) és K3 (Elemzés) fedezi a Folyamatos Motiváció és a Személyre Szabott Visszajelzés használati eseteket. A játékosítási elemek és a Gemini által generált magyarázó szöveges elemzések növelik az elkötelezettséget és csökkentik a lemorzsolódást.
+- **Megoldás (K7, K4, K3):** A K7 (Motiváció), K4 (UI) és K3 (Elemzés) fedezi a Folyamatos Motiváció és a Személyre Szabott Visszajelzés használati eseteket. A játékosítási elemek és a Gemini által generált magyarázó szöveges elemzések növelik az elkötelezettséget és csökkentik a lemorzsolódást.
 
 ## AI Logika és Működési Szabályok
 
