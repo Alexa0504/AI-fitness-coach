@@ -16,15 +16,15 @@ Az alkalmazás platformja elsődlegesen egy modern webes alkalmazás lesz (React
 
 A rendszernek stabil, tudományos alapot kell biztosítania minden edzési döntéshez.
 
-## Jelenlegi Helyzet (Piaci Rések)
+## Jelenlegi helyzet (Piaci Rések)
 
 A jelenlegi fitneszpiac több kritikus réssel küzd, amelyek indokolják az AI-Driven Fitness Coach rendszer szükségességét.
 
-### A Hagyományos Edzés Korlátai
+### A hagyományos edzés korlátai
 
 A személyi edzői szolgáltatások magas költsége és korlátozott elérhetősége pénzügyi akadályt jelent az átlagfelhasználók számára. A tervek minősége gyakran szubjektív, az edző egyéni tapasztalatától függ, nem pedig nagyszámú adaton alapuló objektív elemzéstől. Nincs lehetőség a napi szintű, aprólékos biometrikus adatelemzésre.
 
-### A Statikus Appok Kudarca
+### A statikus appok kudarca
 
 A piacon lévő fitnesz appok többsége merev, előre rögzített terveket használ, amelyek nem képesek a valós idejű adaptációra. Ezek a tervek nem reagálnak a felhasználó aktuális állapotára (fáradtság, rossz alvás, stressz), ami túledzéshez vagy hatékonyságvesztéshez vezethet.
 
@@ -52,6 +52,18 @@ Az alábbi táblázat bemutatja mindegyik modul fő célját, működését és 
 
 A modulok egymással szoros logikai kapcsolatban állnak: az adatkezelés biztosítja az alapokat, az AI logika feldolgozza az információkat, majd az eredmények a felhasználói felületen jelennek meg.  
 A rendszer működése ciklikus — a felhasználói adatok folyamatosan frissülnek, az AI pedig valós időben reagál a változásokra.
+
+## Jelenlegi üzleti folyamatok modellje
+
+A meglévő üzleti modellek folyamatai súrlódásokat okoznak, főleg a manuális és nem adaptív lépések miatt.
+
+### Hagyományos edzői folyamat
+
+A folyamat a rugalmatlan, manuális időpont egyeztetéssel kezdődik. A kezdeti adatfelvétel (célok, étrend) szubjektív és statikus dokumentumokban rögzül. Az edzésterv kézzel, fix ciklusokra készül, és nem módosítható automatikusan a felhasználó állapotváltozásai (pl. sérülés vagy kipihentség) szerint. A dietetikai követés és az étrend ellenőrzése is nehézkes, mivel a naplózás a felhasználó pontosságától függ.
+
+### Statikus appos folyamat
+
+A felhasználó kiválaszt egy fix kategóriájú tervet, amely innentől kezdve nem adaptív. Az edzésrögzítés csak mennyiségi adatokat (ismétlés, súly) gyűjt, de a mozgás minőségét nem ellenőrzi. Ha a felhasználó eltér a tervtől, a rendszer nem indít automatikus korrekciót (pl. regenerációs nap beiktatását). A visszajelzések pusztán számokból állnak, hiányzik az AI által generált értelmező szöveges elemzés.
 
 ## Igényelt üzleti folyamatok modellje
 
