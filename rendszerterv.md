@@ -5,6 +5,20 @@
 Az AI-Driven Fitness Coach rendszer fő célja, hogy demokratizálja a személyre szabott edzést és táplálkozástervezést azáltal, hogy dinamikusan adaptív, adatvezérelt coachingot biztosít a felhasználók számára.
 A rendszer a Gemini API segítségével kínál valós idejű, személyre szabott megoldásokat, amelyek a felhasználó teljesítményéhez, céljaihoz és naplózott adataihoz igazodnak.
 
+#### Alapvető Célok
+
+- Személyre Szabott Optimalizáció: A felhasználó céljai és naplózott adatai alapján folyamatosan adaptálódó edzés- és étrendtervek generálása. Ez a megközelítés biztosítja a maximális hatékonyságot és a stagnálás elkerülését.
+
+- Sérülésmegelőzés: A mozgástechnika elemzésére fókuszálva (a későbbi fejlesztések során), valamint a túledzés kockázatának folyamatos értékelésével minimalizálja a sérülések esélyét.
+
+- Elérhetőség és Skálázhatóság: A hagyományos személyi edzés magas költségét áthidalva, egy megfizethető, előfizetéses modellben biztosít professzionális szintű útmutatást.
+
+- Motiváció és Megtartás: A játékosítási (gamification) elemek és az MI által generált szöveges, értelmező visszajelzések segítségével növeli a felhasználói elkötelezettséget és csökkenti a lemorzsolódást.
+
+### Üzleti Érték
+
+A rendszer a manuális, drága és merev edzői/dietetikusi folyamatokat váltja ki egy adatvezérelt, automatizált ciklussal, amely a felhasználói teljesítmény alapján folyamatosan optimalizálja a beavatkozásokat.
+
 ## Üzleti folyamatok modellje
 
 Az **AI Fitness Coach** rendszer célja, hogy egy intelligens, személyre szabott edzési és életmódtámogató platformot biztosítson a felhasználók számára. A folyamat középpontjában az AI-alapú tervgenerálás és a valós idejű visszajelzés áll, amely lehetővé teszi, hogy minden felhasználó saját igényeihez igazított támogatást kapjon.
