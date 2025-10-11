@@ -233,6 +233,10 @@ A rendszer követelményei két nagy csoportra oszthatók: funkcionális és nem
 - **Karbantarthatóság:** moduláris kódstruktúra, jól dokumentált API-k.  
 - **Megbízhatóság:** hibakezelés minden rétegben (AI válaszhiba, adatbázis kapcsolat, invalid input).
 
+![AI Fitness Coach Use Case Diagram](static/images/Use_Case.png)
+
+Ez a diagram az AI Fitness Coach Rendszer funkcióit mutatja be a főbb szereplők (Felhasználó, Admin) szemszögéből. Kiemeli a Felhasználó alapvető interakcióit, mint a regisztráció, célbeállítás és edzésnaplózás, valamint a központi funkciókat: az AI Tervgenerálást és a Gamification elemeket. A diagram vizuálisan foglalja össze, hogy a rendszer hogyan nyújt személyre szabott, adatvezérelt edzés- és életmódtámogatást.
+
 ## Funkcionális terv
 
 A rendszer célja egy **interaktív és személyre szabott webes alkalmazás** létrehozása, amely segíti a felhasználókat a **saját edzési céljaik elérésében** és az egészséges életmód fenntartásában. A felhasználó naplózhatja edzéseit és étkezéseit, az AI javaslatokat ad a fejlődéshez, és a rendszer pontokat, jelvényeket és statisztikákat biztosít a motiváció fenntartására. A felület letisztult és könnyen kezelhető, hogy a felhasználó az edzésre és az egészségre tudjon koncentrálni.
