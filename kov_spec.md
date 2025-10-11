@@ -25,7 +25,7 @@ A felhasználói felület React technológiára épül, biztosítva a könnyű k
 
 Összességében ezek a funkciók biztosítják, hogy az alkalmazás személyre szabott, motiváló és könnyen kezelhető legyen minden felhasználó számára.
 
-## 5. Nem funkcionális követelmények és technológia
+## Nem funkcionális követelmények és technológia
 
 Ez a szakasz részletezi a Fitness Coach AI alkalmazásunk technológiai döntéseit és nem funkcionális követelményeit. A célunk egy olyan termék létrehozása, amely hatékony, megbízható, személyre szabott és skálázható.
 
@@ -43,7 +43,7 @@ A felhasználói felület megvalósításához frontendhez **HTML**, **CSS** és
 
 ## Követelménylista
 
-## 4. Funkcionális követelmények (AI Fitness Coach) 🏋️‍♀️
+## Funkcionális követelmények (AI Fitness Coach)
 
 | Modul ID | Név és Kifejtés |
 | :--- | :--- |
