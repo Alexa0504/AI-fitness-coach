@@ -53,6 +53,15 @@ A háromfős csapat a projekt fázisainak és a fő technológiai területeknek 
 
 Az absztrakt domain modell a rendszer fő üzleti entitásait (objektumait) és azok közötti kapcsolatokat határozza meg, elvonatkoztatva a technikai megvalósítás részleteitől.
 
+| Entitás | Főbb Attribútumok (Tulajdonságok) | Kapcsolatok és Megjegyzések |
+| :--- | :--- | :--- |
+| **Felhasználó** | ID, Név, Email, Jelszó (hash), Célok, Fiziológiai adatok (súly, magasság). | **1 : N** kapcsolat a **Naplóbejegyzés**-sel. A profilinformációkat a **Csapattag 1** kezeli. |
+| **Edzésterv** | Terv ID, Létrehozás Dátuma, **Gemini Által Generált Terv Szövege**, Aktuális Fázis, Hivatkozás a **Felhasználó**-ra. | **1 : N** kapcsolat a **Felhasználó**-val. A **Csapattag 2** felelős a generálásáért. |
+| **Táplálkozási Terv** | Terv ID, Kalória Cél, Makró Eloszlás, **Gemini Által Generált Étrend Szövege**, Hivatkozás a **Felhasználó**-ra. | **1 : N** kapcsolat a **Felhasználó**-val. A **Csapattag 2** felelős a generálásáért. |
+| **Naplóbejegyzés** | ID, Dátum, **Rögzített Edzésadatok** (pl. elvégzett súly, ismétlés, sorozat, fáradtsági visszajelzés), **Rögzített Ételadatok** (étel neve, mennyiség), Hivatkozás a **Felhasználó**-ra. | **1 : N** kapcsolat a **Felhasználó**-val. Az adatok bevitelét és feldolgozását a **Csapattag 3** végzi, de az előkészítést a **Csapattag 1** biztosítja. |
+| **Motivációs Elem** | ID, Típus (Jelvény/Cél), Megnevezés, Elérési Dátum, Hivatkozás a **Felhasználó**-ra. | **1 : N** kapcsolat a **Felhasználó**-val. A **Csapattag 2 és 3** osztja meg a felelősséget a logikáért. |
+| **Heti Összesítés** | ID, Hét, Súlyváltozás, Összes elégetett kalória, Teljes pontszám, Hivatkozás a **Felhasználó**-ra. | **1 : N** kapcsolat a **Felhasználó**-val. Ezt a **Csapattag 1** készíti elő a **Csapattag 3** számára. |
+
 ## Üzleti folyamatok modellje
 
 Az **AI Fitness Coach** rendszer célja, hogy egy intelligens, személyre szabott edzési és életmódtámogató platformot biztosítson a felhasználók számára. A folyamat középpontjában az AI-alapú tervgenerálás és a valós idejű visszajelzés áll, amely lehetővé teszi, hogy minden felhasználó saját igényeihez igazított támogatást kapjon.
