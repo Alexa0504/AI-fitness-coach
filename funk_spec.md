@@ -8,7 +8,8 @@ A rendszer definiálása: egy dinamikusan adaptív, adatvezérelt fitnesz és we
 
 Projektcél: A felhasználók fitnesz céljainak (súlyvesztés, izomnövekedés, erőnlét, stb.) hatékonyabb elérése, miközben minimalizálja a sérülések kockázatát a technika és a regenerálódás precíz monitorozásával.
 
-Célközönség: Két fő csoport: a kezdők és az átlagfelhasználók (akik iránymutatást és motivációt igényelnek), valamint a haladók (akik optimalizálni szeretnék teljesítményüket a stagnálás elkerülése végett).
+Célközönség: 
+Két fő csoport: a kezdők és az átlagfelhasználók (akik iránymutatást és motivációt igényelnek), valamint a haladók (akik optimalizálni szeretnék teljesítményüket a stagnálás elkerülése végett).
 
 Az AI/Gépi Tanulás (ML) kulcsfontosságú szerepe abban rejlik, hogy képes folyamatosan elemezni az egyéni teljesítményt, a biometrikus adatokat és a visszajelzéseket, biztosítva ezzel a terv valós idejű adaptálását.
 
@@ -22,16 +23,20 @@ A jelenlegi fitneszpiac több kritikus réssel küzd, amelyek indokolják az AI-
 
 ### A hagyományos edzés korlátai
 
-A személyi edzői szolgáltatások magas költsége és korlátozott elérhetősége pénzügyi akadályt jelent az átlagfelhasználók számára. A tervek minősége gyakran szubjektív, az edző egyéni tapasztalatától függ, nem pedig nagyszámú adaton alapuló objektív elemzéstől. Nincs lehetőség a napi szintű, aprólékos biometrikus adatelemzésre.
+A személyi edzői szolgáltatások magas költsége és korlátozott elérhetősége pénzügyi akadályt jelent az átlagfelhasználók számára. 
+A tervek minősége gyakran szubjektív, az edző egyéni tapasztalatától függ, nem pedig nagyszámú adaton alapuló objektív elemzéstől. Nincs lehetőség a napi szintű, aprólékos biometrikus adatelemzésre.
 
 ### A statikus appok kudarca
 
-A piacon lévő fitnesz appok többsége merev, előre rögzített terveket használ, amelyek nem képesek a valós idejű adaptációra. Ezek a tervek nem reagálnak a felhasználó aktuális állapotára (fáradtság, rossz alvás, stressz), ami túledzéshez vagy hatékonyságvesztéshez vezethet.
+A piacon lévő fitnesz appok többsége merev, előre rögzített terveket használ, amelyek nem képesek a valós idejű adaptációra. 
+Ezek a tervek nem reagálnak a felhasználó aktuális állapotára (fáradtság, rossz alvás, stressz), ami túledzéshez vagy hatékonyságvesztéshez vezethet.
 
 ### Minőségellenőrzés és Adatrögzítés
 
 A legkomolyabb probléma a mozgástechnika ellenőrzésének teljes hiánya. Ez növeli a sérülésveszélyt, mivel a rosszul végrehajtott gyakorlatokra nincs azonnali visszajelzés.
-Továbbá, a táplálkozási és edzésadatok manuális rögzítése időigényes és pontatlan. A felhasználók gyakran kihagyják a naplózást, vagy pontatlan adatokat visznek be, ami torzítja a teljesítménykövetést és a kalóriaszámítást. Hiányzik az integrált, minőségi visszajelzést nyújtó rendszer.
+Továbbá, a táplálkozási és edzésadatok manuális rögzítése időigényes és pontatlan. 
+A felhasználók gyakran kihagyják a naplózást, vagy pontatlan adatokat visznek be, ami torzítja a teljesítménykövetést és a kalóriaszámítást. 
+Hiányzik az integrált, minőségi visszajelzést nyújtó rendszer.
 
 ## Követelménylista
 
@@ -59,11 +64,16 @@ A meglévő üzleti modellek folyamatai súrlódásokat okoznak, főleg a manuá
 
 ### Hagyományos edzői folyamat
 
-A folyamat a rugalmatlan, manuális időpont egyeztetéssel kezdődik. A kezdeti adatfelvétel (célok, étrend) szubjektív és statikus dokumentumokban rögzül. Az edzésterv kézzel, fix ciklusokra készül, és nem módosítható automatikusan a felhasználó állapotváltozásai (pl. sérülés vagy kipihentség) szerint. A dietetikai követés és az étrend ellenőrzése is nehézkes, mivel a naplózás a felhasználó pontosságától függ.
+A folyamat a rugalmatlan, manuális időpont egyeztetéssel kezdődik. 
+A kezdeti adatfelvétel (célok, étrend) szubjektív és statikus dokumentumokban rögzül. Az edzésterv kézzel, fix ciklusokra készül, és nem módosítható automatikusan a felhasználó állapotváltozásai (pl. sérülés vagy kipihentség) szerint. 
+A dietetikai követés és az étrend ellenőrzése is nehézkes, mivel a naplózás a felhasználó pontosságától függ.
 
 ### Statikus appos folyamat
 
-A felhasználó kiválaszt egy fix kategóriájú tervet, amely innentől kezdve nem adaptív. Az edzésrögzítés csak mennyiségi adatokat (ismétlés, súly) gyűjt, de a mozgás minőségét nem ellenőrzi. Ha a felhasználó eltér a tervtől, a rendszer nem indít automatikus korrekciót (pl. regenerációs nap beiktatását). A visszajelzések pusztán számokból állnak, hiányzik az AI által generált értelmező szöveges elemzés.
+A felhasználó kiválaszt egy fix kategóriájú tervet, amely innentől kezdve nem adaptív. 
+Az edzésrögzítés csak mennyiségi adatokat (ismétlés, súly) gyűjt, de a mozgás minőségét nem ellenőrzi. 
+Ha a felhasználó eltér a tervtől, a rendszer nem indít automatikus korrekciót (pl. regenerációs nap beiktatását). 
+A visszajelzések pusztán számokból állnak, hiányzik az AI által generált értelmező szöveges elemzés.
 
 ### Funkcionális követelmények törése
 

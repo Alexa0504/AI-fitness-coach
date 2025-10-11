@@ -8,7 +8,8 @@ A rendszer definiálása: egy dinamikusan adaptív, adatvezérelt fitnesz és we
 
 Projektcél: A felhasználók fitnesz céljainak (súlyvesztés, izomnövekedés, erőnlét, stb.) hatékonyabb elérése, miközben minimalizálja a sérülések kockázatát a technika és a regenerálódás precíz monitorozásával.
 
-Célközönség: Két fő csoport: a kezdők és az átlagfelhasználók (akik iránymutatást és motivációt igényelnek), valamint a haladók (akik optimalizálni szeretnék teljesítményüket a stagnálás elkerülése végett).
+Célközönség: 
+Két fő csoport: a kezdők és az átlagfelhasználók (akik iránymutatást és motivációt igényelnek), valamint a haladók (akik optimalizálni szeretnék teljesítményüket a stagnálás elkerülése végett).
 
 Az AI/Gépi Tanulás (ML) kulcsfontosságú szerepe abban rejlik, hogy képes folyamatosan elemezni az egyéni teljesítményt, a biometrikus adatokat és a visszajelzéseket, biztosítva ezzel a terv valós idejű adaptálását.
 
@@ -20,15 +21,18 @@ A rendszernek stabil, tudományos alapot kell biztosítania minden edzési dönt
 
 #### A jelenlegi piacot a személyi edzés szektorban két szélsőség jellemzi:
 
-- Hagyományos, emberi edzők: Ez a szolgáltatás magas költségeket és korlátozott elérhetőséget jelent, ami jelentős pénzügyi akadályt gördít az átlagos vásárlók elé. A minőség nagymértékben függ az edző egyéni tapasztalatától és szubjektív ítéletétől.
+- Hagyományos, emberi edzők: Ez a szolgáltatás magas költségeket és korlátozott elérhetőséget jelent, ami jelentős pénzügyi akadályt gördít az átlagos vásárlók elé. 
+A minőség nagymértékben függ az edző egyéni tapasztalatától és szubjektív ítéletétől.
 
 - Meglévő statikus fitnesz appok: Az elérhető digitális megoldások többsége előre beállított, merev edzésterveket kínál, melyek nem reagálnak a felhasználó egyedi, valós idejű változóira.
 
 #### Korlátok és Fájdalompontok:
 
-- Ezek az appok nem érzékelik a felhasználó aktuális fáradtsági szintjét, az alvás minőségét vagy a rossz edzéstechnikát. Egy rosszul végzett feladat esetében nincs automatikus figyelmeztetés, ami növeli a sérülésveszélyt.
+- Ezek az appok nem érzékelik a felhasználó aktuális fáradtsági szintjét, az alvás minőségét vagy a rossz edzéstechnikát.
+Egy rosszul végzett feladat esetében nincs automatikus figyelmeztetés, ami növeli a sérülésveszélyt.
 
-- A statikus tervek nem képesek automatikusan adaptálódni az elmaradt edzésekhez vagy a hirtelen teljesítménybeli változásokhoz. Ez gyakran a felhasználói motiváció csökkenéséhez és magas lemorzsolódáshoz vezet.
+- A statikus tervek nem képesek automatikusan adaptálódni az elmaradt edzésekhez vagy a hirtelen teljesítménybeli változásokhoz. 
+Ez gyakran a felhasználói motiváció csökkenéséhez és magas lemorzsolódáshoz vezet.
 
 - Hiányzik a nagy adathalmazokból történő kollektív tanulás lehetősége, amely finomhangolhatná a legoptimálisabb edzési protokollokat.
 
@@ -48,7 +52,9 @@ A rendszernek stabil, tudományos alapot kell biztosítania minden edzési dönt
 
 #### Főbb Fókuszpontok:
 
-- Valós idejű, Adatvezérelt Tervezés: A felhasználó teljesítménye és regenerációs állapota alapján automatikusan változó edzéstervek. Ha valaki fáradt, a rendszer alacsonyabb intenzitást javasol. Ha kirobbanó formában van, optimalizáltan növeli a terhelést.
+- Valós idejű, Adatvezérelt Tervezés: A felhasználó teljesítménye és regenerációs állapota alapján automatikusan változó edzéstervek. 
+Ha valaki fáradt, a rendszer alacsonyabb intenzitást javasol. 
+Ha kirobbanó formában van, optimalizáltan növeli a terhelést.
 
 - Sérülésmegelőzés és Technikai Korrekció: Az ML algoritmusok képesek előre jelezni a túledzés kockázatát, vagy (a későbbiekben bevezethető, egyszerűsített bemenetek segítségével) azonnali visszajelzést adni a rossz gyakorlat végrehajtásról.
 
