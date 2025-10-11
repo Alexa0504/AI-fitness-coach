@@ -29,6 +29,8 @@ A háromfős csapat a projekt fázisainak és a fő technológiai területeknek 
 | **Csapattag 2** | AI Tervgenerálás & Dashboard | A Gemini API integrációjának kialakítása és az AI által generált tervek kezelése. A **dashboard** és a motivációs elemek (jelvények, értesítések) frontendjének fejlesztése, valamint a hozzá tartozó backend logikának a megvalósítása. |
 | **Csapattag 3** | Haladás, Naplózás & Gamification | A haladás elemző és a napló modulok fejlesztése. A **gamification** logika (pontszámítás, ranglista) backend implementációja, valamint a naplózó felület és a **grafikonok** (React) elkészítése. |
 
+![User Journey diagram](/static/images/user_journey.png)
+
 ## Fizikai környezet
 
 #### A rendszer egy modern, webes (web application) infrastruktúrára épül, amely biztosítja a skálázhatóságot és az optimális teljesítményt.
