@@ -1,182 +1,70 @@
 # Rendszerterv
 
+## Rendszer célja
 
+Az AI-Driven Fitness Coach rendszer fő célja, hogy demokratizálja a személyre szabott edzést és táplálkozástervezést azáltal, hogy dinamikusan adaptív, adatvezérelt coachingot biztosít a felhasználók számára.
+A rendszer a Gemini API segítségével kínál valós idejű, személyre szabott megoldásokat, amelyek a felhasználó teljesítményéhez, céljaihoz és naplózott adataihoz igazodnak.
 
+#### Alapvető Célok
 
+- Személyre Szabott Optimalizáció: A felhasználó céljai és naplózott adatai alapján folyamatosan adaptálódó edzés- és étrendtervek generálása. Ez a megközelítés biztosítja a maximális hatékonyságot és a stagnálás elkerülését.
 
+- Sérülésmegelőzés: A mozgástechnika elemzésére fókuszálva (a későbbi fejlesztések során), valamint a túledzés kockázatának folyamatos értékelésével minimalizálja a sérülések esélyét.
 
+- Elérhetőség és Skálázhatóság: A hagyományos személyi edzés magas költségét áthidalva, egy megfizethető, előfizetéses modellben biztosít professzionális szintű útmutatást.
 
+- Motiváció és Megtartás: A játékosítási (gamification) elemek és az MI által generált szöveges, értelmező visszajelzések segítségével növeli a felhasználói elkötelezettséget és csökkenti a lemorzsolódást.
 
+### Üzleti Érték
 
+A rendszer a manuális, drága és merev edzői/dietetikusi folyamatokat váltja ki egy adatvezérelt, automatizált ciklussal, amely a felhasználói teljesítmény alapján folyamatosan optimalizálja a beavatkozásokat.
 
+## Projektterv és projektszerepkörök
 
+A háromfős csapat a projekt fázisainak és a fő technológiai területeknek megfelelően osztja meg a szerepköröket.
 
+| Szerepkör | Fókuszterület | Főbb Felelősségek a Projektben |
+| :--- | :--- | :--- |
+| **Csapattag 1 (Én)** | Profil és Adatkezelés & Logikai Modul | A backend adatbázis séma (PostgreSQL) és a modellek (SQLAlchemy) megtervezése és implementálása. A felhasználói profilkezelő rendszer (regisztráció, profilfrissítés) és a célfigyelő modul fejlesztése. A frontend profilkezelő felület (React) és a hiányos adatokra vonatkozó validációk elkészítése. |
+| **Csapattag 2** | AI Tervgenerálás & Dashboard | A Gemini API integrációjának kialakítása és az AI által generált tervek kezelése. A **dashboard** és a motivációs elemek (jelvények, értesítések) frontendjének fejlesztése, valamint a hozzá tartozó backend logikának a megvalósítása. |
+| **Csapattag 3** | Haladás, Naplózás & Gamification | A haladás elemző és a napló modulok fejlesztése. A **gamification** logika (pontszámítás, ranglista) backend implementációja, valamint a naplózó felület és a **grafikonok** (React) elkészítése. |
 
+![User Journey diagram](/static/images/user_journey.png)
 
+## Fizikai környezet
 
+#### A rendszer egy modern, webes (web application) infrastruktúrára épül, amely biztosítja a skálázhatóságot és az optimális teljesítményt.
 
+1. Felhasználói Hozzáférés:
 
+- Kliens Oldal (Frontend): Webes böngésző (Chrome, Firefox, Safari) a React-alapú webalkalmazáson keresztül. A felhasználói felületet a HTML, CSS és JavaScript (React) biztosítja.
 
+2. Infrastruktúra (Backend és Adatbázis):
 
+- Alkalmazás Szerver: Python nyelven fejlesztett Flask keretrendszer. Ez a komponens felel az üzleti logika futtatásáért, az API hívások kezeléséért és az adatok adatbázisba mentéséért.
 
+- Adatbázis Szerver: PostgreSQL relációs adatbázis, amely a felhasználói profil adatokat, a naplóbejegyzéseket, az AI által generált terveket és a motivációs státuszokat tárolja.
 
+- API-k: Külső szolgáltatások, mint a Gemini API (AI logika és tartalomgenerálás).
 
+3. Hálózati Környezet:
 
+- Minden adatforgalom a felhasználó és a Flask backend között HTTPS/TLS protokollon keresztül, titkosítva zajlik, biztosítva a megbízhatóságot.
 
+## Absztrakt domain modell
 
+Az absztrakt domain modell a rendszer fő üzleti entitásait (objektumait) és azok közötti kapcsolatokat határozza meg, elvonatkoztatva a technikai megvalósítás részleteitől.
 
+| Entitás | Főbb Attribútumok (Tulajdonságok) | Kapcsolatok és Megjegyzések |
+| :--- | :--- | :--- |
+| **Felhasználó** | ID, Név, Email, Jelszó (hash), Célok, Fiziológiai adatok (súly, magasság). | **1 : N** kapcsolat a **Naplóbejegyzés**-sel. A profilinformációkat a **Csapattag 1** kezeli. |
+| **Edzésterv** | Terv ID, Létrehozás Dátuma, **Gemini Által Generált Terv Szövege**, Aktuális Fázis, Hivatkozás a **Felhasználó**-ra. | **1 : N** kapcsolat a **Felhasználó**-val. A **Csapattag 2** felelős a generálásáért. |
+| **Táplálkozási Terv** | Terv ID, Kalória Cél, Makró Eloszlás, **Gemini Által Generált Étrend Szövege**, Hivatkozás a **Felhasználó**-ra. | **1 : N** kapcsolat a **Felhasználó**-val. A **Csapattag 2** felelős a generálásáért. |
+| **Naplóbejegyzés** | ID, Dátum, **Rögzített Edzésadatok** (pl. elvégzett súly, ismétlés, sorozat, fáradtsági visszajelzés), **Rögzített Ételadatok** (étel neve, mennyiség), Hivatkozás a **Felhasználó**-ra. | **1 : N** kapcsolat a **Felhasználó**-val. Az adatok bevitelét és feldolgozását a **Csapattag 3** végzi, de az előkészítést a **Csapattag 1** biztosítja. |
+| **Motivációs Elem** | ID, Típus (Jelvény/Cél), Megnevezés, Elérési Dátum, Hivatkozás a **Felhasználó**-ra. | **1 : N** kapcsolat a **Felhasználó**-val. A **Csapattag 2 és 3** osztja meg a felelősséget a logikáért. |
+| **Heti Összesítés** | ID, Hét, Súlyváltozás, Összes elégetett kalória, Teljes pontszám, Hivatkozás a **Felhasználó**-ra. | **1 : N** kapcsolat a **Felhasználó**-val. Ezt a **Csapattag 1** készíti elő a **Csapattag 3** számára. |
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+![Absztrakt domain model diagram](/static/images/adm_diagram.png)
 
 ## Üzleti folyamatok modellje
 
