@@ -64,6 +64,8 @@ Az absztrakt domain modell a rendszer fő üzleti entitásait (objektumait) és 
 | **Motivációs Elem** | ID, Típus (Jelvény/Cél), Megnevezés, Elérési Dátum, Hivatkozás a **Felhasználó**-ra. | **1 : N** kapcsolat a **Felhasználó**-val. A **Csapattag 2 és 3** osztja meg a felelősséget a logikáért. |
 | **Heti Összesítés** | ID, Hét, Súlyváltozás, Összes elégetett kalória, Teljes pontszám, Hivatkozás a **Felhasználó**-ra. | **1 : N** kapcsolat a **Felhasználó**-val. Ezt a **Csapattag 1** készíti elő a **Csapattag 3** számára. |
 
+![Absztrakt domain model diagram](/static/images/adm_diagram.png)
+
 ## Üzleti folyamatok modellje
 
 Az **AI Fitness Coach** rendszer célja, hogy egy intelligens, személyre szabott edzési és életmódtámogató platformot biztosítson a felhasználók számára. A folyamat középpontjában az AI-alapú tervgenerálás és a valós idejű visszajelzés áll, amely lehetővé teszi, hogy minden felhasználó saját igényeihez igazított támogatást kapjon.
