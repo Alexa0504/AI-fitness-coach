@@ -407,9 +407,10 @@
 | **Pontosság Teszt** | Az **AI-modell** által generált tervek és tanácsok szakmai hitelessége (**NF1**). | **Manuális Szakmai Validáció:** Szakemberrel vagy előre definiált forgatókönyvekkel történő ellenőrzés. |
 | **Teljesítmény Teszt** | Az API válaszidő mérése terhelés alatt. | Terheléses teszt: Az egyidejű **Gemini API** hívások latenciájának mérése. |
 
-### Tesztelési Folyamat Ábra 🖼️
+### Tesztelési Folyamat Ábra
 
 *Az ábra egy **körforgásos (iteratív) tesztelési modellt** ábrázol, amely megfelel a webalkalmazás agilis fejlesztésének.*
 
 ![Testing Process Flowchart](static/images/tesztelesi_folyamatabra.png)
 
+## 4. Adatbázis Terv (PostgreSQL)
