@@ -16,6 +16,23 @@ Az alkalmazás platformja elsődlegesen egy modern webes alkalmazás lesz (React
 
 A rendszernek stabil, tudományos alapot kell biztosítania minden edzési döntéshez.
 
+## Jelenlegi Helyzet (Piaci Rések)
+
+A jelenlegi fitneszpiac több kritikus réssel küzd, amelyek indokolják az AI-Driven Fitness Coach rendszer szükségességét.
+
+### A Hagyományos Edzés Korlátai
+
+A személyi edzői szolgáltatások magas költsége és korlátozott elérhetősége pénzügyi akadályt jelent az átlagfelhasználók számára. A tervek minősége gyakran szubjektív, az edző egyéni tapasztalatától függ, nem pedig nagyszámú adaton alapuló objektív elemzéstől. Nincs lehetőség a napi szintű, aprólékos biometrikus adatelemzésre.
+
+### A Statikus Appok Kudarca
+
+A piacon lévő fitnesz appok többsége merev, előre rögzített terveket használ, amelyek nem képesek a valós idejű adaptációra. Ezek a tervek nem reagálnak a felhasználó aktuális állapotára (fáradtság, rossz alvás, stressz), ami túledzéshez vagy hatékonyságvesztéshez vezethet.
+
+### Minőségellenőrzés és Adatrögzítés
+
+A legkomolyabb probléma a mozgástechnika ellenőrzésének teljes hiánya. Ez növeli a sérülésveszélyt, mivel a rosszul végrehajtott gyakorlatokra nincs azonnali visszajelzés.
+Továbbá, a táplálkozási és edzésadatok manuális rögzítése időigényes és pontatlan. A felhasználók gyakran kihagyják a naplózást, vagy pontatlan adatokat visznek be, ami torzítja a teljesítménykövetést és a kalóriaszámítást. Hiányzik az integrált, minőségi visszajelzést nyújtó rendszer.
+
 ## Követelménylista
 
 A projekt sikeres megvalósításához elengedhetetlen a funkcionális modulok világos definiálása.  
