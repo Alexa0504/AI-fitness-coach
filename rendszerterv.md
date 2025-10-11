@@ -49,6 +49,10 @@ A háromfős csapat a projekt fázisainak és a fő technológiai területeknek 
 
 - Minden adatforgalom a felhasználó és a Flask backend között HTTPS/TLS protokollon keresztül, titkosítva zajlik, biztosítva a megbízhatóságot.
 
+## Absztrakt domain modell
+
+Az absztrakt domain modell a rendszer fő üzleti entitásait (objektumait) és azok közötti kapcsolatokat határozza meg, elvonatkoztatva a technikai megvalósítás részleteitől.
+
 ## Üzleti folyamatok modellje
 
 Az **AI Fitness Coach** rendszer célja, hogy egy intelligens, személyre szabott edzési és életmódtámogató platformot biztosítson a felhasználók számára. A folyamat középpontjában az AI-alapú tervgenerálás és a valós idejű visszajelzés áll, amely lehetővé teszi, hogy minden felhasználó saját igényeihez igazított támogatást kapjon.
