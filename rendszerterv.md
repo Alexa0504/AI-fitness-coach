@@ -432,22 +432,47 @@ Ez a fejezet tartalmazza a rendszer tartós stabilitását és biztosítja a fri
 
 ### Telepítési Terv (Szerver- és Kliensoldal)
 
-| Komponens | Lépések | Fókusz |
-| :--- | :--- | :--- |
-| **Szerveroldal (Backend + DB)** | **PostgreSQL** és **Flask** környezetek beállítása, függőségek telepítése. | **Gemini API kulcs** és **Nutritionix API kulcsok** környezeti változókként való **biztonságos beállítása**. |
-| **Kliensoldal (Frontend)** | **React** build (kompilálás), statikus fájlok telepítése a Flask szerverre. | A felhasználóknak csak egy modern böngészőre van szükségük. |
+A rendszer telepítése egy többkomponensű, háromszintű architektúrát igényel, amely magában foglalja az adatbázist, a Flask alapú szerveroldali logikát és a React alapú kliensoldali felületet.
 
-### Telepítési Folyamat Diagram
+**1. Szerveroldal és Adatbázis (Backend)**
 
-*Az ábra egy tipikus **háromszintű (three-tier) webalkalmazás telepítési folyamatát** mutatja.*
+* **Adatbázis Beállítás:** A **PostgreSQL** szerver telepítése az éles környezetben. Ezt követően a `fitness_db` adatbázis létrehozása és a sémák inicializálása migrációs eszközök (pl. Flask-Migrate) segítségével.
+* **Flask Alkalmazás Beállítása:** A Python környezet előkészítése, a függőségek telepítése a `requirements.txt` fájl alapján.
+* **Biztonsági Konfiguráció:** A külső szolgáltatásokhoz (Gemini, Nutritionix) szükséges **API kulcsok** környezeti változókként történő biztonságos beállítása az alkalmazás konfigurációs fájljában, a forráskódtól elkülönítve.
+* **Futtatás:** Az éles környezeti szerver (pl. Gunicorn vagy uWSGI) konfigurálása és a Flask alkalmazás indítása, reverse proxy használatával az HTTPS forgalom kezelésére.
+
+**2. Kliensoldal (Frontend)**
+
+* **Build Folyamat:** A React forráskódjának kompilálása éles (production) módra, ami optimalizált, statikus fájlokat eredményez (HTML, CSS, JavaScript).
+* **Telepítés:** A generált statikus fájlok áthelyezése a Flask alkalmazás statikus mappájába, biztosítva a zökkenőmentes elérést a szerveren keresztül. A felhasználói élmény szempontjából csak egy modern böngészőre van szükség, mivel a felület reszponzív és minden logika a szerveren fut.
+
+
+![Deployment Plan](static/images/telepitesi_terv.png)
 
 
 ### Karbantartási Terv
 
-| Típus | Tevékenység | Fókusz / AI-specifikus Lépés |
-| :--- | :--- | :--- |
-| **Corrective Maintenance** | Hibajavítás, rendellenességek elhárítása. | Adatbázis inkonzisztenciák, hibás AI-adaptációk azonnali javítása. |
-| **Adaptive Maintenance** | Alkalmazkodás a változásokhoz. | **MI-modell Frissítések:** Rendszeres ellenőrzés és adaptálás a **Gemini API** újabb verzióira. |
-| **Perfective Maintenance** | Fejlesztés, hatékonyság növelése. | Új funkciók (pl. új grafikonok), kód-optimalizálás. |
-| **Preventive Maintenance** | Megelőző intézkedések. | Rendszeres **PostgreSQL adatbázis mentés** és biztonsági ellenőrzések. |
+A karbantartási terv biztosítja a rendszer hosszú távú stabilitását, különös tekintettel az MI-vezérelt komponensekre és az érzékeny egészségügyi adatok kezelésére.
 
+**1. Corrective Maintenance (Hibajavítás)**
+
+* **Hibanaplózás:** Rendszeres (heti) hibanaplózás és riasztások áttekintése.
+* **Azonnali Beavatkozás:** Hibás adatbázis-inkonzisztenciák (pl. a naplózásban fellépő anomáliák) és a kritikus AI-logika hibáinak azonnali javítása.
+
+**2. Adaptive Maintenance (Alkalmazkodás)**
+
+* **AI-modell Frissítések:** A **Gemini API** újabb verzióinak, funkcióinak és a mögöttes AI-modellek változásainak rendszeres ellenőrzése és lekövetése, az alkalmazás kódjának adaptálása.
+* **Külső API Változások:** A **Nutritionix API** interfészében, URL-jeiben vagy hitelesítési mechanizmusában bekövetkező változások azonnali lekövetése és a backend frissítése.
+* **Technológiai Frissítések:** A főbb függőségek (React, Flask, PostgreSQL) kritikus biztonsági frissítéseinek beépítése.
+
+**3. Perfective Maintenance (Fejlesztés és Optimalizálás)**
+
+* **Teljesítmény Optimalizálás:** A kritikus API hívások (különösen a `plan/generate` Gemini hívás) sebességének és hatékonyságának rendszeres felülvizsgálata.
+* **Új Funkciók:** Új, tervezett funkciók (pl. fejlettebb grafikonok, új AI chat mód) bevezetése a felhasználói visszajelzések alapján.
+
+**4. Preventive Maintenance (Megelőző Karbantartás)**
+
+* **Adatbázis Mentés:** Rendszeres (napi/heti) **PostgreSQL adatbázis mentés** biztosítása, különös tekintettel a felhasználói egészségügyi adatok (Health Data) biztonságos megőrzésére.
+* **Kód Audit:** Időszakos kódbázis felülvizsgálat (Code Review) elvégzése a potenciális biztonsági rések és teljesítményproblémák megelőzése érdekében.
+
+![Maintenance Plan](static/images/karbantartasi_terv.png)
