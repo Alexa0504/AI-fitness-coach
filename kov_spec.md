@@ -38,6 +38,26 @@ A rendszernek stabil, tudományos alapot kell biztosítania minden edzési dönt
 
 ## Igényelt üzleti folyamatok modellje
 
+### Az AI-Driven Fitness Coach bevezetésével egy új, adatközpontú üzleti folyamat jön létre, amely optimalizálja a felhasználói élményt és a célelérést:
+
+#### Üzleti Érték:
+
+- Megfizethető Skálázhatóság: A rendszer alacsonyabb áron biztosít professzionális minőségű edzéstervezést (előfizetéses modellben), széles tömegek számára elérhetővé téve a személyi edzés előnyeit.
+
+- Dinamikus Adaptáció: Az AI motor a felhasználói visszajelzések, az edzésadatok és biometrikus bemenetek (pl. pulzus, alvás) alapján folyamatosan finomhangolja az edzés nehézségét, volumenét és a táplálkozási javaslatokat.
+
+#### Főbb Fókuszpontok:
+
+- Valós idejű, Adatvezérelt Tervezés: A felhasználó teljesítménye és regenerációs állapota alapján automatikusan változó edzéstervek. Ha valaki fáradt, a rendszer alacsonyabb intenzitást javasol. Ha kirobbanó formában van, optimalizáltan növeli a terhelést.
+
+- Sérülésmegelőzés és Technikai Korrekció: Az ML algoritmusok képesek előre jelezni a túledzés kockázatát, vagy (a későbbiekben bevezethető, egyszerűsített bemenetek segítségével) azonnali visszajelzést adni a rossz gyakorlat végrehajtásról.
+
+- Hatékonyságnövelés: Az AI által generált terv precízebb és hatékonyabb, mint a statikus vagy szubjektív emberi tervek, mivel objektív, nagyszámú adatra épül.
+
+- Magasabb Felhasználói Megtartás: A folyamatos, releváns adaptáció növeli az elkötelezettséget, csökkentve a lemorzsolódási arányt.
+
+### Az igényelt folyamat egy folyamatos optimalizálási ciklusra épül: Adatgyűjtés -> Elemzés -> Tervadaptáció -> Végrehajtás -> Visszacsatolás -> Ismétlés. Ez biztosítja a maximális hatékonyságot és a felhasználói elégedettséget.
+
 ## Jelenlegi helyzet
 
 A digitális fitnesz alkalmazások jelenlegi állapota számos kihívást tartogat a felhasználók számára. Gyakran előfordul, hogy az edzéstervek nem igazodnak a felhasználó személyes igényeihez és céljaihoz, amely a fejlődés lassulásához vezethet. Emellett a helytelen mozgásforma gyakran sérülésveszélyt jelenthet, különösen kezdők vagy kevés edzési tapasztalattal rendelkezők számára.
