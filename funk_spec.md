@@ -137,6 +137,22 @@ Az alábbiakban bemutatjuk az egyes szerepkörök engedélyeit és feladatait.
 
 Ezek a szerepkörök egy jól strukturált, biztonságos és átlátható működési modellt alkotnak.
 
+## Hogyan fedik le a használati esetek a követelményeket
+
+A követelmények (K1-K7) szoros kapcsolatban állnak a felhasználási esetekkel, igazolva, hogy a tervezett funkciók valóban megoldják a jelenlegi üzleti hiányosságokat.
+
+#### Probléma: Sérülésveszély és Statikus Tervek
+
+- Megoldás (K2, K3): A K2 (AI Logika) és a K3 (Elemzés) fedezi az Edzés Technika Elemzése használati esetet. Az MI feldolgozza a mozgás adatokat, és szöveges korrekciós visszajelzést ad, ami a sérülésmegelőzés és a statikus appok legnagyobb hibája ellen hat.
+
+- Megoldás (K2, K6): A K2 és K6 (Adatbázis mentés) fedezi a Dinamikus Terv Módosítás használati esetet. A K6 tárolt valós idejű adatok alapján a K2 automatikusan optimalizálja a terhelést, megszüntetve a statikus tervezés problémáját.
+
+#### Probléma: Pontatlan Adatrögzítés és Alacsony Megtartás
+
+- Megoldás (K5): A K5 (Naplózó Képernyő) fedezi a Pontos Étrend Naplózás használati esetet. A K5 lehetővé teszi a felhasználó számára, hogy részletes adatokat adjon meg az elfogyasztott ételekről, amelyeket a K2/K3 logika elemzésre használ fel ahelyett, hogy külső API-ra támaszkodna.
+
+- Megoldás (K7, K4, K3): A K7 (Motiváció), K4 (UI) és K3 (Elemzés) fedezi a Folyamatos Motiváció és a Személyre Szabott Visszajelzés használati eseteket. A játékosítási elemek és a Gemini által generált magyarázó szöveges elemzések növelik az elkötelezettséget és csökkentik a lemorzsolódást.
+
 ## AI Logika és Működési Szabályok
 
 A rendszer intelligens működését a **Gemini API** biztosítja, amely a természetes nyelvfeldolgozást és a személyre szabott edzési tanácsadást valósítja meg.  
