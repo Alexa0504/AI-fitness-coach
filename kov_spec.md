@@ -58,6 +58,8 @@ A rendszernek stabil, tudományos alapot kell biztosítania minden edzési dönt
 
 ### Az igényelt folyamat egy folyamatos optimalizálási ciklusra épül: Adatgyűjtés -> Elemzés -> Tervadaptáció -> Végrehajtás -> Visszacsatolás -> Ismétlés. Ez biztosítja a maximális hatékonyságot és a felhasználói elégedettséget.
 
+![Required business process model](/static/images/req_model.png)
+
 ## Jelenlegi helyzet
 
 A digitális fitnesz alkalmazások jelenlegi állapota számos kihívást tartogat a felhasználók számára. Gyakran előfordul, hogy az edzéstervek nem igazodnak a felhasználó személyes igényeihez és céljaihoz, amely a fejlődés lassulásához vezethet. Emellett a helytelen mozgásforma gyakran sérülésveszélyt jelenthet, különösen kezdők vagy kevés edzési tapasztalattal rendelkezők számára.
