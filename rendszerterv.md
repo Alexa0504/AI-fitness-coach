@@ -414,3 +414,14 @@
 ![Testing Process Flowchart](static/images/tesztelesi_folyamatabra.png)
 
 ## 4. Adatbázis Terv (PostgreSQL)
+
+Ez a fejezet az adatbázis szerkezetét részletezi, amelyet a **PostgreSQL** rendszerben valósítunk meg, az **SQLAlchemy ORM** segítségével.
+
+### Főbb Táblák és ORM Modellek
+
+| Tábla / ORM Modell | Fő Adatmezők | Kapcsolatok | Fókusz (Fitness Coach) |
+| :--- | :--- | :--- | :--- |
+| **users** | `id`, `username`, `password_hash`, `célok` (JSON), `súly`, `magasság` | `1:N` a `logs`-hoz és `plans`-hoz | Felhasználói profil adatok, a tervgenerálás alapja. |
+| **plans** | `id`, `user_id` (FK), `típus` (edzés/étrend), `tartalom` (JSON/szöveg), `dátum`, `adaptáció_státusz` | `1:N` a `users`-től | Az AI (**Gemini**) által generált tervek tárolása. |
+| **logs** | `id`, `user_id` (FK), `dátum`, `típus` (edzés/étkezés) | `1:N` a `users`-től | Minden felhasználói bejegyzés (naplózás). |
+| **log_details** | `id`, `log_id` (FK), `kalória`, `makrók` (JSON), `gyakorlat`, `ismétlés`, `szett` | `1:N` a `logs`-tól | Részletes adatok a táplálkozásról (**Nutritionix**) és edzésről. |
