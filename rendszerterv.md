@@ -208,3 +208,22 @@ A rendszer üzleti folyamata a következő lépésekre bontható:
 
 7. **Haladás és statisztika:**  
    A backend feldolgozza az adatokat, és összesített statisztikát generál, amely a felhasználó teljesítményének időbeli alakulását jeleníti meg a grafikonokon.
+
+## Követelmények
+A rendszer követelményei két nagy csoportra oszthatók: funkcionális és nem funkcionális követelmények.
+
+### Funkcionális követelmények
+
+
+
+
+
+
+
+
+
+
+
+### Nem funkcionális követelmények
+
+
