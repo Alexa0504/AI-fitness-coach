@@ -65,6 +65,44 @@ A folyamat a rugalmatlan, manuális időpont egyeztetéssel kezdődik. A kezdeti
 
 A felhasználó kiválaszt egy fix kategóriájú tervet, amely innentől kezdve nem adaptív. Az edzésrögzítés csak mennyiségi adatokat (ismétlés, súly) gyűjt, de a mozgás minőségét nem ellenőrzi. Ha a felhasználó eltér a tervtől, a rendszer nem indít automatikus korrekciót (pl. regenerációs nap beiktatását). A visszajelzések pusztán számokból állnak, hiányzik az AI által generált értelmező szöveges elemzés.
 
+### Funkcionális követelmények törése
+
+A funkciók hierarchikus bontása mutatja, hogyan épül fel a rendszer almodulokból.
+
+#### I. AI-vezérelt edzéstervezés és korrekció
+
+- Dinamikus Tervgenerálás (K2): Gemini API hívás, amely a felhasználói profil (K1) és a teljesítmény adatok (K6) alapján személyre szabott tervet állít elő.
+
+- Adaptív Logika (K2): Az MI folyamatosan újraértékeli a tervet a napi edzés- és biometrikus adatok (K6) alapján, biztosítva a Regeneráció Kezelését (túlterhelés elkerülése).
+
+- Mozgástechnika Ellenőrzés (K2, K3) – Fő fókusztámogatás: Technikai integráció (Webkamera/Mobil API) a mozgásrögzítéshez. A háttérben futó mozgásérzékelő algoritmusok valós idejű észlelésre és szöveges korrekciós visszajelzés generálására (K3) szolgálnak.
+
+- Edzésnapló Rögzítése (K6): Felület a sorozatok, ismétlések és súlyok bevitelére, a Progressziós Menedzsment (K3) adatalapja.
+
+#### II. Táplálkozás és életmód menedzsment
+
+- AI Étrendtervezés (K2): A Gemini API-n keresztül generálja az étrendet a K1 adatok és az edzési energiaigény alapján.
+
+- Táplálkozási Napló (K5): Képernyő az étkezési adatok bejegyzésére. A felhasználó a bevitt ételekhez rögzíti a mennyiségeket.
+
+- Adatfeldolgozás és Számítás (K5, K3): A rendszer (K5, K3) a rögzített ételek és mennyiségek alapján makrók és kalóriák becslését végzi el az AI logika (K2) utasításainak megfelelően.
+
+#### III. Haladáskövetés és motiváció
+
+- Részletes Statisztikák (K4): Grafikonok és kimutatások megjelenítése (React komponens) a fejlődésről.
+
+- Szöveges Elemzés (K3): Az MI (Gemini) értelmező szöveges összefoglalót ad a heti teljesítményről, növelve a felhasználói tudatosságot.
+
+- Motivációs Modul (K7): Rendszer a célok státuszának és a megszerzett jelvények kiosztására, valamint személyre szabott emlékeztetők küldésére.
+
+#### IV. Felhasználói felület és adatintegráció
+
+- React Felület (K4): Biztosítja a felhasználóbarát, moduláris felépítést és a gyors adatfrissítést.
+
+- Adatbázis Kapcsolat (K1, K6): Flask backend felelős a frontend (React) és a PostgreSQL adatbázis közötti biztonságos adatátvitelért és tárolásért.
+
+- Gemini API Kapcsolat (K2): Backend szerviz a Gemini hívások kezelésére.
+
 ## Igényelt üzleti folyamatok modellje
 
 Az AI Coach működését egy dinamikus, **adatvezérelt üzleti modell** támogatja.  
