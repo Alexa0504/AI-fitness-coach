@@ -1,17 +1,6 @@
 # Követelmény Specifikáció
 
-
-
-
-
-
-
-
-
-
-
-
-
+## Bevezetés és Projektcél
 
 ## Jelenlegi helyzet
 
