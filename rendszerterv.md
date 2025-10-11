@@ -426,5 +426,28 @@ Ez a fejezet az adatbázis szerkezetét részletezi, amelyet a **PostgreSQL** re
 | **logs** | `id`, `user_id` (FK), `dátum`, `típus` (edzés/étkezés) | `1:N` a `users`-től | Minden felhasználói bejegyzés (naplózás). |
 | **log_details** | `id`, `log_id` (FK), `kalória`, `makrók` (JSON), `gyakorlat`, `ismétlés`, `szett` | `1:N` a `logs`-tól | Részletes adatok a táplálkozásról (**Nutritionix**) és edzésről. |
 
-## Telepítési és Karbantartási Terv 🛠️
+## Telepítési és Karbantartási Terv
+
+Ez a fejezet tartalmazza a rendszer tartós stabilitását és biztosítja a frissíthetőséget.
+
+### Telepítési Terv (Szerver- és Kliensoldal)
+
+| Komponens | Lépések | Fókusz |
+| :--- | :--- | :--- |
+| **Szerveroldal (Backend + DB)** | **PostgreSQL** és **Flask** környezetek beállítása, függőségek telepítése. | **Gemini API kulcs** és **Nutritionix API kulcsok** környezeti változókként való **biztonságos beállítása**. |
+| **Kliensoldal (Frontend)** | **React** build (kompilálás), statikus fájlok telepítése a Flask szerverre. | A felhasználóknak csak egy modern böngészőre van szükségük. |
+
+### Telepítési Folyamat Diagram
+
+*Az ábra egy tipikus **háromszintű (three-tier) webalkalmazás telepítési folyamatát** mutatja.*
+
+
+### Karbantartási Terv
+
+| Típus | Tevékenység | Fókusz / AI-specifikus Lépés |
+| :--- | :--- | :--- |
+| **Corrective Maintenance** | Hibajavítás, rendellenességek elhárítása. | Adatbázis inkonzisztenciák, hibás AI-adaptációk azonnali javítása. |
+| **Adaptive Maintenance** | Alkalmazkodás a változásokhoz. | **MI-modell Frissítések:** Rendszeres ellenőrzés és adaptálás a **Gemini API** újabb verzióira. |
+| **Perfective Maintenance** | Fejlesztés, hatékonyság növelése. | Új funkciók (pl. új grafikonok), kód-optimalizálás. |
+| **Preventive Maintenance** | Megelőző intézkedések. | Rendszeres **PostgreSQL adatbázis mentés** és biztonsági ellenőrzések. |
 
