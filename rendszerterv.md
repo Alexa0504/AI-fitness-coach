@@ -179,3 +179,17 @@
 
 
 ## Üzleti folyamatok modellje
+
+Az AI Fitness Coach üzleti folyamata több lépésből áll, amelyek egymásra épülnek, és biztosítják a személyre szabott edzéstervek, étrendi javaslatok és motivációs elemek hatékony működését.
+
+### Felhasználói adatgyűjtés
+A felhasználó a regisztráció során megadja alapadatait (életkor, testsúly, célok, edzési előzmények), amelyeket a rendszer a PostgreSQL adatbázisban tárol. Ez biztosítja, hogy az AI által generált edzésterv pontosan az adott felhasználóhoz legyen szabva.
+
+### AI tervgenerálás
+Az API a felhasználói adatokat a Gemini AI modellhez továbbítja. Az AI válasza tartalmazza a személyre szabott edzésterveket és étrendi javaslatokat, amelyeket a backend feldolgoz és tárol az adatbázisban.
+
+### Dashboard megjelenítés
+A frontend komponensek (React) dinamikusan jelenítik meg az AI által generált terveket, grafikonokat és motivációs jelzéseket. A dashboard folyamatosan frissül az új adatok alapján, például a felhasználó bejegyzései vagy a heti statisztikák szerint.
+
+### Felhasználói visszajelzés
+A felhasználó interakciói, mint például edzésnapló vezetése vagy célok módosítása, valós időben frissítik a dashboardot, így az AI terv adaptív módon változhat a felhasználó teljesítménye alapján.
