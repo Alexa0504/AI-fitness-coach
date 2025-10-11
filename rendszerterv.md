@@ -233,4 +233,6 @@ A rendszer követelményei két nagy csoportra oszthatók: funkcionális és nem
 - **Karbantarthatóság:** moduláris kódstruktúra, jól dokumentált API-k.  
 - **Megbízhatóság:** hibakezelés minden rétegben (AI válaszhiba, adatbázis kapcsolat, invalid input).
 
+## Funkcionális terv
+
 
