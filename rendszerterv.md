@@ -276,3 +276,6 @@ Az alkalmazás menüstruktúrája egyszerű és könnyen átlátható, egyértel
 - **Profil:** A felhasználó módosíthatja személyes adatait és céljait.  
 - **Beállítások / Kilépés:** Alkalmazás beállítások módosítása, kijelentkezés.
 
+## Architekturális terv
+
+
