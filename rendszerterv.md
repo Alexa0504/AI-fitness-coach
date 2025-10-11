@@ -319,7 +319,7 @@ A központi adattároló, amely biztosítja az adatok megbízható elérését �
 
 Ez a felépítés biztosítja, hogy a felhasználók valós időben láthassák előrehaladásukat, az AI által generált terveket és a motivációs elemeket, miközben a backend stabilan kezeli az adatokat.
 
-![AI Fitness Coach Architectural Diagram](static/images/Architectural_diagram.png)
+![AI Fitness Coach Architectural Diagram](static/images/Architectural_Diagram.png)
 
 A diagram az AI Fitness Coach rendszer többrétegű (kliens-szerver) architektúráját szemlélteti, amely három fő rétegből áll: Frontend-, Backend- és Adatbázis-réteg.
 
