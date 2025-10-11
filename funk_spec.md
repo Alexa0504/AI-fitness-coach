@@ -75,8 +75,6 @@ A funkciók hierarchikus bontása mutatja, hogyan épül fel a rendszer almodulo
 
 - Adaptív Logika (K2): Az MI folyamatosan újraértékeli a tervet a napi edzés- és biometrikus adatok (K6) alapján, biztosítva a Regeneráció Kezelését (túlterhelés elkerülése).
 
-- Mozgástechnika Ellenőrzés (K2, K3) – Fő fókusztámogatás: Technikai integráció (Webkamera/Mobil API) a mozgásrögzítéshez. A háttérben futó mozgásérzékelő algoritmusok valós idejű észlelésre és szöveges korrekciós visszajelzés generálására (K3) szolgálnak.
-
 - Edzésnapló Rögzítése (K6): Felület a sorozatok, ismétlések és súlyok bevitelére, a Progressziós Menedzsment (K3) adatalapja.
 
 #### II. Táplálkozás és életmód menedzsment
