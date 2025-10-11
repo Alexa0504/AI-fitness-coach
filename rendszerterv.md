@@ -278,4 +278,40 @@ Az alkalmazás menüstruktúrája egyszerű és könnyen átlátható, egyértel
 
 ## Architekturális terv
 
+A rendszer egy **többrétegű kliens–szerver architektúrát** követ, ahol a felhasználói felület (frontend) és az üzleti logika (backend) különálló komponensek. A kliens HTTP kérésekkel kommunikál a szerverrel, a szerver pedig az adatbázissal. Ez a felépítés lehetővé teszi a rugalmasságot, skálázhatóságot és a moduláris fejlesztést.
+
+### Backend
+A rendszer backend-je egy Python-alapú szerver, amely az AI által generált edzéstervekért, az adatok feldolgozásáért és a statisztikák előállításáért felel.
+
+- **Technológia:** Python, Flask mikrokeretrendszer, SQLAlchemy ORM, Gemini API integráció.
+- **Feladatok:**
+  - Adatbázis-kezelés: Fogadja a kliens kéréseit, kezeli a felhasználói, cél- és naplóadatokat a PostgreSQL adatbázisban.
+  - API: RESTful API végpontok biztosítása JSON formátumban. Például:
+    - `/user/profile` – profiladatok lekérése/módosítása  
+    - `/ai/plan` – AI terv lekérése  
+    - `/progress/log` – edzés és étkezés naplózása  
+    - `/gamification/leaderboard` – ranglista lekérése  
+  - Üzleti logika: AI tervgenerálás, pontszámítás, jelvények kezelése, statisztikák összesítése.
+
+### Frontend
+A felhasználói felület a böngészőben fut, React alapokon, és interaktív dashboardot biztosít.
+
+- **Technológia:** React, JavaScript, HTML5, CSS (esetleg Bootstrap).  
+- **Feladatok:**
+  - Felhasználói felület megjelenítése: regisztráció, dashboard, naplózás, statisztikák, gamification.  
+  - Kommunikáció a backend API-val AJAX/HTTP kéréseken keresztül, JSON adatok feldolgozása.
+
+### Adatbázis
+A központi adattároló, amely biztosítja az adatok megbízható elérését és tartósságát.
+
+- **Technológia:** PostgreSQL relációs adatbázis  
+- **Fő táblák például:**
+  - `Users` – felhasználói profiladatok  
+  - `Goals` – célok  
+  - `AI_Plans` – AI által generált edzéstervek  
+  - `Progress` – naplózott edzések és étkezések  
+  - `Statistics` – heti összesítések  
+  - `Badges` – jelvények és gamification adatok  
+
+Ez a felépítés biztosítja, hogy a felhasználók valós időben láthassák előrehaladásukat, az AI által generált terveket és a motivációs elemeket, miközben a backend stabilan kezeli az adatokat.
 
