@@ -29,6 +29,26 @@ A háromfős csapat a projekt fázisainak és a fő technológiai területeknek 
 | **Csapattag 2** | AI Tervgenerálás & Dashboard | A Gemini API integrációjának kialakítása és az AI által generált tervek kezelése. A **dashboard** és a motivációs elemek (jelvények, értesítések) frontendjének fejlesztése, valamint a hozzá tartozó backend logikának a megvalósítása. |
 | **Csapattag 3** | Haladás, Naplózás & Gamification | A haladás elemző és a napló modulok fejlesztése. A **gamification** logika (pontszámítás, ranglista) backend implementációja, valamint a naplózó felület és a **grafikonok** (React) elkészítése. |
 
+## Fizikai környezet
+
+#### A rendszer egy modern, webes (web application) infrastruktúrára épül, amely biztosítja a skálázhatóságot és az optimális teljesítményt.
+
+1. Felhasználói Hozzáférés:
+
+- Kliens Oldal (Frontend): Webes böngésző (Chrome, Firefox, Safari) a React-alapú webalkalmazáson keresztül. A felhasználói felületet a HTML, CSS és JavaScript (React) biztosítja.
+
+2. Infrastruktúra (Backend és Adatbázis):
+
+- Alkalmazás Szerver: Python nyelven fejlesztett Flask keretrendszer. Ez a komponens felel az üzleti logika futtatásáért, az API hívások kezeléséért és az adatok adatbázisba mentéséért.
+
+- Adatbázis Szerver: PostgreSQL relációs adatbázis, amely a felhasználói profil adatokat, a naplóbejegyzéseket, az AI által generált terveket és a motivációs státuszokat tárolja.
+
+- API-k: Külső szolgáltatások, mint a Gemini API (AI logika és tartalomgenerálás).
+
+3. Hálózati Környezet:
+
+- Minden adatforgalom a felhasználó és a Flask backend között HTTPS/TLS protokollon keresztül, titkosítva zajlik, biztosítva a megbízhatóságot.
+
 ## Üzleti folyamatok modellje
 
 Az **AI Fitness Coach** rendszer célja, hogy egy intelligens, személyre szabott edzési és életmódtámogató platformot biztosítson a felhasználók számára. A folyamat középpontjában az AI-alapú tervgenerálás és a valós idejű visszajelzés áll, amely lehetővé teszi, hogy minden felhasználó saját igényeihez igazított támogatást kapjon.
