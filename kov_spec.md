@@ -18,6 +18,12 @@ A rendszernek stabil, tudományos alapot kell biztosítania minden edzési dönt
 
 ## Jelenlegi üzleti folyamatok modellje
 
+#### A jelenlegi piacot a személyi edzés szektorban két szélsőség jellemzi:
+
+- Hagyományos, emberi edzők: Ez a szolgáltatás magas költségeket és korlátozott elérhetőséget jelent, ami jelentős pénzügyi akadályt gördít az átlagos vásárlók elé. A minőség nagymértékben függ az edző egyéni tapasztalatától és szubjektív ítéletétől.
+
+- Meglévő statikus fitnesz appok: Az elérhető digitális megoldások többsége előre beállított, merev edzésterveket kínál, melyek nem reagálnak a felhasználó egyedi, valós idejű változóira.
+
 ## Jelenlegi helyzet
 
 A digitális fitnesz alkalmazások jelenlegi állapota számos kihívást tartogat a felhasználók számára. Gyakran előfordul, hogy az edzéstervek nem igazodnak a felhasználó személyes igényeihez és céljaihoz, amely a fejlődés lassulásához vezethet. Emellett a helytelen mozgásforma gyakran sérülésveszélyt jelenthet, különösen kezdők vagy kevés edzési tapasztalattal rendelkezők számára.
