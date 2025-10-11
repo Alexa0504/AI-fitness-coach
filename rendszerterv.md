@@ -180,16 +180,31 @@
 
 ## Üzleti folyamatok modellje
 
-Az AI Fitness Coach üzleti folyamata több lépésből áll, amelyek egymásra épülnek, és biztosítják a személyre szabott edzéstervek, étrendi javaslatok és motivációs elemek hatékony működését.
+Az **AI Fitness Coach** rendszer célja, hogy egy intelligens, személyre szabott edzési és életmódtámogató platformot biztosítson a felhasználók számára. A folyamat középpontjában az AI-alapú tervgenerálás és a valós idejű visszajelzés áll, amely lehetővé teszi, hogy minden felhasználó saját igényeihez igazított támogatást kapjon.
 
-### Felhasználói adatgyűjtés
-A felhasználó a regisztráció során megadja alapadatait (életkor, testsúly, célok, edzési előzmények), amelyeket a rendszer a PostgreSQL adatbázisban tárol. Ez biztosítja, hogy az AI által generált edzésterv pontosan az adott felhasználóhoz legyen szabva.
+A rendszer üzleti folyamata a következő lépésekre bontható:
 
-### AI tervgenerálás
-Az API a felhasználói adatokat a Gemini AI modellhez továbbítja. Az AI válasza tartalmazza a személyre szabott edzésterveket és étrendi javaslatokat, amelyeket a backend feldolgoz és tárol az adatbázisban.
+1. **Regisztráció és profilkezelés:**  
+   A felhasználó létrehozza profilját, megadja alapadatait (nem, életkor, testsúly, célok), amelyeket az adatbázisban tárol a rendszer.  
+   Ezek az adatok képezik az AI ajánlásainak alapját.
 
-### Dashboard megjelenítés
-A frontend komponensek (React) dinamikusan jelenítik meg az AI által generált terveket, grafikonokat és motivációs jelzéseket. A dashboard folyamatosan frissül az új adatok alapján, például a felhasználó bejegyzései vagy a heti statisztikák szerint.
+2. **Célok meghatározása és adatgyűjtés:**  
+   A felhasználó beállíthat konkrét célokat (pl. fogyás, izomnövelés, állóképesség javítás).  
+   A rendszer naplózza a haladást, és figyeli az esetleges hiányos adatokat.
 
-### Felhasználói visszajelzés
-A felhasználó interakciói, mint például edzésnapló vezetése vagy célok módosítása, valós időben frissítik a dashboardot, így az AI terv adaptív módon változhat a felhasználó teljesítménye alapján.
+3. **AI tervgenerálás:**  
+   Az alkalmazás a Gemini AI modellhez továbbítja a felhasználó adatait.  
+   A modell visszaküldi az edzési és étrendi javaslatokat, amelyeket a backend feldolgoz, validál és eltárol.
+
+4. **Terv megjelenítés és interakció:**  
+   A frontend React-alapú dashboardja jeleníti meg az aktuális edzéstervet, heti összesítéseket és motivációs elemeket (pl. jelvények, fejlődés mértéke).
+
+5. **Felhasználói naplózás és visszajelzés:**  
+   A felhasználó rögzíti edzéseit és étkezéseit.  
+   Ezek az adatok frissítik a statisztikákat, és az AI újraértékeli a terveket, szükség esetén módosításokat javasol.
+
+6. **Motiváció és gamification:**  
+   A rendszer pontokat, ranglistát és jelvényeket ad, hogy ösztönözze a felhasználót a rendszeres aktivitásra.
+
+7. **Haladás és statisztika:**  
+   A backend feldolgozza az adatokat, és összesített statisztikát generál, amely a felhasználó teljesítményének időbeli alakulását jeleníti meg a grafikonokon.
