@@ -235,4 +235,44 @@ A rendszer követelményei két nagy csoportra oszthatók: funkcionális és nem
 
 ## Funkcionális terv
 
+A rendszer célja egy **interaktív és személyre szabott webes alkalmazás** létrehozása, amely segíti a felhasználókat a **saját edzési céljaik elérésében** és az egészséges életmód fenntartásában. A felhasználó naplózhatja edzéseit és étkezéseit, az AI javaslatokat ad a fejlődéshez, és a rendszer pontokat, jelvényeket és statisztikákat biztosít a motiváció fenntartására. A felület letisztult és könnyen kezelhető, hogy a felhasználó az edzésre és az egészségre tudjon koncentrálni.
+
+### Rendszerszereplők
+
+- **Felhasználó:** Az a személy, aki regisztrál, kitölti a profilját, követi az edzéstervét, naplózza az edzéseit és étkezéseit, és megtekinti a statisztikákat, játékos elemeket (pontok, jelvények, ranglista).  
+- **Admin (opcionális):** Felügyeli a felhasználókat, ellenőrzi az adatokat, és karbantartja a rendszert.  
+
+### Rendszerhasználati esetek és lefutásaik
+
+- **Profil létrehozása és szerkesztése**  
+A felhasználó regisztrál az alkalmazásba, megadja alapadatait (nem, életkor, testsúly, célok). A rendszer eltárolja ezeket az adatokat az adatbázisban, amelyek az AI tervgenerálás alapját képezik. A felhasználó bármikor módosíthatja a profilját és céljait.
+
+- **Célok beállítása**  
+A felhasználó kiválaszthatja az elérni kívánt célokat (pl. fogyás, izomtömeg növelés, állóképesség fejlesztés). A rendszer ezeket a célokat figyelembe veszi az AI tervgenerálás során.
+
+- **AI terv generálása**  
+A felhasználó kérheti az AI által készített edzéstervet. A backend elküldi a felhasználói adatokat az AI modellnek, amely visszaküldi a személyre szabott edzési és étrendi javaslatokat. A rendszer tárolja és frissíti ezeket a terveket.
+
+- **Terv megjelenítése a dashboardon**  
+A felhasználó a React-alapú dashboardon látja az aktuális edzéstervét, heti összesítéseket, motivációs jelvényeket, és a célokhoz viszonyított előrehaladást.
+
+- **Edzés és étkezés naplózása**  
+A felhasználó rögzíti elvégzett edzéseit és az étkezéseit. A rendszer feldolgozza ezeket az adatokat, frissíti a statisztikákat, és az AI újraértékeli a terveket, ha szükséges.
+
+- **Játékos elemek frissítése**  
+A rendszer pontokat, jelvényeket és ranglistát biztosít a felhasználói aktivitás alapján. A felhasználó folyamatos visszajelzést kap a haladásáról.
+
+- **Statisztikák és trendek megjelenítése**  
+A backend összesített statisztikákat készít a felhasználó tevékenységeiről, amelyek a dashboardon grafikonok és trendek formájában jelennek meg, így a felhasználó könnyen áttekintheti fejlődését.
+
+### Menü-hierarchia
+
+Az alkalmazás menüstruktúrája egyszerű és könnyen átlátható, egyértelmű navigációt biztosítva:
+
+- **Dashboard:** A főoldal, ahol az AI által generált terv, a heti statisztikák és motivációs jelvények láthatók.  
+- **Naplózás:** Itt rögzítheti a felhasználó az edzéseit és étkezéseit.  
+- **Statisztikák:** Grafikonos és táblázatos formában mutatja az előrehaladást, célok teljesülését.  
+- **Gamification / Ranglista:** A felhasználó megtekintheti pontjait, jelvényeit, és a többi felhasználóval összehasonlíthatja eredményeit.  
+- **Profil:** A felhasználó módosíthatja személyes adatait és céljait.  
+- **Beállítások / Kilépés:** Alkalmazás beállítások módosítása, kijelentkezés.
 
