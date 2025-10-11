@@ -214,16 +214,23 @@ A rendszer követelményei két nagy csoportra oszthatók: funkcionális és nem
 
 ### Funkcionális követelmények
 
-
-
-
-
-
-
-
-
-
+- **Felhasználói profilkezelés:** regisztráció, bejelentkezés, célok beállítása, adatmódosítás.  
+- **AI integráció:** a rendszer képes a Gemini API-n keresztül edzési és étrendi javaslatokat kérni és fogadni.  
+- **Adatbázis-kezelés:** felhasználói, cél- és edzésadatok mentése, lekérdezése, frissítése.  
+- **Dashboard megjelenítés:** a felhasználó aktuális állapotának, tervének és statisztikáinak vizuális megjelenítése.  
+- **Naplózás:** napi edzések, étkezések és teljesítménymutatók rögzítése.  
+- **Gamification:** pontszámítás, ranglista és jelvényrendszer működtetése.  
+- **Valós idejű kommunikáció:** az AI válaszai és a felhasználói visszajelzések azonnali frissítése.  
+- **Admin funkciók (opcionális):** rendszerfelügyelet, adatellenőrzés és hibajavítás.
 
 ### Nem funkcionális követelmények
+
+- **Teljesítmény:** a dashboard frissítése valós időben, minimális késleltetéssel.  
+- **Skálázhatóság:** több ezer felhasználó egyidejű kiszolgálása.  
+- **Biztonság:** titkosított kommunikáció (HTTPS), jelszavak hash-elése, adatszivárgás elleni védelem.  
+- **Kompatibilitás:** a rendszer működjön modern böngészőkben (Chrome, Firefox, Edge, Opera Browser).  
+- **Felhasználói élmény:** letisztult, intuitív felület, reszponzív megjelenítés.  
+- **Karbantarthatóság:** moduláris kódstruktúra, jól dokumentált API-k.  
+- **Megbízhatóság:** hibakezelés minden rétegben (AI válaszhiba, adatbázis kapcsolat, invalid input).
 
 
