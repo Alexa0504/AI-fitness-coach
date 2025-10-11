@@ -1,5 +1,18 @@
 # Követelmény Specifikáció
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Jelenlegi helyzet
 
 A digitális fitnesz alkalmazások jelenlegi állapota számos kihívást tartogat a felhasználók számára. Gyakran előfordul, hogy az edzéstervek nem igazodnak a felhasználó személyes igényeihez és céljaihoz, amely a fejlődés lassulásához vezethet. Emellett a helytelen mozgásforma gyakran sérülésveszélyt jelenthet, különösen kezdők vagy kevés edzési tapasztalattal rendelkezők számára.
