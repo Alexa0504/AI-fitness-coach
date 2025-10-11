@@ -398,3 +398,18 @@
 
 
 ## 3. Tesztterv (Minőségbiztosítás)
+
+| Tesztelési Eljárás | Cél | Mérés / Validáció |
+| :--- | :--- | :--- |
+| **Unit Teszt** | A **Flask API** végpontok és az adatlogika stabilitása. | PyTest: API válaszok, adatlogika, CRUD műveletek a **PostgreSQL**-ben. |
+| **Integrációs Teszt** | Kommunikáció: **Frontend ↔ Backend ↔ Gemini/Nutritionix**. | End-to-end (E2E) tesztelés: Adatok helyes átadása a **React** felületen a **Gemini**-nek és a terv helyes visszatérése. |
+| **Kompatibilitási Teszt** | **Bootstrap** alapú felület reszponzivitása és böngészőkompatibilitás. | Ellenőrzés több böngészőben (Chrome, Firefox) és különböző képernyőméreteken a **Bootstrap** reszponzivitásának ellenőrzésére. |
+| **Pontosság Teszt** | Az **AI-modell** által generált tervek és tanácsok szakmai hitelessége (**NF1**). | **Manuális Szakmai Validáció:** Szakemberrel vagy előre definiált forgatókönyvekkel történő ellenőrzés. |
+| **Teljesítmény Teszt** | Az API válaszidő mérése terhelés alatt. | Terheléses teszt: Az egyidejű **Gemini API** hívások latenciájának mérése. |
+
+### Tesztelési Folyamat Ábra 🖼️
+
+*Az ábra egy **körforgásos (iteratív) tesztelési modellt** ábrázol, amely megfelel a webalkalmazás agilis fejlesztésének.*
+
+![Testing Process Flowchart](static/images/tesztelesi_folyamatabra.png)
+
