@@ -24,6 +24,18 @@ A rendszernek stabil, tudományos alapot kell biztosítania minden edzési dönt
 
 - Meglévő statikus fitnesz appok: Az elérhető digitális megoldások többsége előre beállított, merev edzésterveket kínál, melyek nem reagálnak a felhasználó egyedi, valós idejű változóira.
 
+#### Korlátok és Fájdalompontok:
+
+- Ezek az appok nem érzékelik a felhasználó aktuális fáradtsági szintjét, az alvás minőségét vagy a rossz edzéstechnikát. Egy rosszul végzett feladat esetében nincs automatikus figyelmeztetés, ami növeli a sérülésveszélyt.
+
+- A statikus tervek nem képesek automatikusan adaptálódni az elmaradt edzésekhez vagy a hirtelen teljesítménybeli változásokhoz. Ez gyakran a felhasználói motiváció csökkenéséhez és magas lemorzsolódáshoz vezet.
+
+- Hiányzik a nagy adathalmazokból történő kollektív tanulás lehetősége, amely finomhangolhatná a legoptimálisabb edzési protokollokat.
+
+- Az edzéstervezés gyakran a mennyiségre, nem pedig a minőségre vagy a test egyéni regenerációs igényeire fókuszál.
+
+### A jelenlegi üzleti modell nem skálázható és nem biztosít valós, folyamatosan optimalizált személyre szabást.
+
 ## Jelenlegi helyzet
 
 A digitális fitnesz alkalmazások jelenlegi állapota számos kihívást tartogat a felhasználók számára. Gyakran előfordul, hogy az edzéstervek nem igazodnak a felhasználó személyes igényeihez és céljaihoz, amely a fejlődés lassulásához vezethet. Emellett a helytelen mozgásforma gyakran sérülésveszélyt jelenthet, különösen kezdők vagy kevés edzési tapasztalattal rendelkezők számára.
