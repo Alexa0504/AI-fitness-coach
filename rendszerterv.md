@@ -317,4 +317,35 @@ Ez a felépítés biztosítja, hogy a felhasználók valós időben láthassák 
 
 ## Implementációs terv
 
+Az AI Fitness Coach fejlesztése modulárisan történik, különálló komponensekre bontva, hogy a rendszer könnyen karbantartható és bővíthető legyen.
 
+### Webes felület (Frontend)
+- **Technológiák:** React, HTML, CSS, JavaScript  
+- A felület külön fájlokban és komponensekben készül: dashboard, naplózás, statisztikák, gamification.  
+- A frontend AJAX/HTTP hívásokkal kommunikál a backend REST API végpontjaival, JSON formátumban.  
+- Az edzések időtartamát a felhasználó böngészője (a kliens) méri, így az adatok pontosak és nem befolyásolja őket a hálózati késés vagy a szerver válaszideje.
+
+### Backend
+- **Technológiák:** Python, Flask, SQLAlchemy ORM, Gemini API integráció  
+- Feladatai: felhasználói adatok kezelése, AI tervgenerálás, naplózott adatok feldolgozása, statisztikák előállítása, gamification logika.  
+- REST API végpontok biztosítják a frontend számára az adatok lekérését és rögzítését.  
+- A backend ellenőrzi, validálja és menti az adatokat az adatbázisba, garantálva az adatintegritást.
+
+### Adatbázis
+- **Technológia:** PostgreSQL  
+- Tárolja a felhasználói profilokat, célokat, AI terveket, naplózott adatokat, statisztikákat és jelvényeket.  
+- Az SQLAlchemy ORM egyszerűsíti az adatkezelést és a migrációkat.
+
+### Fájlstruktúra (példa)
+- app.py: Flask indító fájl és konfiguráció
+- models.py: Adatbázis modellek
+- routes.py: API végpontok
+- ai_integration.py: AI tervgenerálás és validálás
+- static/: CSS, JS, képek
+- components/: React komponensek (dashboard, naplózás, gamification)
+
+### Technológiaválasztás indoklása
+- **React:** gyors, interaktív, komponens-alapú felület  
+- **Flask:** rugalmas, könnyen tanulható backend Python nyelven  
+- **PostgreSQL + SQLAlchemy:** megbízható, relációs adatkezelés  
+- **Gemini API:** AI alapú, személyre szabott edzéstervek generálására
