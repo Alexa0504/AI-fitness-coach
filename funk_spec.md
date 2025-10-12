@@ -124,6 +124,8 @@ A **költséghatékonyság** kulcsfontosságú üzleti előny: a platform automa
 Ezen felül a skálázható architektúra lehetővé teszi a gyors bővítést és a felhasználói szám növelését.  
 A **valós idejű visszajelzés** és az **AI-alapú motiváció** versenyelőnyt biztosít a piacon, mivel a legtöbb fitneszalkalmazás nem kínál ilyen mélységű személyre szabást.
 
+![Required Business Process Model](static/images/Igenyelt_uzleti_folyamatok_modell.png)
+
 ## Használati esetek
 
 A rendszer három fő szereplő köré épül: **Felhasználó**, **AI Coach (Rendszer)** és **Admin**.  
