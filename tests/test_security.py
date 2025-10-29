@@ -14,9 +14,9 @@ TEST_SECRET_KEY = "test-ai-fitness-coach-secret-key-123"
 
 @pytest.fixture(autouse=True)
 def set_test_env():
-    """Sets the SECRET_KEY for the duration of the tests."""
-    with patch.dict(os.environ, {"SECRET_KEY": TEST_SECRET_KEY}):
-        yield  # This allows the tests to run
+    os.environ["SECRET_KEY"] = TEST_SECRET_KEY
+    yield
+    del os.environ["SECRET_KEY"]
 
 
 # --- Password Hashing Tests ---
