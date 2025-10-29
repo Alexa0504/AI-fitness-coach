@@ -7,7 +7,8 @@ import os
 
 
 load_dotenv()
-db = SQLAlchemy()
+from .models import db, User
+
 migrate = Migrate()
 
 
