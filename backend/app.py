@@ -2,7 +2,9 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+
 import os
+
 
 load_dotenv()
 db = SQLAlchemy()
@@ -21,6 +23,8 @@ def create_app(test_config=None):
 
     db.init_app(app)
     migrate.init_app(app, db)
+
+
 
     @app.route("/")
     def index():
