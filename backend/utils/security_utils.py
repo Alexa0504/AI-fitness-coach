@@ -32,22 +32,23 @@ def _get_secret_key() -> str | None:
 
 # --- Password Management Functions ---
 
-def hash_password(password: str) -> bytes:
+def hash_password(password: str) -> str:
     """
     Safely hashes the given password using the bcrypt algorithm.
     Returns the hashed password as bytes (this should be stored in the database).
     """
     password_bytes = password.encode('utf-8')
     # Generating salt and hashing simultaneously
-    return bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+    return bcrypt.hashpw(password_bytes, bcrypt.gensalt()).decode('utf-8')
 
 
-def check_password(password: str, hashed_password: bytes) -> bool:
+def check_password(password: str, hashed_password: str) -> bool:
     """
     Checks if the provided plain password matches the stored hash.
     """
     password_bytes = password.encode('utf-8')
-    return bcrypt.checkpw(password_bytes, hashed_password)
+    hashed_password_bytes = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(password_bytes, hashed_password_bytes)
 
 
 # --- Authentication (JWT) Functions ---
