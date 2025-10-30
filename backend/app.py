@@ -7,7 +7,8 @@ import os
 
 
 load_dotenv()
-from .models import db, User
+from backend.models import db, User
+from backend.auth import auth_bp
 
 migrate = Migrate()
 
@@ -25,7 +26,7 @@ def create_app(test_config=None):
     db.init_app(app)
     migrate.init_app(app, db)
 
-
+    app.register_blueprint(auth_bp)
 
     @app.route("/")
     def index():
