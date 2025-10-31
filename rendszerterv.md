@@ -25,7 +25,7 @@ A háromfős csapat a projekt fázisainak és a fő technológiai területeknek 
 
 | Szerepkör | Fókuszterület | Főbb Felelősségek a Projektben |
 | :--- | :--- | :--- |
-| **Csapattag 1 (Én)** | Profil és Adatkezelés & Logikai Modul | A backend adatbázis séma (PostgreSQL) és a modellek (SQLAlchemy) megtervezése és implementálása. A felhasználói profilkezelő rendszer (regisztráció, profilfrissítés) és a célfigyelő modul fejlesztése. A frontend profilkezelő felület (React) és a hiányos adatokra vonatkozó validációk elkészítése. |
+| **Csapattag 1** | Profil és Adatkezelés & Logikai Modul | A backend adatbázis séma (PostgreSQL) és a modellek (SQLAlchemy) megtervezése és implementálása. A felhasználói profilkezelő rendszer (regisztráció, profilfrissítés) és a célfigyelő modul fejlesztése. A frontend profilkezelő felület (React) és a hiányos adatokra vonatkozó validációk elkészítése. |
 | **Csapattag 2** | AI Tervgenerálás & Dashboard | A Gemini API integrációjának kialakítása és az AI által generált tervek kezelése. A **dashboard** és a motivációs elemek (jelvények, értesítések) frontendjének fejlesztése, valamint a hozzá tartozó backend logikának a megvalósítása. |
 | **Csapattag 3** | Haladás, Naplózás & Gamification | A haladás elemző és a napló modulok fejlesztése. A **gamification** logika (pontszámítás, ranglista) backend implementációja, valamint a naplózó felület és a **grafikonok** (React) elkészítése. |
 
