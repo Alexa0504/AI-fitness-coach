@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AuthForm from "../components/AuthForm";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ThemeSwitcher from "../components/ThemeSwitcher";
 
 const LoginPage: React.FC = () => {
