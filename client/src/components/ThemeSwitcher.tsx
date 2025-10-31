@@ -1,17 +1,8 @@
-import React, { useEffect, useState } from "react";
-
-const themes = ["light", "dark"] as const;
+import React, { useContext } from "react";
+import { ThemeContext } from "./ThemeContext";
 
 const ThemeSwitcher: React.FC = () => {
-  const [themeIndex, setThemeIndex] = useState(0);
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", themes[themeIndex]);
-  }, [themeIndex]);
-
-  const toggleTheme = () => {
-    setThemeIndex((prev) => (prev + 1) % themes.length);
-  };
+  const { toggleTheme } = useContext(ThemeContext);
 
   return (
     <button
