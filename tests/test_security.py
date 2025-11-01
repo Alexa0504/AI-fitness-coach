@@ -21,16 +21,16 @@ def set_test_env():
 
 # --- Password Hashing Tests ---
 
+# tests/test_security.py
+
 def test_hash_and_check_password_success():
     """Tests that hashing and checking the password work successfully."""
     password = "MySecurePassword123"
     hashed = security_utils.hash_password(password)
 
-    # 1. Check that the hash is of type bytes and is long (not empty)
-    assert isinstance(hashed, bytes)
-    assert len(hashed) > 10
+    assert isinstance(hashed, str)
+    assert len(hashed) > 40
 
-    # 2. Check that check_password returns True for the correct password
     assert security_utils.check_password(password, hashed) is True
 
 

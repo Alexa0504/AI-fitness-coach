@@ -2,6 +2,7 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+from flask_cors import CORS
 
 import os
 
@@ -22,6 +23,8 @@ def create_app(test_config=None):
         app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
     else:
         app.config.update(test_config)
+
+    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5173"]}})
 
     db.init_app(app)
     migrate.init_app(app, db)
