@@ -54,9 +54,7 @@ const RegisterPage: React.FC = () => {
       if (response.ok) {
         console.log("Register response:", data);
 
-        localStorage.setItem("authToken", data.token);
-
-        navigate("/dashboard");
+        navigate("/login");
       } else {
         setError(data.message || "Registration failed");
       }
@@ -89,12 +87,15 @@ const RegisterPage: React.FC = () => {
         onSubmit={handleRegister}
         fields={fields}
         footer={
-          <p className="text-white text-center mt-2">
-            Already have an account?{" "}
-            <Link to="/login" className="link link-info">
-              Login
-            </Link>
-          </p>
+          <div className="space-y-2">
+            {error && <p className="text-red-500 text-center">{error}</p>}
+            <p className="text-white text-center mt-2">
+              Already have an account?{" "}
+              <Link to="/login" className="link link-info">
+                Login
+              </Link>
+            </p>
+          </div>
         }
       />
     </>
