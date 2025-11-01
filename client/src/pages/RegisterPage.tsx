@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import AuthForm from "../components/AuthForm";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ThemeSwitcher from "../components/ThemeSwitcher";
 
 const RegisterPage: React.FC = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -12,6 +14,7 @@ const RegisterPage: React.FC = () => {
   });
 
   const [confirmError, setConfirmError] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!formData.confirmPassword) {
@@ -28,11 +31,39 @@ const RegisterPage: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (confirmError) return;
-    console.log("Register submitted", formData);
-    // TODO: connect to Flask API
+    setError(null);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Register response:", data);
+
+        localStorage.setItem("authToken", data.token);
+
+        navigate("/dashboard");
+      } else {
+        setError(data.message || "Registration failed");
+      }
+    } catch (err) {
+      setError("Network error. Please try again.");
+      console.error(err);
+    }
   };
 
   const fields = [
