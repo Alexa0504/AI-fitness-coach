@@ -54,7 +54,8 @@ const RegisterPage: React.FC = () => {
       if (response.ok) {
         console.log("Register response:", data);
 
-        navigate("/login");
+        navigate("/login", { state: { registered: true } });
+
       } else {
         setError(data.message || "Registration failed");
       }
