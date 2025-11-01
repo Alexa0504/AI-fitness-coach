@@ -11,15 +11,41 @@ const LoginPage: React.FC = () => {
     password: "",
   });
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Login submitted", formData);
-    // TODO: connect to Flask API
+    setError(null);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log("Login response:", data);
+
+        localStorage.setItem("authToken", data.token);
+
+        navigate("/dashboard");
+      } else {
+        setError(data.message || "Login failed");
+      }
+    } catch (err) {
+      setError("Network error. Please try again.");
+      console.error(err);
+    }
   };
 
   const fields = [
