@@ -1,6 +1,6 @@
-from backend.app import create_app
-from backend.models import db, User
-from backend.utils.security_utils import hash_password
+from app import create_app
+from models import db, User
+from utils.security_utils import hash_password
 
 def seed_users():
 
