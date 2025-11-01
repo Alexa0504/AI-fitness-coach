@@ -44,7 +44,7 @@ const LoginPage: React.FC = () => {
         localStorage.setItem("authToken", data.token);
         navigate("/dashboard");
       } else {
-        setError(data.message || "Login failed");
+        setError(data.message || "User not found or credentials do not match");
       }
     } catch (err) {
       setError("Network error. Please try again.");

@@ -14,6 +14,8 @@ const RegisterPage: React.FC = () => {
   });
 
   const [confirmError, setConfirmError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -26,6 +28,25 @@ const RegisterPage: React.FC = () => {
     }
   }, [formData.password, formData.confirmPassword]);
 
+  useEffect(() => {
+    if (!formData.email) {
+      setEmailError("");
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      setEmailError(emailRegex.test(formData.email) ? "" : "Invalid email address");
+    }
+  }, [formData.email]);
+
+  useEffect(() => {
+    if (!formData.password) {
+      setPasswordError("");
+    } else if (formData.password.length < 6) {
+      setPasswordError("Password must be at least 6 characters long");
+    } else {
+      setPasswordError("");
+    }
+  }, [formData.password]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -33,7 +54,9 @@ const RegisterPage: React.FC = () => {
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (confirmError) return;
+
+    if (confirmError || emailError || passwordError) return;
+
     setError(null);
 
     try {
@@ -53,9 +76,7 @@ const RegisterPage: React.FC = () => {
 
       if (response.ok) {
         console.log("Register response:", data);
-
         navigate("/login", { state: { registered: true } });
-
       } else {
         setError(data.message || "Registration failed");
       }
@@ -67,8 +88,8 @@ const RegisterPage: React.FC = () => {
 
   const fields = [
     { label: "Username", type: "text", name: "username", value: formData.username, onChange: handleChange },
-    { label: "Email", type: "email", name: "email", value: formData.email, onChange: handleChange },
-    { label: "Password", type: "password", name: "password", value: formData.password, onChange: handleChange },
+    { label: "Email", type: "email", name: "email", value: formData.email, onChange: handleChange, error: emailError },
+    { label: "Password", type: "password", name: "password", value: formData.password, onChange: handleChange, error: passwordError },
     {
       label: "Confirm Password",
       type: "password",
