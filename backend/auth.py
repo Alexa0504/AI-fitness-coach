@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from models import db, User
-from utils.security_utils import hash_password, check_password, generate_auth_token
+from backend.models import db, User
+from backend.utils.security_utils import hash_password, check_password, generate_auth_token
 
 # Create the Blueprint for authentication routes
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')

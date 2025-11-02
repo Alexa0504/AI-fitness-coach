@@ -1,7 +1,7 @@
-from app import app
-from seed import seed_users
+from backend.app import app
+from backend.seed import seed_users
 
 if __name__ == "__main__":
     with app.app_context():
-        seed_users()
+        seed_users(app)
     app.run(debug=True, host="0.0.0.0", port=5000)

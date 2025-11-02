@@ -8,8 +8,8 @@ import os
 
 
 load_dotenv()
-from models import db, User
-from auth import auth_bp
+from backend.models import db, User
+from backend.auth import auth_bp
 
 migrate = Migrate()
 
