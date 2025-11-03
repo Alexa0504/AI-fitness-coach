@@ -188,7 +188,7 @@ A rendszer backend-je egy Python-alapú szerver, amely az AI által generált ed
 ### Frontend
 A felhasználói felület a böngészőben fut, React alapokon, és interaktív dashboardot biztosít.
 
-- **Technológia:** React, JavaScript, HTML5, CSS (esetleg Bootstrap).  
+- **Technológia:** React, JavaScript, HTML5, CSS, Tailwind.  
 - **Feladatok:**
   - Felhasználói felület megjelenítése: regisztráció, dashboard, naplózás, statisztikák, gamification.  
   - Kommunikáció a backend API-val AJAX/HTTP kéréseken keresztül, JSON adatok feldolgozása.
@@ -253,7 +253,7 @@ Az AI Fitness Coach fejlesztése modulárisan történik, különálló komponen
 | :--- | :--- | :--- |
 | **Unit Teszt** | A **Flask API** végpontok és az adatlogika stabilitása. | PyTest: API válaszok, adatlogika, CRUD műveletek a **PostgreSQL**-ben. |
 | **Integrációs Teszt** | Kommunikáció: **Frontend ↔ Backend ↔ Gemini/Nutritionix**. | End-to-end (E2E) tesztelés: Adatok helyes átadása a **React** felületen a **Gemini**-nek és a terv helyes visszatérése. |
-| **Kompatibilitási Teszt** | **Bootstrap** alapú felület reszponzivitása és böngészőkompatibilitás. | Ellenőrzés több böngészőben (Chrome, Firefox) és különböző képernyőméreteken a **Bootstrap** reszponzivitásának ellenőrzésére. |
+| **Kompatibilitási Teszt** | **Tailwind** alapú felület reszponzivitása és böngészőkompatibilitás. | Ellenőrzés több böngészőben (Chrome, Firefox) és különböző képernyőméreteken a **Tailwind** reszponzivitásának ellenőrzésére. |
 | **Pontosság Teszt** | Az **AI-modell** által generált tervek és tanácsok szakmai hitelessége (**NF1**). | **Manuális Szakmai Validáció:** Szakemberrel vagy előre definiált forgatókönyvekkel történő ellenőrzés. |
 | **Teljesítmény Teszt** | Az API válaszidő mérése terhelés alatt. | Terheléses teszt: Az egyidejű **Gemini API** hívások latenciájának mérése. |
 
