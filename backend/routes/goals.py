@@ -18,20 +18,33 @@ def get_goals(current_user):
 def create_goal(current_user):
     """Create a new goal for the current user"""
     data = request.get_json()
-    goal = Goal(
-        user_id=current_user.id,
-        goal_type=data.get("goal_type"),
-        target_value=data.get("target_value"),
-        unit=data.get("unit")
-    )
-    db.session.add(goal)
-    db.session.commit()
-    return jsonify({"message": "Goal created", "goal": goal.to_dict()}), 201
+
+    goal_type = data.get("goal_type")
+    target_value = data.get("target_value")
+    unit = data.get("unit")
+
+    if not goal_type:
+        return jsonify({"message": "goal_type is required"}), 400
+
+    try:
+        goal = Goal(
+            user_id=current_user.id,
+            goal_type=goal_type,
+            target_value=target_value,
+            unit=unit
+        )
+        db.session.add(goal)
+        db.session.commit()
+        return jsonify({"message": "Goal created", "goal": goal.to_dict()}), 201
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error creating goal: {e}")
+        return jsonify({"message": "Error creating goal"}), 500
 
 
 @goals_bp.route('/<int:goal_id>', methods=['PUT'])
 @token_required
-def update_goal(goal_id, current_user):
+def update_goal(current_user, goal_id):
     """Update an existing goal for the current user"""
     data = request.get_json()
     goal = Goal.query.filter_by(id=goal_id, user_id=current_user.id).first()
@@ -54,7 +67,7 @@ def update_goal(goal_id, current_user):
 
 @goals_bp.route('/<int:goal_id>', methods=['DELETE'])
 @token_required
-def delete_goal(goal_id, current_user):
+def delete_goal(current_user, goal_id):
     """Delete a goal for the current user"""
     goal = Goal.query.filter_by(id=goal_id, user_id=current_user.id).first()
 

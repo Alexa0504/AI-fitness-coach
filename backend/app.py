@@ -31,7 +31,7 @@ def create_app(test_config=None):
     app.register_blueprint(auth_bp)
     app.register_blueprint(plans_bp)
     app.register_blueprint(goals_bp)
-    
+
 
     @app.route("/")
     def index():
