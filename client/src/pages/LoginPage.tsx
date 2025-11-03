@@ -8,7 +8,7 @@ const LoginPage: React.FC = () => {
     const location = useLocation();
 
     const [formData, setFormData] = useState({
-        email: "",
+        identifier: "",
         password: "",
     });
 
@@ -53,7 +53,13 @@ const LoginPage: React.FC = () => {
     };
 
     const fields = [
-        {label: "Email", type: "email", name: "email", value: formData.email, onChange: handleChange},
+        {
+            label: "Email or Username",
+            type: "text",
+            name: "identifier",
+            value: formData.identifier,
+            onChange: handleChange
+        },
         {label: "Password", type: "password", name: "password", value: formData.password, onChange: handleChange},
     ];
 

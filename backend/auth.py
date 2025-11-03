@@ -78,4 +78,3 @@ def login():
         "user": user.to_dict(),
         "token": token
     }), 200
-
