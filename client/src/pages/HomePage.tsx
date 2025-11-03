@@ -4,7 +4,7 @@ import ThemeSwitcher from "../components/ThemeSwitcher";
 import { useTheme } from "../components/ThemeContext";
 import AiPlanCard from "../components/AIPlanComponent";
 import GamificationCard from "../components/StatComponent";
-import GoalsCard from "../components/GoalsComponent"; // 👈 ha még nincs, így fog működni
+import GoalsCard from "../components/GoalsComponent";
 import { motion } from "framer-motion";
 
 const HeaderBar: React.FC = () => {
