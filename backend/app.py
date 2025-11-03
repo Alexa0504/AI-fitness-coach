@@ -5,11 +5,11 @@ from flask_cors import CORS
 
 import os
 
-
 load_dotenv()
 from .models import db
 from backend.routes.auth import auth_bp
 from backend.routes.plans import plans_bp
+from backend.routes.goals import goals_bp
 
 migrate = Migrate()
 
@@ -30,7 +30,9 @@ def create_app(test_config=None):
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(plans_bp)
+    app.register_blueprint(goals_bp)
     
+
     @app.route("/")
     def index():
         return "AI Fitness Coach Backend Running!"
