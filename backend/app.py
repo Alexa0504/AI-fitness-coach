@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from flask_cors import CORS
 
@@ -8,7 +7,7 @@ import os
 
 
 load_dotenv()
-from .models import db, User      # ÚJ SOR
+from .models import db, User
 from .auth import auth_bp
 
 migrate = Migrate()
