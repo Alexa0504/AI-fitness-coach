@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from backend.models import db, User
+from backend.utils.auth_decorator import token_required
 from backend.utils.security_utils import hash_password, check_password, generate_auth_token
+from backend.utils.token_blacklist import add_token_to_blacklist
 
 # Create the Blueprint for authentication routes
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
@@ -78,3 +80,13 @@ def login():
         "user": user.to_dict(),
         "token": token
     }), 200
+
+@auth_bp.route('/logout', methods=['POST'])
+@token_required
+def logout(current_user):
+    """Logs out the user by blacklisting the current token."""
+    token = request.headers['Authorization'].split(" ")[1]
+    if add_token_to_blacklist(token):
+        return jsonify({"message": "Logout successful."}), 200
+    else:
+        return jsonify({"message": "Failed to blacklist token."}), 500
