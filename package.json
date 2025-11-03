@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "daisyui": "^5.4.2",
+    "tailwindcss": "^4.1.16"
+  }
+}
