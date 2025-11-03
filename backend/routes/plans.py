@@ -14,6 +14,16 @@ def get_user_plans(current_user):
     return jsonify([plan.to_dict() for plan in user_plans]), 200
 
 
+@plans_bp.route('/<int:plan_id>', methods=['GET'])
+@token_required
+def get_single_plan(plan_id, current_user):
+    """Get a specific plan by ID for the current user"""
+    plan = Plan.query.filter_by(id=plan_id, user_id=current_user.id).first()
+    if not plan:
+        return jsonify({"message": "Plan not found"}), 404
+    return jsonify(plan.to_dict()), 200
+
+
 @plans_bp.route('/', methods=['POST'])
 @token_required
 def create_plan(current_user):
@@ -22,7 +32,7 @@ def create_plan(current_user):
     plan_type = data.get("plan_type", "workout")
 
     try:
-
+      
         content = get_mock_plan(plan_type)
 
         new_plan = Plan(
@@ -55,9 +65,9 @@ def update_plan(plan_id, current_user):
     if not plan:
         return jsonify({"message": "Plan not found"}), 404
 
-
     plan.score = data.get("score", plan.score)
     plan.content = data.get("content", plan.content)
+    plan.plan_type = data.get("plan_type", plan.plan_type)
 
     try:
         db.session.commit()
@@ -69,3 +79,22 @@ def update_plan(plan_id, current_user):
         db.session.rollback()
         print(f"Error updating plan: {e}")
         return jsonify({"message": "Error updating plan"}), 500
+
+
+@plans_bp.route('/<int:plan_id>', methods=['DELETE'])
+@token_required
+def delete_plan(plan_id, current_user):
+    """Delete a plan for the current user"""
+    plan = Plan.query.filter_by(id=plan_id, user_id=current_user.id).first()
+
+    if not plan:
+        return jsonify({"message": "Plan not found"}), 404
+
+    try:
+        db.session.delete(plan)
+        db.session.commit()
+        return jsonify({"message": "Plan deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting plan: {e}")
+        return jsonify({"message": "Error deleting plan"}), 500
