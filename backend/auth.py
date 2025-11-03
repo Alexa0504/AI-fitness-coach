@@ -19,9 +19,9 @@ def register():
     if not all([username, email, password]):
         return jsonify({"message": "Missing required fields (username, email, or password)."}), 400
 
-    # Check if email already exists
-    if User.query.filter_by(email=email).first():
-        return jsonify({"message": "Email address already registered."}), 409
+    # Check if email or username already exists
+    if User.query.filter((User.email == email) | (User.username == username)).first():
+        return jsonify({"message": "Username or email already registered."}), 409
 
     try:
         # 1. Hash the password (for secure storage)
@@ -54,33 +54,28 @@ def register():
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    """Authenticates the user based on email and password and returns a JWT token."""
+    """Authenticates the user by username or email and password then returns a JWT token."""
 
     data = request.get_json()
-    email = data.get('email')
+    identifier = data.get('email') or data.get('username') or data.get('identifier')
     password = data.get('password')
 
-    if not all([email, password]):
-        return jsonify({"message": "Missing email or password."}), 400
+    if not all([identifier, password]):
+        return jsonify({"message": "Missing username/email or password."}), 400
 
-    # 1. Find user by email
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter(
+        (User.email == identifier) | (User.username == identifier)
+    ).first()
 
-    if user:
-        # 2. Check password against the stored hash
-        if check_password(password, user.password_hash):
+    # In case of invalid username/email or password.:
+    if not user or not check_password(password, user.password_hash):
+        return jsonify({"message": "Invalid username/email or password."}), 401
 
-            # 3. Successful login, generate token
-            token = generate_auth_token(str(user.id))
+    # Successful login
+    token = generate_auth_token(str(user.id))
+    return jsonify({
+        "message": "Login successful.",
+        "user": user.to_dict(),
+        "token": token
+    }), 200
 
-            return jsonify({
-                "message": "Login successful.",
-                "user": user.to_dict(),
-                "token": token
-            }), 200
-        else:
-            # 4. Incorrect password
-            return jsonify({"message": "Invalid credentials."}), 401
-    else:
-        # 5. User not found
-        return jsonify({"message": "Invalid credentials."}), 401
