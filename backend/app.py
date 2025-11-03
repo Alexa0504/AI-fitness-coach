@@ -7,11 +7,10 @@ import os
 
 
 load_dotenv()
-from .models import db, User      # ÚJ SOR
-from .auth import auth_bp
+from .models import db
+from backend.routes.auth import auth_bp
 
 migrate = Migrate()
-
 
 def create_app(test_config=None):
     app = Flask(__name__)
