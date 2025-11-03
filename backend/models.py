@@ -57,12 +57,12 @@ class Plan(db.Model):
     __tablename__ = "plans"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    plan_type = db.Column(db.String(50), nullable=False)  # "workout", "diet"
-    content = db.Column(db.JSON, nullable=True)  # AI terv JSON formában
+    plan_type = db.Column(db.String(50), nullable=False)
+    content = db.Column(db.JSON, nullable=True)
     score = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-   
+
 
     def __repr__(self):
         return f"<Plan {self.plan_type} for User {self.user_id}>"
