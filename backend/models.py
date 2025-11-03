@@ -37,7 +37,7 @@ class Goal(db.Model):
     unit = db.Column(db.String(20), nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    user = db.relationship("User", backref="goals")
+
 
     def __repr__(self):
         return f"<Goal {self.goal_type} for User {self.user_id}>"
@@ -62,7 +62,7 @@ class Plan(db.Model):
     score = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    user = db.relationship("User", backref="plans")
+   
 
     def __repr__(self):
         return f"<Plan {self.plan_type} for User {self.user_id}>"
