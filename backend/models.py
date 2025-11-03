@@ -76,3 +76,12 @@ class Plan(db.Model):
             "score": self.score,
             "created_at": self.created_at.isoformat(),
         }
+
+class TokenBlacklist(db.Model):
+     __tablename__ = "token_blacklist"
+     id = db.Column(db.Integer, primary_key=True)
+     token = db.Column(db.String(500), unique=True, nullable=False)
+     blacklisted_on = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+     def __repr__(self):
+        return f"<TokenBlacklist {self.token}>"

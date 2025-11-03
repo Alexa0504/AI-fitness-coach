@@ -32,7 +32,7 @@ def create_plan(current_user):
     plan_type = data.get("plan_type", "workout")
 
     try:
-      
+
         content = get_mock_plan(plan_type)
 
         new_plan = Plan(
