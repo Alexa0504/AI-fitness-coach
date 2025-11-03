@@ -2,6 +2,7 @@ from functools import wraps
 from flask import request, jsonify
 from backend.models import User
 from backend.utils.security_utils import decode_auth_token
+from backend.utils.token_blacklist import is_token_blacklisted
 
 def token_required(f):
     @wraps(f)
@@ -14,11 +15,13 @@ def token_required(f):
         if not token:
             return jsonify({"message": "Token is missing!"}), 401
 
+        if is_token_blacklisted(token):
+            return jsonify({"message": "Token has been revoked. Please log in again."}), 401
+
         user_id = decode_auth_token(token)
 
         if not user_id:
             return jsonify({"message": "Token is invalid or expired!"}), 401
-
 
         user = User.query.get(user_id)
         if not user:
