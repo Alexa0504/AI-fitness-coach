@@ -248,13 +248,13 @@ A felhasználói felület és a különböző funkciók szoros kapcsolatban áll
 
 ## Képernyő Tervek
 
-A képernyő tervek részletesen bemutatják az alkalmazás főbb nézeteit, amelyek a **React** és a **Bootstrap** keretrendszerekre épülnek, és az **AI** elemeket emelik ki.
+A képernyő tervek részletesen bemutatják az alkalmazás főbb nézeteit, amelyek a **React** és a **Tailwind** keretrendszerekre épülnek, és az **AI** elemeket emelik ki.
 
 -   **Főképernyő (Dashboard):**
     * Felső rész: A felhasználó neve, az aktuális cél. A navigációs sáv gombjai: *Terv*, *Napló*, *Statisztika*.
-    * Középső Rész: Két fő **Bootstrap kártya**: **Napi Edzés Terv** és **Étrend Javaslat**. A kártyák a **Gemini API** legfrissebb adatait tartalmazzák. (**K2**)
+    * Középső Rész: Két fő **Tailwind kártya**: **Napi Edzés Terv** és **Étrend Javaslat**. A kártyák a **Gemini API** legfrissebb adatait tartalmazzák. (**K2**)
     * Motivációs/Visszajelzés szekció: Itt jelenik meg a **Gemini** legutóbbi szöveges elemzése (**K3**), valamint a legújabb **jelvény** (**K7**).
-    * **Letisztult**, modern, **reszponzív** elrendezés a **Bootstrap** komponensekkel.
+    * **Letisztult**, modern, **reszponzív** elrendezés a **Tailwind** komponensekkel.
 
 -   **Naplózó Képernyő:**
     * Felső rész: Egy **React Form** az Edzés- és az Étkezés adatok beviteli mezőivel.
@@ -268,6 +268,6 @@ A képernyő tervek részletesen bemutatják az alkalmazás főbb nézeteit, ame
     * Felület, amely a **Gemini API-val** való valós idejű kommunikációt szolgálja (**K3**). Hagyományos chat ablak elrendezésben, ahol a felhasználó kérdést ír be, és azonnal választ kap.
 
 -   **Reszponzív dizájn:**
-    * A felület **React** és **Bootstrap** alapú kialakítása révén jól működik asztali gépen és mobil eszközökön is, garantálva a **reszponzív megjelenést**. (**K4**)
+    * A felület **React** és **Tailwind** alapú kialakítása révén jól működik asztali gépen és mobil eszközökön is, garantálva a **reszponzív megjelenést**. (**K4**)
 
     ![Screen Design](static/images/kepernyokep.png)
