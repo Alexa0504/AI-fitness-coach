@@ -7,7 +7,6 @@ const AiPlanCard: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            {/* Változtatás: text-base-content/80 a text-gray-700 dark:text-gray-300 helyett */}
             <div className="text-base-content/80 transition-colors duration-300">
                 <p className="mb-4 border-gray-200 dark:border-gray-700 pb-2 transition-colors duration-300">
                     Jelenleg nem elérhető edzés- vagy étrendterv. Kérlek, generálj egy újat a gomb segítségével.
