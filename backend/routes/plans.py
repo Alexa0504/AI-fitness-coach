@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from backend.models import db, Plan
 from backend.utils.mock_data import get_mock_plan
 from backend.utils.auth_decorator import token_required
+from backend.utils.score_utils import calculate_mock_score
 
 plans_bp = Blueprint('plans', __name__, url_prefix='/api/plans')
 
@@ -34,12 +35,13 @@ def create_plan(current_user):
     try:
 
         content = get_mock_plan(plan_type)
+        score = calculate_mock_score(plan_type)
 
         new_plan = Plan(
             user_id=current_user.id,
             plan_type=plan_type,
             content=content,
-            score=0
+            score=score
         )
         db.session.add(new_plan)
         db.session.commit()
@@ -58,16 +60,23 @@ def create_plan(current_user):
 @plans_bp.route('/<int:plan_id>', methods=['PUT'])
 @token_required
 def update_plan(plan_id, current_user):
-    """Update a plan (e.g. update score or content)"""
+    """Update a plan (e.g. update score, content, or plan type)"""
     data = request.get_json()
     plan = Plan.query.filter_by(id=plan_id, user_id=current_user.id).first()
 
     if not plan:
         return jsonify({"message": "Plan not found"}), 404
 
-    plan.score = data.get("score", plan.score)
     plan.content = data.get("content", plan.content)
-    plan.plan_type = data.get("plan_type", plan.plan_type)
+
+    new_plan_type = data.get("plan_type", plan.plan_type)
+    if new_plan_type != plan.plan_type:
+        plan.plan_type = new_plan_type
+
+        plan.score = calculate_mock_score(plan.plan_type)
+    else:
+
+        plan.score = data.get("score", plan.score)
 
     try:
         db.session.commit()

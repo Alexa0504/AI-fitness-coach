@@ -1,4 +1,3 @@
-
 def calculate_mock_score(plan_type: str) -> int:
     """
     Returns a mock score based on the plan type.
@@ -8,4 +7,4 @@ def calculate_mock_score(plan_type: str) -> int:
         return 80
     elif plan_type.lower() == "diet":
         return 90
-    return 70 
+    return 70
