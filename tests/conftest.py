@@ -1,4 +1,5 @@
 import pytest
+import os
 from backend.app import create_app
 from backend.models import db
 
@@ -22,3 +23,10 @@ def session(app):
     with app.app_context():
         yield db.session
         db.session.rollback()
+
+@pytest.fixture(scope="session", autouse=True)
+def ensure_in_memory_db():
+    """Safety check to ensure tests never touch the production database"""
+    uri = os.getenv("SQLALCHEMY_DATABASE_URI", "")
+    if not uri.startswith("sqlite:///:memory:"):
+        pytest.exit("ERROR: Test attempted to use a non-mock (non-in-memory) database!")
