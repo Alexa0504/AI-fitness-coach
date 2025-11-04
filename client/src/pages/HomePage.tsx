@@ -10,10 +10,33 @@ import { motion } from "framer-motion";
 const HeaderBar: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
+  const handleLogout = async () => {
+  const token = localStorage.getItem("authToken");
+  if (!token) {
     navigate("/login");
-  };
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.ok) {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
+      navigate("/login");
+    } else {
+      console.error("Logout failed:", await res.text());
+    }
+  } catch (err) {
+    console.error("Error logging out:", err);
+  }
+};
 
   return (
     <header className="sticky top-0 z-20 w-full bg-base-100/70 dark:bg-base-300/50 backdrop-blur-lg shadow-md border-b border-base-300 transition-colors duration-300">
