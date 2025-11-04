@@ -54,7 +54,7 @@ const HeaderBar: React.FC = () => {
                         onClick={handleLogout}
                         className="px-3 sm:px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold shadow-md hover:shadow-indigo-400/30 transition-all duration-200 text-sm sm:text-base"
                     >
-                        Kijelentkezés
+                        Logout
                     </button>
                 </div>
             </div>
@@ -86,7 +86,7 @@ const DashboardSection: React.FC<{ title: string; children: React.ReactNode }> =
 
 const Footer: React.FC = () => (
     <footer className="py-6 text-center text-sm text-white/80 dark:text-gray-400 mt-10 transition-colors duration-300">
-        © {new Date().getFullYear()} AI Tervező. Minden jog fenntartva.
+        © {new Date().getFullYear()} AI Planner. All rights reserved.
     </footer>
 );
 
@@ -109,21 +109,21 @@ const HomePage: React.FC = () => {
                         transition={{duration: 0.7}}
                         className="text-4xl font-extrabold text-white dark:text-gray-100 mb-10 text-center sm:text-left drop-shadow-[0_3px_5px_rgba(0,0,0,0.3)] transition-colors duration-500"
                     >
-                        Irányítópult
+                        Dashboard
                     </motion.h1>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2 space-y-8">
-                            <DashboardSection title="AI Edzés- és Étrendterv">
+                            <DashboardSection title="AI Workout and Diet Plan">
                                 <AiPlanCard/>
                             </DashboardSection>
-                            <DashboardSection title="Céljaid és Előrehaladásod">
+                            <DashboardSection title="Your Goals and Progress">
                                 <GoalsCard/>
                             </DashboardSection>
                         </div>
 
                         <aside className="lg:col-span-1 space-y-8">
-                            <DashboardSection title="Statisztikák és Pontszám">
+                            <DashboardSection title="Statistics and Score">
                                 <GamificationCard/>
                             </DashboardSection>
                         </aside>

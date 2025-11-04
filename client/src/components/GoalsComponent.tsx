@@ -69,7 +69,7 @@ const GoalsComponent: React.FC = () => {
             )}
 
             {goals.map((g, i) => {
-                const progress = Math.min((Math.random() * 100), 100); // 🔹 ide tehetsz valós current progress logikát, ha lesz ilyen meződ
+                const progress = Math.min((Math.random() * 100), 100);
                 return (
                     <motion.div
                         key={g.id}
