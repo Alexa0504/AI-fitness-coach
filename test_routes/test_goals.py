@@ -111,7 +111,7 @@ def test_delete_goal_success(client, auth_header):
     assert delete_resp.status_code == 200
     assert delete_resp.get_json()["message"] == "Goal deleted successfully"
 
-    
+
     get_resp = client.get('/api/goals/', headers=auth_header)
     assert all(g["id"] != goal_id for g in get_resp.get_json())
 
