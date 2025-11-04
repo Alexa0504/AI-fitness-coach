@@ -31,7 +31,7 @@ def session(app):
 
 @pytest.fixture(scope="session", autouse=True)
 def ensure_in_memory_db(app):
-    """Ensure tests never touch production DB"""
+    """Prevent tests from touching the production DB"""
     uri = app.config.get("SQLALCHEMY_DATABASE_URI", "")
     if not uri.startswith("sqlite:///:memory:"):
         pytest.exit("ERROR: Non-test database detected!")
