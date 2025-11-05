@@ -57,7 +57,7 @@ def test_goals_list_performance(test_client):
         db.session.add(Goal(user_id=user.id, goal_type=f"goal{i}", target_value=10, unit="kg"))
     db.session.commit()
 
-    
+
     login = test_client.post("/api/auth/login", json={"email": "perf@test.com", "password": "test123"})
     token = login.get_json()["token"]
 
