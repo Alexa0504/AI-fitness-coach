@@ -15,10 +15,8 @@ except Exception as e:
 
 def get_mock_user_data(current_user_id: int) -> dict:
     """
-    Ideiglenes függvény részletes felhasználói adatok generálására az AI promptjához,
-    amíg a felhasználói profil adatbázisban nincs implementálva.
+    Ideiglenes függvény részletes felhasználói adatok generálására az AI promptjához.
     """
-    # A valós alkalmazásban ez az UserProfile táblát kérdezné le
     return {
         "user_id": current_user_id,
         "age": 32,
@@ -63,14 +61,31 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
             "Your output must STRICTLY follow the JSON structure defined below."
         )
         plan_structure_description = {
-            "plan_name": "4 Week Custom Workout Plan",
-            "plan_type": "workout",
-            "duration_days": 28,
-            "exercises": [
-                {"day": 1, "activity": "Bench Press", "sets": 3, "reps": 8, "duration_min": None},
-                {"day": 2, "activity": "Rest", "sets": None, "reps": None, "duration_min": None},
-            ],
-            "note": "Focus on progressive overload.",
+            "type": "object",
+            "properties": {
+                "plan_name": {"type": "string", "description": "Descriptive name for the plan."},
+                "plan_type": {"type": "string", "description": "Should be 'workout'."},
+                "duration_days": {"type": "integer", "description": "Total duration in days (e.g., 28)."},
+                "exercises": {
+                    "type": "array",
+                    "description": "List of daily exercises or rest days.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "day": {"type": "integer"},
+                            "activity": {"type": "string",
+                                         "description": "Exercise name (e.g., Bench Press) or 'Rest'."},
+                            "sets": {"type": ["integer", "null"], "description": "Number of sets, or null if Rest."},
+                            "reps": {"type": ["integer", "null"], "description": "Number of reps, or null if Rest."},
+                            "duration_min": {"type": ["integer", "null"],
+                                             "description": "Duration in minutes, or null if Set/Reps are used."},
+                        },
+                        "required": ["day", "activity"]
+                    }
+                },
+                "note": {"type": "string", "description": "A final motivational or technical note."},
+            },
+            "required": ["plan_name", "plan_type", "duration_days", "exercises"]
         }
 
     else:  # diet plan
@@ -79,15 +94,39 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
             "optimized for the user's goals. Your response must STRICTLY follow the JSON structure."
         )
         plan_structure_description = {
-            "plan_name": "7 Day Balanced Meal Plan",
-            "plan_type": "diet",
-            "duration_days": 7,
-            "calories_target": 2200,
-            "meals": [
-                {"day": 1, "breakfast": "Oatmeal with berries", "lunch": "Chicken salad",
-                 "dinner": "Salmon with asparagus"},
-            ],
-            "note": "Stay hydrated throughout the day.",
+            "type": "object",
+            "properties": {
+                "plan_name": {"type": "string"},
+                "plan_type": {"type": "string", "description": "Should be 'diet'."},
+                "duration_days": {"type": "integer"},
+                "calories_target": {"type": "integer", "description": "Target daily calorie intake."},
+                "meals": {
+                    "type": "array",
+                    "description": "List of daily meal schedules.",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "day": {"type": "integer"},
+                            "breakfast": {"type": "string"},
+                            "lunch": {"type": "string"},
+                            "dinner": {"type": "string"},
+                            "snack_1": {"type": ["string", "null"], "description": "Optional snack."},
+                        },
+                        "required": ["day", "breakfast", "lunch", "dinner"]
+                    }
+                },
+                "macros_g": {
+                    "type": "object",
+                    "properties": {
+                        "protein": {"type": "integer"},
+                        "carbs": {"type": "integer"},
+                        "fat": {"type": "integer"},
+                    },
+                    "required": ["protein", "carbs", "fat"]
+                },
+                "note": {"type": "string"},
+            },
+            "required": ["plan_name", "plan_type", "duration_days", "calories_target", "meals"]
         }
 
     user_prompt = f"""
