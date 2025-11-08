@@ -3,6 +3,7 @@ from backend.models import db, Plan
 from backend.utils.mock_data import get_mock_plan
 from backend.utils.auth_decorator import token_required
 from backend.utils.score_utils import calculate_mock_score
+from backend.utils.ai_integration import generate_plan, get_mock_user_data
 
 plans_bp = Blueprint('plans', __name__, url_prefix='/api/plans')
 
@@ -33,8 +34,17 @@ def create_plan(current_user):
     plan_type = data.get("plan_type", "workout")
 
     try:
+        user_data = get_mock_user_data(current_user.id)
 
-        content = get_mock_plan(plan_type)
+        result = generate_plan(user_data, plan_type)
+
+        if result["error"] or not result["plan_content_string"]:
+            return jsonify({
+                "message": f"Error generating plan via AI: {result.get('error', 'Unknown error')}"
+            }), 500
+
+        content = result["plan_content_string"]
+
         score = calculate_mock_score(plan_type)
 
         new_plan = Plan(
