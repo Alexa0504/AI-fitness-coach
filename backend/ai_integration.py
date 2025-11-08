@@ -79,3 +79,25 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
     Generate the {plan_type} plan. The output must STRICTLY be in the specified JSON format.
     DO NOT include any extra text or explanation outside the JSON object.
     """
+
+    try:
+        response = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=user_prompt,
+            config=genai.types.GenerateContentConfig(
+                system_instruction=system_instruction,
+                response_mime_type="application/json",
+                response_schema=genai.types.Schema.from_dict(plan_structure_description)
+            )
+        )
+
+        plan_content_string = response.text
+
+        if not plan_content_string:
+            raise ValueError("Empty response from Gemini.")
+
+        return {"error": None, "plan_content_string": plan_content_string}
+
+    except Exception as e:
+        print(f"Hiba a Gemini API hívásban: {e}")
+        return {"error": f"Gemini API hiba: {e}", "plan_content_string": None}
