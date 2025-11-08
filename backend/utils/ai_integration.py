@@ -7,7 +7,7 @@ load_dotenv()
 
 try:
     client = genai.Client()
-    GEMINI_MODEL = 'gemini-2.5-flash'
+    GEMINI_MODEL = "gemini-2.5-flash"
 except Exception as e:
     print(f"FIGYELEM: Gemini Client inicializálása sikertelen: {e}. Mock adatokat szolgálunk ki API hiba esetén.")
     client = None
@@ -44,7 +44,7 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
         print(f"Hiba: {error_msg}")
         return {"error": error_msg, "plan_content_string": None}
 
-    is_workout = (plan_type.lower() == "workout")
+    is_workout = plan_type.lower() == "workout"
 
     prompt_data = {
         "age": user_data.get("age", 30),
@@ -60,32 +60,30 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
             "You are a professional fitness coach. Generate a 4-week workout plan. "
             "Your output must STRICTLY follow the JSON structure defined below."
         )
+
         plan_structure_description = {
             "type": "object",
             "properties": {
-                "plan_name": {"type": "string", "description": "Descriptive name for the plan."},
-                "plan_type": {"type": "string", "description": "Should be 'workout'."},
-                "duration_days": {"type": "integer", "description": "Total duration in days (e.g., 28)."},
+                "plan_name": {"type": "string"},
+                "plan_type": {"type": "string"},
+                "duration_days": {"type": "integer"},
                 "exercises": {
                     "type": "array",
-                    "description": "List of daily exercises or rest days.",
                     "items": {
                         "type": "object",
                         "properties": {
                             "day": {"type": "integer"},
-                            "activity": {"type": "string",
-                                         "description": "Exercise name (e.g., Bench Press) or 'Rest'."},
-                            "sets": {"type": ["integer", "null"], "description": "Number of sets, or null if Rest."},
-                            "reps": {"type": ["integer", "null"], "description": "Number of reps, or null if Rest."},
-                            "duration_min": {"type": ["integer", "null"],
-                                             "description": "Duration in minutes, or null if Set/Reps are used."},
+                            "activity": {"type": "string"},
+                            "sets": {"type": "integer", "nullable": True},
+                            "reps": {"type": "integer", "nullable": True},
+                            "duration_min": {"type": "integer", "nullable": True},
                         },
-                        "required": ["day", "activity"]
-                    }
+                        "required": ["day", "activity"],
+                    },
                 },
-                "note": {"type": "string", "description": "A final motivational or technical note."},
+                "note": {"type": "string"},
             },
-            "required": ["plan_name", "plan_type", "duration_days", "exercises"]
+            "required": ["plan_name", "plan_type", "duration_days", "exercises"],
         }
 
     else:  # diet plan
@@ -93,16 +91,16 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
             "You are a professional dietitian. Generate a 7-day example meal plan "
             "optimized for the user's goals. Your response must STRICTLY follow the JSON structure."
         )
+
         plan_structure_description = {
             "type": "object",
             "properties": {
                 "plan_name": {"type": "string"},
-                "plan_type": {"type": "string", "description": "Should be 'diet'."},
+                "plan_type": {"type": "string"},
                 "duration_days": {"type": "integer"},
-                "calories_target": {"type": "integer", "description": "Target daily calorie intake."},
+                "calories_target": {"type": "integer"},
                 "meals": {
                     "type": "array",
-                    "description": "List of daily meal schedules.",
                     "items": {
                         "type": "object",
                         "properties": {
@@ -110,10 +108,10 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
                             "breakfast": {"type": "string"},
                             "lunch": {"type": "string"},
                             "dinner": {"type": "string"},
-                            "snack_1": {"type": ["string", "null"], "description": "Optional snack."},
+                            "snack_1": {"type": "string", "nullable": True},
                         },
-                        "required": ["day", "breakfast", "lunch", "dinner"]
-                    }
+                        "required": ["day", "breakfast", "lunch", "dinner"],
+                    },
                 },
                 "macros_g": {
                     "type": "object",
@@ -122,11 +120,11 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
                         "carbs": {"type": "integer"},
                         "fat": {"type": "integer"},
                     },
-                    "required": ["protein", "carbs", "fat"]
+                    "required": ["protein", "carbs", "fat"],
                 },
                 "note": {"type": "string"},
             },
-            "required": ["plan_name", "plan_type", "duration_days", "calories_target", "meals"]
+            "required": ["plan_name", "plan_type", "duration_days", "calories_target", "meals"],
         }
 
     user_prompt = f"""
@@ -136,14 +134,20 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
     """
 
     try:
+        schema = genai.types.Schema(
+            type=plan_structure_description["type"],
+            properties=plan_structure_description["properties"],
+            required=plan_structure_description.get("required", []),
+        )
+
         response = client.models.generate_content(
             model=GEMINI_MODEL,
             contents=user_prompt,
             config=genai.types.GenerateContentConfig(
                 system_instruction=system_instruction,
                 response_mime_type="application/json",
-                response_schema=genai.types.Schema.from_dict(plan_structure_description)
-            )
+                response_schema=schema,
+            ),
         )
 
         plan_content_string = response.text
@@ -154,5 +158,7 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
         return {"error": None, "plan_content_string": plan_content_string}
 
     except Exception as e:
-        print(f"Hiba a Gemini API hívásban: {e}")
+        import traceback
+
+        print("Gemini API error details:\n", traceback.format_exc())
         return {"error": f"Gemini API hiba: {e}", "plan_content_string": None}
