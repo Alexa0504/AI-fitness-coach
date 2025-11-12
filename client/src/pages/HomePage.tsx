@@ -46,17 +46,26 @@ const HeaderBar: React.FC = () => {
                     AI Fitness Coach
                 </h1>
 
-                <div className="flex items-center gap-2 sm:gap-4">
-                    <div className="flex items-center justify-center">
-                        <ThemeSwitcher/>
-                    </div>
-                    <button
-                        onClick={handleLogout}
-                        className="px-3 sm:px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold shadow-md hover:shadow-indigo-400/30 transition-all duration-200 text-sm sm:text-base"
-                    >
-                        Logout
-                    </button>
-                </div>
+                 <div className="flex items-center gap-2 sm:gap-4">
+          {/*  Profile button added */}
+          <button
+            onClick={() => navigate("/profile")}
+            className="px-3 sm:px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold shadow-md hover:shadow-indigo-400/30 transition-all duration-200 text-sm sm:text-base"
+          >
+            Profile
+          </button>
+
+          <div className="flex items-center justify-center">
+            <ThemeSwitcher />
+          </div>
+
+          <button
+            onClick={handleLogout}
+            className="px-3 sm:px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold shadow-md hover:shadow-indigo-400/30 transition-all duration-200 text-sm sm:text-base"
+          >
+            Logout
+          </button>
+        </div>
             </div>
         </header>
     );
