@@ -5,8 +5,10 @@ from backend.utils.mock_data import get_mock_plan
 from backend.utils.auth_decorator import token_required
 from backend.utils.score_utils import calculate_mock_score
 from backend.utils.ai_integration import generate_plan, get_mock_user_data
+from datetime import date
 
 plans_bp = Blueprint('plans', __name__, url_prefix='/api/plans')
+
 
 def _parse_plan_content_field(content_field):
     """Parse content saved in DB: can be JSON-string or dict."""
@@ -55,6 +57,14 @@ def create_plan(current_user):
     data = request.get_json() or {}
     plan_type = data.get("plan_type", "workout")
 
+    start_date_str = data.get("start_date")
+    plan_start_date = None
+    if start_date_str:
+        try:
+
+            plan_start_date = date.fromisoformat(start_date_str)
+        except ValueError:
+            return jsonify({"message": "Invalid start_date format. Use YYYY-MM-DD."}), 400
     try:
         user_data = get_mock_user_data(current_user.id)
         result = generate_plan(user_data, plan_type)
@@ -74,6 +84,8 @@ def create_plan(current_user):
         if existing_plan:
             existing_plan.content = content_string
             existing_plan.score = score
+            if plan_start_date:
+                existing_plan.start_date = plan_start_date
             db.session.commit()
             plan_obj = existing_plan
             status_code = 200
@@ -108,6 +120,13 @@ def update_plan(plan_id, current_user):
     plan = Plan.query.filter_by(id=plan_id, user_id=current_user.id).first()
     if not plan:
         return jsonify({"message": "Plan not found"}), 404
+
+    if "start_date" in data:
+        start_date_str = data["start_date"]
+        try:
+            plan.start_date = date.fromisoformat(start_date_str)
+        except ValueError:
+            return jsonify({"message": "Invalid start_date format. Use YYYY-MM-DD."}), 400
 
     if "content" in data:
         new_content = data["content"]
