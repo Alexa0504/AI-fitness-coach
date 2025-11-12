@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import WeeklyGoals, {type WeeklyGoal } from "./WeeklyGoalsComponent.tsx";
 
 interface Goal {
     id: number;
@@ -12,61 +13,72 @@ interface Goal {
 
 const GoalsComponent: React.FC = () => {
     const [longGoals, setLongGoals] = useState<Goal[]>([]);
-    const [weeklyGoals, setWeeklyGoals] = useState<Goal[]>([]);
+    const [weeklyGoals, setWeeklyGoals] = useState<WeeklyGoal[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     const token = localStorage.getItem("authToken") || "";
 
+    const calculateProgress = (goal: WeeklyGoal) => {
+        const days = ["mon","tue","wed","thu","fri","sat","sun"] as const;
+        const completed = days.filter(day => goal[day]).length;
+        return (completed / days.length) * 100;
+    };
+
     const fetchLongGoals = async () => {
-        try {
-            const res = await fetch("http://localhost:5000/api/goals/", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            const data: { message?: string } & Goal[] = await res.json();
-            if (!res.ok) throw new Error(data.message || "Failed to fetch goals.");
-            setLongGoals(data as Goal[]);
-        } catch (e) {
-            const msg = e instanceof Error ? e.message : "Error fetching goals.";
-            setError(msg);
-        }
+        const res = await fetch("http://localhost:5000/api/goals/", {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Failed to fetch goals.");
+        setLongGoals(data);
     };
 
     const fetchWeeklyGoals = async () => {
-        try {
-            const res = await fetch("http://localhost:5000/api/goals/weekly", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            const data: { message?: string } & Goal[] = await res.json();
-            if (!res.ok) throw new Error(data.message || "Failed to fetch weekly goals.");
-            setWeeklyGoals(data as Goal[]);
-        } catch (e) {
-            const msg = e instanceof Error ? e.message : "Error fetching weekly goals.";
-            setError(msg);
-        }
+        const res = await fetch("http://localhost:5000/api/weekly-goals/", {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        const data: WeeklyGoal[] = await res.json();
+        if (!res.ok) throw new Error("Failed to fetch weekly goals.");
+        // számítsuk ki a progress-t frontend oldalon is
+        const updated = data.map(g => ({ ...g, progress: calculateProgress(g) }));
+        setWeeklyGoals(updated);
     };
 
-    const toggleWeeklyGoal = async (id: number) => {
-        try {
-            const res = await fetch(`http://localhost:5000/api/goals/weekly/${id}/toggle`, {
-                method: "PATCH",
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            const data: { message?: string } & Goal = await res.json();
-            if (!res.ok) throw new Error(data.message || "Failed to toggle goal.");
-            setWeeklyGoals(prev => prev.map(g => g.id === id ? { ...g, is_completed: !g.is_completed } : g));
-        } catch (e) {
-            const msg = e instanceof Error ? e.message : "Error toggling weekly goal.";
-            setError(msg);
-        }
+    const toggleWeeklyGoalDay = (
+        goalId: number,
+        day: keyof Omit<WeeklyGoal, "id" | "goal_name" | "progress">
+    ) => {
+        // 1. Frontend frissítés azonnal
+        setWeeklyGoals(prev =>
+            prev.map(g => {
+                if (g.id === goalId) {
+                    const updatedGoal = { ...g, [day]: !g[day] };
+                    return { ...updatedGoal, progress: calculateProgress(updatedGoal) };
+                }
+                return g;
+            })
+        );
+
+        // 2. Backend frissítés
+        fetch(`http://localhost:5000/api/weekly-goals/${goalId}/toggle/${day}`, {
+            method: "PATCH",
+            headers: { Authorization: `Bearer ${token}` },
+        });
     };
 
     useEffect(() => {
         const fetchAll = async () => {
             setLoading(true);
-            await fetchLongGoals();
-            await fetchWeeklyGoals();
-            setLoading(false);
+            try {
+                await fetchLongGoals();
+                await fetchWeeklyGoals();
+            } catch (e) {
+                const msg = e instanceof Error ? e.message : "Error fetching goals.";
+                setError(msg);
+            } finally {
+                setLoading(false);
+            }
         };
         fetchAll();
     }, []);
@@ -103,23 +115,7 @@ const GoalsComponent: React.FC = () => {
                 );
             })}
 
-            {weeklyGoals.map((g, i) => (
-                <motion.div
-                    key={`weekly-${g.id}`}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.15 }}
-                    className="bg-base-200/60 dark:bg-base-300/60 rounded-xl p-4 shadow-md border border-base-300 flex justify-between items-center transition-colors duration-300"
-                >
-                    <span className="font-medium text-base-content">{g.goal_name}</span>
-                    <input
-                        type="checkbox"
-                        checked={!!g.is_completed}
-                        onChange={() => toggleWeeklyGoal(g.id!)}
-                        className="w-5 h-5 accent-pink-500"
-                    />
-                </motion.div>
-            ))}
+            <WeeklyGoals goals={weeklyGoals} toggleDay={toggleWeeklyGoalDay} />
 
             {!loading && longGoals.length === 0 && weeklyGoals.length === 0 && !error && (
                 <div className="text-center text-base-content/70">You don’t have any goals yet.</div>
