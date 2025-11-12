@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -88,6 +88,7 @@ class Plan(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     plan_type = db.Column(db.String(50), nullable=False)
+    start_date = db.Column(db.Date, nullable=False, default=date.today)
     content = db.Column(db.JSON, nullable=True)
     score = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
@@ -102,6 +103,7 @@ class Plan(db.Model):
             "id": self.id,
             "user_id": self.user_id,
             "plan_type": self.plan_type,
+            "start_date": self.start_date.isoformat() if self.start_date else None,
             "content": self.content,
             "score": self.score,
             "created_at": self.created_at.isoformat(),
