@@ -1,21 +1,11 @@
 import json
-import os
-from google import genai
-from dotenv import load_dotenv
-
-load_dotenv()
-
-try:
-    client = genai.Client()
-    GEMINI_MODEL = "gemini-2.5-flash"
-except Exception as e:
-    print(f"FIGYELEM: Gemini Client inicializálása sikertelen: {e}. Mock adatokat szolgálunk ki API hiba esetén.")
-    client = None
-
+import time
+import random
+from backend.utils.mock_data import get_mock_plan
 
 def get_mock_user_data(current_user_id: int) -> dict:
     """
-    Ideiglenes függvény részletes felhasználói adatok generálására az AI promptjához.
+    Temporary helper that returns sample user details for the AI prompt.
     """
     return {
         "user_id": current_user_id,
@@ -29,20 +19,25 @@ def get_mock_user_data(current_user_id: int) -> dict:
         "dietary_restrictions": "none",
     }
 
-
 def generate_plan(user_data: dict, plan_type: str) -> dict:
     """
-    Meghívja a Gemini API-t egy személyre szabott terv generálására.
-
-    :param user_data: A felhasználó adatai (angol kulcsokkal).
-    :param plan_type: A generálandó terv típusa ('workout' vagy 'diet').
-    :return: Szótár {"error": str | None, "plan_content_string": str | None}
+    Generate a workout or diet plan via Gemini API.
+    Includes retry logic and simplified workout schema for reliability.
     """
 
-    if not client:
-        error_msg = "Gemini API kliens nem elérhető."
-        print(f"Hiba: {error_msg}")
-        return {"error": error_msg, "plan_content_string": None}
+    try:
+        from google import genai
+        from dotenv import load_dotenv
+        import os
+
+        load_dotenv()
+        GEMINI_MODEL = "gemini-2.5-flash"
+        client = genai.Client()  # create the Gemini API client
+        print("✅ Gemini client initialized successfully.")
+
+    except Exception as e:
+        print(f"⚠️  Gemini client initialization failed: {e}")
+        client = None
 
     is_workout = plan_type.lower() == "workout"
 
@@ -53,12 +48,16 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
         "goal": user_data.get("goal", "muscle gain"),
         "level": user_data.get("fitness_level", "intermediate"),
         "weekly_workouts": user_data.get("weekly_workouts", 4),
+        "dietary_restrictions": user_data.get("dietary_restrictions", "none"),
     }
 
+    # Simplified schema for workout to reduce Gemini overloads
     if is_workout:
         system_instruction = (
-            "You are a professional fitness coach. Generate a 4-week workout plan. "
-            "Your output must STRICTLY follow the JSON structure defined below."
+            "You are a certified personal trainer. Generate a realistic 7-day workout plan "
+            "tailored to the user data below. Each day includes a title and a list of exercises. "
+            "Each exercise has a name, sets, reps, duration (optional), and notes (optional). "
+            "Output ONLY valid JSON following the schema. No extra text."
         )
 
         plan_structure_description = {
@@ -67,29 +66,42 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
                 "plan_name": {"type": "string"},
                 "plan_type": {"type": "string"},
                 "duration_days": {"type": "integer"},
-                "exercises": {
+                "days": {
                     "type": "array",
                     "items": {
                         "type": "object",
                         "properties": {
                             "day": {"type": "integer"},
-                            "activity": {"type": "string"},
-                            "sets": {"type": "integer", "nullable": True},
-                            "reps": {"type": "integer", "nullable": True},
-                            "duration_min": {"type": "integer", "nullable": True},
+                            "title": {"type": "string"},
+                            "exercises": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {"type": "string"},
+                                        "sets": {"type": "integer"},
+                                        "reps": {"type": "integer"},
+                                        "duration_min": {"type": "integer"},
+                                        "notes": {"type": "string"},
+                                    },
+                                    "required": ["name"]
+                                },
+                            },
+                            "completed": {"type": "boolean"},
                         },
-                        "required": ["day", "activity"],
+                        "required": ["day", "exercises"],
                     },
                 },
                 "note": {"type": "string"},
             },
-            "required": ["plan_name", "plan_type", "duration_days", "exercises"],
+            "required": ["plan_name", "plan_type", "duration_days", "days"],
         }
 
-    else:  # diet plan
+    else:
+        # Keep diet schema the same (since it works fine)
         system_instruction = (
-            "You are a professional dietitian. Generate a 7-day example meal plan "
-            "optimized for the user's goals. Your response must STRICTLY follow the JSON structure."
+            "You are a professional dietitian. Generate a 7-day diet plan optimized for the user. "
+            "Output ONLY a JSON object that matches the schema. No explanations."
         )
 
         plan_structure_description = {
@@ -108,7 +120,7 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
                             "breakfast": {"type": "string"},
                             "lunch": {"type": "string"},
                             "dinner": {"type": "string"},
-                            "snack_1": {"type": "string", "nullable": True},
+                            "snack": {"type": "string"},
                         },
                         "required": ["day", "breakfast", "lunch", "dinner"],
                     },
@@ -120,45 +132,58 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
                         "carbs": {"type": "integer"},
                         "fat": {"type": "integer"},
                     },
-                    "required": ["protein", "carbs", "fat"],
                 },
                 "note": {"type": "string"},
             },
-            "required": ["plan_name", "plan_type", "duration_days", "calories_target", "meals"],
         }
 
     user_prompt = f"""
-    User Data: {json.dumps(prompt_data, indent=2)}
+User Data: {json.dumps(prompt_data, indent=2)}
 
-    Generate the {plan_type} plan following the rules. DO NOT include any extra text or explanation outside the JSON object.
-    """
+Generate the {plan_type} plan following the schema. Return only a JSON object.
+"""
 
-    try:
-        schema = genai.types.Schema(
-            type=plan_structure_description["type"],
-            properties=plan_structure_description["properties"],
-            required=plan_structure_description.get("required", []),
-        )
+    # --- Retry logic ---
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            schema = genai.types.Schema(
+                type=plan_structure_description["type"],
+                properties=plan_structure_description["properties"],
+                required=plan_structure_description.get("required", []),
+            )
 
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=user_prompt,
-            config=genai.types.GenerateContentConfig(
-                system_instruction=system_instruction,
-                response_mime_type="application/json",
-                response_schema=schema,
-            ),
-        )
+            response = client.models.generate_content(
+                model=GEMINI_MODEL,
+                contents=user_prompt,
+                config=genai.types.GenerateContentConfig(
+                    system_instruction=system_instruction,
+                    response_mime_type="application/json",
+                    response_schema=schema,
+                ),
+            )
 
-        plan_content_string = response.text
+            plan_content_string = response.text
+            if not plan_content_string:
+                raise ValueError("Empty response from Gemini")
 
-        if not plan_content_string:
-            raise ValueError("Empty response from Gemini.")
+            return {"error": None, "plan_content_string": plan_content_string}
 
-        return {"error": None, "plan_content_string": plan_content_string}
+        except Exception as e:
+            err_str = str(e)
+            if "503" in err_str or "UNAVAILABLE" in err_str:
+                wait = 2 ** attempt + random.uniform(0.5, 1.5)
+                print(f"[Retry {attempt+1}/{max_retries}] Gemini overloaded. Retrying in {wait:.1f}s...")
+                time.sleep(wait)
+                continue
+            else:
+                print(f"Gemini API error: {e}")
+                break
 
-    except Exception as e:
-        import traceback
-
-        print("Gemini API error details:\n", traceback.format_exc())
-        return {"error": f"Gemini API hiba: {e}", "plan_content_string": None}
+    # --- Fallback after retries ---
+    print("Gemini failed after retries. Returning mock plan.")
+    mock_plan = get_mock_plan(plan_type)
+    return {
+        "error": "Gemini API temporarily unavailable — mock plan returned.",
+        "plan_content_string": json.dumps(mock_plan),
+    }
