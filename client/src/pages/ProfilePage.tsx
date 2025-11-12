@@ -17,6 +17,7 @@ export default function ProfilePage() {
     target_weight_kg: "",
   });
 
+  // Fetch profile data from API
   const fetchProfile = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/users/profile", {
@@ -42,6 +43,7 @@ export default function ProfilePage() {
     }
   };
 
+  // Save updated profile to API
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -53,10 +55,11 @@ export default function ProfilePage() {
         },
         body: JSON.stringify(profile),
       });
-      const data = await res.json();
+
       if (res.ok) {
-        setMessage("✅ Profile updated successfully!");
+        navigate("/dashboard");
       } else {
+        const data = await res.json();
         setMessage(data.message || "Error updating profile");
       }
     } catch {
@@ -66,14 +69,16 @@ export default function ProfilePage() {
     }
   };
 
+  // Handle input changes
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setProfile({ ...profile, [e.target.name]: e.target.value });
+  };
+
   useEffect(() => {
     fetchProfile();
   }, []);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setProfile({ ...profile, [e.target.name]: e.target.value });
-  };
-
+  // Loading state
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-blue-500 text-white">
@@ -83,88 +88,98 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className={`relative min-h-screen ${theme} transition-colors duration-500`}>
+    <div className="relative w-full min-h-screen transition-colors duration-500">
+      {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-blue-500 dark:from-gray-900 dark:via-gray-800 dark:to-black transition-colors duration-500" />
       <div className="absolute inset-0 bg-black/10 dark:bg-black/50 backdrop-blur-[1px]" />
-      <div className="relative z-10 max-w-3xl mx-auto px-6 py-10 text-white">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-10">
-          <h1 className="text-4xl font-extrabold drop-shadow-md">Your Profile</h1>
-          <div className="flex gap-3 items-center">
-            <ThemeSwitcher />
-            <button
-              onClick={() => navigate("/")}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold shadow-md transition-all duration-200"
-            >
-              Back to Dashboard
-            </button>
-          </div>
-        </div>
 
-        {/* Message */}
+      {/* ThemeSwitcher button in the top-right corner */}
+      <div className="absolute top-4 right-4 z-50">
+        <ThemeSwitcher />
+      </div>
+
+      {/* Scrollable content */}
+      <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-10 py-10 overflow-y-auto">
+        {/* Header */}
+        <h1 className="text-4xl font-extrabold text-white drop-shadow-md text-center sm:text-left mb-10">
+          Your Profile
+        </h1>
+
+        {/* Message alert */}
         {message && (
-          <div className="mb-4 text-center bg-black/30 p-3 rounded-lg">
+          <div className="mb-4 text-center bg-base-200/50 dark:bg-base-300/50 p-3 rounded-lg text-base-content transition-colors duration-300">
             {message}
           </div>
         )}
 
-        {/* Profile Card */}
-        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 space-y-4 shadow-lg">
+        {/* Profile card */}
+        <div className="bg-base-100/90 dark:bg-base-200/80 border border-base-300 dark:border-base-700 rounded-2xl p-6 space-y-4 shadow-lg transition-colors duration-300">
+          {/* Gender select */}
           <div>
-            <label className="block mb-1 font-semibold">Gender</label>
-            <input
+            <label className="block mb-1 font-semibold text-base-content">Gender</label>
+            <select
               name="gender"
               value={profile.gender}
               onChange={handleChange}
-              placeholder="male / female"
-              className="w-full px-3 py-2 rounded-lg bg-white/20 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-pink-300"
-            />
+              className="w-full px-3 py-2 rounded-lg bg-base-200 dark:bg-base-300 text-base-content dark:text-base-content focus:outline-none focus:ring-2 focus:ring-primary appearance-none transition-colors duration-300"
+            >
+              <option value="" disabled>Select gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
           </div>
 
+          {/* Height input */}
           <div>
-            <label className="block mb-1 font-semibold">Height (cm)</label>
+            <label className="block mb-1 font-semibold text-base-content">Height (cm)</label>
             <input
               type="number"
               name="height_cm"
               value={profile.height_cm}
               onChange={handleChange}
               placeholder="e.g. 180"
-              className="w-full px-3 py-2 rounded-lg bg-white/20 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-pink-300"
+              className="w-full px-3 py-2 rounded-lg bg-base-200 dark:bg-base-300 text-base-content dark:text-base-content placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-300"
             />
           </div>
 
+          {/* Current weight input */}
           <div>
-            <label className="block mb-1 font-semibold">Current Weight (kg)</label>
+            <label className="block mb-1 font-semibold text-base-content">Current Weight (kg)</label>
             <input
               type="number"
               name="weight_kg"
               value={profile.weight_kg}
               onChange={handleChange}
               placeholder="e.g. 75"
-              className="w-full px-3 py-2 rounded-lg bg-white/20 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-pink-300"
+              className="w-full px-3 py-2 rounded-lg bg-base-200 dark:bg-base-300 text-base-content dark:text-base-content placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-300"
             />
           </div>
 
+          {/* Target weight input */}
           <div>
-            <label className="block mb-1 font-semibold">Target Weight (kg)</label>
+            <label className="block mb-1 font-semibold text-base-content">Target Weight (kg)</label>
             <input
               type="number"
               name="target_weight_kg"
               value={profile.target_weight_kg}
               onChange={handleChange}
               placeholder="e.g. 70"
-              className="w-full px-3 py-2 rounded-lg bg-white/20 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-pink-300"
+              className="w-full px-3 py-2 rounded-lg bg-base-200 dark:bg-base-300 text-base-content dark:text-base-content placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-300"
             />
           </div>
 
+          {/* Save button */}
           <button
             onClick={handleSave}
             disabled={saving}
-            className="w-full mt-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold shadow-md transition-all"
+            className="w-full mt-4 py-2 bg-primary text-primary-content hover:bg-primary-focus rounded-lg font-semibold shadow-md transition-colors duration-300"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
         </div>
+
+        {/* Bottom spacing so the save button is not hidden on mobile */}
+        <div className="h-16 sm:h-24" />
       </div>
     </div>
   );
