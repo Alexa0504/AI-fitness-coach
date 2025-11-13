@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect }  from "react";
 import {useNavigate} from "react-router-dom";
 import ThemeSwitcher from "../components/ThemeSwitcher";
 import {useTheme} from "../components/ThemeContext";
@@ -101,7 +101,38 @@ const Footer: React.FC = () => (
 
 const HomePage: React.FC = () => {
     const {theme} = useTheme();
+    const navigate = useNavigate();
 
+    
+    useEffect(() => {
+    const checkProfileCompletion = async () => {
+      const token = localStorage.getItem("authToken");
+
+      
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      try {
+        
+        const res = await fetch("http://localhost:5000/api/users/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+
+        
+        if (!data.gender || !data.height_cm || !data.weight_kg) {
+          navigate("/profile");
+        }
+      } catch (error) {
+        console.error("Error checking profile:", error);
+        navigate("/login"); 
+      }
+    };
+
+    checkProfileCompletion();
+  }, [navigate]);
     return (
         <div className={`relative min-h-screen ${theme} transition-colors duration-500`}>
             <div
