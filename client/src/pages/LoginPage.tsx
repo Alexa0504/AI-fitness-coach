@@ -42,7 +42,7 @@ const LoginPage: React.FC = () => {
 
             if (response.ok) {
                 localStorage.setItem("authToken", data.token);
-                navigate("/dashboard");
+                navigate("/profile");
             } else {
                 setError(data.message || "User not found or credentials do not match");
             }
