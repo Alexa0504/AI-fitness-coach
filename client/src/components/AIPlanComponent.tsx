@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const API_URL = "http://localhost:5000/api/plans/";
 
 interface Plan {
-    id?: number;
+  id?: number;
   plan_name: string;
   plan_type: "workout" | "diet";
   duration_days: number;
@@ -12,7 +12,11 @@ interface Plan {
   note?: string;
 }
 
-const AiPlanCard: React.FC = () => {
+interface AiPlanCardProps {
+  onPlanUpdate?: (plan: any, type: "workout" | "diet") => void;
+}
+
+const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
   const [plans, setPlans] = useState<{ workout?: Plan; diet?: Plan }>({});
   const [activeType, setActiveType] = useState<"workout" | "diet">("workout");
   const [loading, setLoading] = useState(false);
@@ -47,6 +51,7 @@ const AiPlanCard: React.FC = () => {
 
       // store in correct slot (workout or diet)
       setPlans((prev) => ({ ...prev, [activeType]: content }));
+      onPlanUpdate?.(content, activeType);
     } catch (err: any) {
       console.error(err);
       setError(err.message);
@@ -64,7 +69,7 @@ const AiPlanCard: React.FC = () => {
         ? { type: "workout_day", day, field: "completed", value: true }
         : { type: "diet_meal", day, meal, value: true };
 
-    await fetch(`${API_URL}${plan.id || 1}/toggle`, {
+    const res = await fetch(`${API_URL}${plan.id || 1}/toggle`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -72,6 +77,19 @@ const AiPlanCard: React.FC = () => {
       },
       body: JSON.stringify(body),
     });
+
+    const data = await res.json();
+
+    // ha a backend visszaküldi a frissített plan-t, frissítjük
+    if (data?.plan?.content) {
+      const updated =
+        typeof data.plan.content === "string"
+          ? JSON.parse(data.plan.content)
+          : data.plan.content;
+
+      setPlans((prev) => ({ ...prev, [activeType]: updated }));
+      onPlanUpdate?.(updated, activeType);
+    }
   };
 
   const plan = plans[activeType];

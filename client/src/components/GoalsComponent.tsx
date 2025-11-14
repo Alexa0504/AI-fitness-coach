@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import WeeklyGoals, {type WeeklyGoal } from "./WeeklyGoalsComponent.tsx";
+import Taskbar from "./Taskbar.tsx";
+import WeeklyGoals, { type WeeklyGoal } from "./WeeklyGoalsComponent.tsx";
 
 interface Goal {
     id: number;
@@ -19,12 +20,6 @@ const GoalsComponent: React.FC = () => {
 
     const token = localStorage.getItem("authToken") || "";
 
-    const calculateProgress = (goal: WeeklyGoal) => {
-        const days = ["mon","tue","wed","thu","fri","sat","sun"] as const;
-        const completed = days.filter(day => goal[day]).length;
-        return (completed / days.length) * 100;
-    };
-
     const fetchLongGoals = async () => {
         const res = await fetch("http://localhost:5000/api/goals/", {
             headers: { Authorization: `Bearer ${token}` },
@@ -35,35 +30,22 @@ const GoalsComponent: React.FC = () => {
     };
 
     const fetchWeeklyGoals = async () => {
-        const res = await fetch("http://localhost:5000/api/weekly-goals/", {
+        const res = await fetch("http://localhost:5000/api/goals/weekly", {
             headers: { Authorization: `Bearer ${token}` },
         });
         const data: WeeklyGoal[] = await res.json();
         if (!res.ok) throw new Error("Failed to fetch weekly goals.");
-        // számítsuk ki a progress-t frontend oldalon is
-        const updated = data.map(g => ({ ...g, progress: calculateProgress(g) }));
+        const updated = data.map(g => ({ ...g, progress: g.is_completed ? 100 : 0 }));
         setWeeklyGoals(updated);
     };
 
-    const toggleWeeklyGoalDay = (
-        goalId: number,
-        day: keyof Omit<WeeklyGoal, "id" | "goal_name" | "progress">
-    ) => {
-        // 1. Frontend frissítés azonnal
+    const toggleWeeklyGoal = (goalId: number) => {
         setWeeklyGoals(prev =>
-            prev.map(g => {
-                if (g.id === goalId) {
-                    const updatedGoal = { ...g, [day]: !g[day] };
-                    return { ...updatedGoal, progress: calculateProgress(updatedGoal) };
-                }
-                return g;
-            })
+            prev.map(g => g.id === goalId ? { ...g, is_completed: !g.is_completed, progress: g.is_completed ? 0 : 100 } : g)
         );
-
-        // 2. Backend frissítés
-        fetch(`http://localhost:5000/api/weekly-goals/${goalId}/toggle/${day}`, {
+        fetch(`http://localhost:5000/api/goals/weekly/${goalId}/toggle`, {
             method: "PATCH",
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         });
     };
 
@@ -102,20 +84,12 @@ const GoalsComponent: React.FC = () => {
                             <span className="font-medium text-base-content">{g.goal_type}</span>
                             <span className="text-sm text-base-content/70">Target: {g.target_value} {g.unit || ""}</span>
                         </div>
-                        <div className="w-full bg-base-300 rounded-full h-3 overflow-hidden">
-                            <motion.div
-                                className="h-3 rounded-full bg-gradient-to-r from-pink-500 to-purple-500"
-                                style={{ width: `${progress}%` }}
-                                initial={{ width: 0 }}
-                                animate={{ width: `${progress}%` }}
-                                transition={{ duration: 1, ease: "easeOut" }}
-                            />
-                        </div>
+                        <Taskbar progress={progress} />
                     </motion.div>
                 );
             })}
 
-            <WeeklyGoals goals={weeklyGoals} toggleDay={toggleWeeklyGoalDay} />
+            <WeeklyGoals goals={weeklyGoals} toggleDay={toggleWeeklyGoal} />
 
             {!loading && longGoals.length === 0 && weeklyGoals.length === 0 && !error && (
                 <div className="text-center text-base-content/70">You don’t have any goals yet.</div>
