@@ -66,7 +66,17 @@ def create_plan(current_user):
         except ValueError:
             return jsonify({"message": "Invalid start_date format. Use YYYY-MM-DD."}), 400
     try:
-        user_data = get_mock_user_data(current_user.id)
+        user_data = {
+            "user_id": current_user.id,
+            "age": current_user.age,  # make sure you store age in the DB
+            "weight_kg": current_user.weight_kg,
+            "height_cm": current_user.height_cm,
+            "gender": current_user.gender,
+            "goal": current_user.goal,  # target goal
+            "fitness_level": current_user.fitness_level,
+            "weekly_workouts": current_user.weekly_workouts,
+            "dietary_restrictions": current_user.dietary_restrictions,
+        }
         result = generate_plan(user_data, plan_type)
 
         # If generator returned no content — try to use mock_plan (generate_plan should fallback).
@@ -108,7 +118,8 @@ def create_plan(current_user):
 
     except Exception as e:
         db.session.rollback()
-        print(f"Error creating plan: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({"message": "Error creating plan"}), 500
 
 

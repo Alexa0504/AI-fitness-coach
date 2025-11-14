@@ -64,31 +64,50 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
     const plan = plans[activeType];
     if (!plan || !token) return;
 
+    let value = true;
+
+    if (activeType === "workout") {
+      // Narrow type: ensure days exists
+      if (!plan.days) return;
+      const targetDay = plan.days.find((d: any) => d.day === day);
+      if (!targetDay) return;
+      value = !targetDay.completed; // toggle current value
+    } else if (activeType === "diet") {
+      if (!plan.meals || !meal) return;
+      const targetDay = plan.meals.find((d: any) => d.day === day);
+      if (!targetDay) return;
+      const key = `${meal}_consumed`;
+      value = !targetDay[key]; // toggle current value
+    }
+
     const body =
       activeType === "workout"
-        ? { type: "workout_day", day, field: "completed", value: true }
-        : { type: "diet_meal", day, meal, value: true };
+        ? { type: "workout_day", day, field: "completed", value }
+        : { type: "diet_meal", day, meal, value };
 
-    const res = await fetch(`${API_URL}${plan.id || 1}/toggle`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(body),
-    });
+    try {
+      const res = await fetch(`${API_URL}${plan.id || 1}/toggle`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    // ha a backend visszaküldi a frissített plan-t, frissítjük
-    if (data?.plan?.content) {
-      const updated =
-        typeof data.plan.content === "string"
-          ? JSON.parse(data.plan.content)
-          : data.plan.content;
+      if (data?.plan?.content) {
+        const updated =
+          typeof data.plan.content === "string"
+            ? JSON.parse(data.plan.content)
+            : data.plan.content;
 
-      setPlans((prev) => ({ ...prev, [activeType]: updated }));
-      onPlanUpdate?.(updated, activeType);
+        setPlans((prev) => ({ ...prev, [activeType]: updated }));
+        onPlanUpdate?.(updated, activeType);
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
