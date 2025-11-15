@@ -208,6 +208,7 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
                         </span>
                         <input
                           type="checkbox"
+                          checked={!!day[`${meal}_consumed`]}
                           onChange={() =>
                             handleToggle(day.day, "diet_meal", meal)
                           }
