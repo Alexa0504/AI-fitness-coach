@@ -19,7 +19,10 @@ const HeaderBar: React.FC = () => {
     try {
       const res = await fetch("http://localhost:5000/api/auth/logout", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (res.ok) {
         localStorage.removeItem("authToken");
@@ -56,15 +59,22 @@ const HeaderBar: React.FC = () => {
   );
 };
 
-const DashboardSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
+const DashboardSection: React.FC<{
+  title: string;
+  children: React.ReactNode;
+}> = ({ title, children }) => (
   <motion.section
     initial={{ opacity: 0, y: 25 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.6, ease: "easeOut" }}
     className="p-6 rounded-2xl shadow-2xl border border-base-300 bg-base-100/90 dark:bg-base-200/80 backdrop-blur-md hover:shadow-[0_0_25px_rgba(255,255,255,0.15)] transition-all duration-300"
   >
-    <h2 className="text-2xl font-bold text-base-content mb-4 border-b border-base-300 pb-2 transition-colors duration-300">{title}</h2>
-    <div className="text-base-content transition-colors duration-300">{children}</div>
+    <h2 className="text-2xl font-bold text-base-content mb-4 border-b border-base-300 pb-2 transition-colors duration-300">
+      {title}
+    </h2>
+    <div className="text-base-content transition-colors duration-300">
+      {children}
+    </div>
   </motion.section>
 );
 
@@ -85,7 +95,11 @@ const HomePage: React.FC = () => {
       total = plan.days.length;
       completed = plan.days.filter((d: any) => d.completed).length;
     } else if (type === "diet" && plan.meals) {
-      const allMeals = plan.meals.flatMap((d: any) => [d.breakfast, d.lunch, d.dinner]);
+      const allMeals = plan.meals.flatMap((d: any) => [
+        d.breakfast,
+        d.lunch,
+        d.dinner,
+      ]);
       total = allMeals.length;
       completed = 0;
     }
@@ -93,7 +107,9 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className={`relative min-h-screen ${theme} transition-colors duration-500`}>
+    <div
+      className={`relative min-h-screen ${theme} transition-colors duration-500`}
+    >
       <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-blue-500 dark:from-gray-900 dark:via-gray-800 dark:to-black transition-colors duration-500" />
       <div className="absolute inset-0 bg-black/10 dark:bg-black/50 backdrop-blur-[1px] transition-colors duration-500" />
       <div className="relative z-10">
