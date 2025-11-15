@@ -4,9 +4,6 @@ import random
 from backend.utils.mock_data import get_mock_plan
 
 def get_mock_user_data(current_user_id: int) -> dict:
-    """
-    Temporary helper that returns sample user details for the AI prompt.
-    """
     return {
         "user_id": current_user_id,
         "age": 32,
@@ -20,11 +17,6 @@ def get_mock_user_data(current_user_id: int) -> dict:
     }
 
 def generate_plan(user_data: dict, plan_type: str) -> dict:
-    """
-    Generate a workout or diet plan via Gemini API.
-    Includes retry logic and simplified workout schema for reliability.
-    """
-
     try:
         from google import genai
         from dotenv import load_dotenv
@@ -32,11 +24,8 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
 
         load_dotenv()
         GEMINI_MODEL = "gemini-2.5-flash"
-        client = genai.Client()  # create the Gemini API client
-        print("✅ Gemini client initialized successfully.")
-
+        client = genai.Client()
     except Exception as e:
-        print(f"⚠️  Gemini client initialization failed: {e}")
         client = None
 
     is_workout = plan_type.lower() == "workout"
@@ -51,7 +40,6 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
         "dietary_restrictions": user_data.get("dietary_restrictions", "none"),
     }
 
-    # Simplified schema for workout to reduce Gemini overloads
     if is_workout:
         system_instruction = (
             "You are a certified personal trainer. Generate a realistic 7-day workout plan "
@@ -98,7 +86,6 @@ def generate_plan(user_data: dict, plan_type: str) -> dict:
         }
 
     else:
-        # Keep diet schema the same (since it works fine)
         system_instruction = (
             "You are a professional dietitian. Generate a 7-day diet plan optimized for the user. "
             "Output ONLY a JSON object that matches the schema. No explanations."
@@ -143,7 +130,6 @@ User Data: {json.dumps(prompt_data, indent=2)}
 Generate the {plan_type} plan following the schema. Return only a JSON object.
 """
 
-    # --- Retry logic ---
     max_retries = 3
     for attempt in range(max_retries):
         try:
@@ -164,8 +150,14 @@ Generate the {plan_type} plan following the schema. Return only a JSON object.
             )
 
             plan_content_string = response.text
-            if not plan_content_string:
-                raise ValueError("Empty response from Gemini")
+
+            try:
+                obj = json.loads(plan_content_string)
+                if plan_type.lower() == "workout":
+                    obj["duration_days"] = 7
+                plan_content_string = json.dumps(obj)
+            except:
+                pass
 
             return {"error": None, "plan_content_string": plan_content_string}
 
@@ -173,15 +165,11 @@ Generate the {plan_type} plan following the schema. Return only a JSON object.
             err_str = str(e)
             if "503" in err_str or "UNAVAILABLE" in err_str:
                 wait = 2 ** attempt + random.uniform(0.5, 1.5)
-                print(f"[Retry {attempt+1}/{max_retries}] Gemini overloaded. Retrying in {wait:.1f}s...")
                 time.sleep(wait)
                 continue
             else:
-                print(f"Gemini API error: {e}")
                 break
 
-    # --- Fallback after retries ---
-    print("Gemini failed after retries. Returning mock plan.")
     mock_plan = get_mock_plan(plan_type)
     return {
         "error": "Gemini API temporarily unavailable — mock plan returned.",

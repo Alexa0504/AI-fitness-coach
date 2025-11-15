@@ -14,6 +14,7 @@ from backend.routes.users import users_bp
 
 migrate = Migrate()
 
+
 def create_app(test_config=None):
     app = Flask(__name__)
 
@@ -24,7 +25,14 @@ def create_app(test_config=None):
     else:
         app.config.update(test_config)
 
-    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5173"]}})
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": ["http://localhost:5173"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+            "allow_headers": ["Authorization", "Content-Type"],
+            "supports_credentials": True
+        }
+    })
 
     db.init_app(app)
     migrate.init_app(app, db)

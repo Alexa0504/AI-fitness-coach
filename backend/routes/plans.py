@@ -6,12 +6,12 @@ from backend.utils.auth_decorator import token_required
 from backend.utils.score_utils import calculate_mock_score
 from backend.utils.ai_integration import generate_plan, get_mock_user_data
 from datetime import date
+from sqlalchemy import desc
 
 plans_bp = Blueprint('plans', __name__, url_prefix='/api/plans')
 
 
 def _parse_plan_content_field(content_field):
-    """Parse content saved in DB: can be JSON-string or dict."""
     if content_field is None:
         return None
     if isinstance(content_field, (dict, list)):
@@ -19,15 +19,40 @@ def _parse_plan_content_field(content_field):
     try:
         return json.loads(content_field)
     except Exception:
-        # last-resort: return as-is (string)
         return content_field
 
 
 def _plan_to_response(plan):
-    """Return plan dict for API response with parsed content."""
     p = plan.to_dict()
     p["content"] = _parse_plan_content_field(p.get("content"))
     return p
+
+
+@plans_bp.route('/latest', methods=['GET'])
+@token_required
+def get_latest_plans(current_user):
+    latest_workout_plan = Plan.query.filter_by(
+        user_id=current_user.id,
+        plan_type='workout'
+    ).order_by(desc(Plan.created_at)).first()
+
+    latest_diet_plan = Plan.query.filter(
+        Plan.user_id == current_user.id,
+        Plan.plan_type.in_(['diet'])
+    ).order_by(desc(Plan.created_at)).first()
+
+    plans_list = []
+    if latest_workout_plan:
+        plans_list.append(_plan_to_response(latest_workout_plan))
+    else:
+        plans_list.append(get_mock_plan("workout"))
+
+    if latest_diet_plan:
+        plans_list.append(_plan_to_response(latest_diet_plan))
+    else:
+        plans_list.append(get_mock_plan("diet"))
+
+    return jsonify({"plans": plans_list}), 200
 
 
 @plans_bp.route('/', methods=['GET'])
@@ -66,25 +91,13 @@ def create_plan(current_user):
         except ValueError:
             return jsonify({"message": "Invalid start_date format. Use YYYY-MM-DD."}), 400
     try:
-        user_data = {
-            "user_id": current_user.id,
-            "age": current_user.age,  # make sure you store age in the DB
-            "weight_kg": current_user.weight_kg,
-            "height_cm": current_user.height_cm,
-            "gender": current_user.gender,
-            "goal": current_user.goal,  # target goal
-            "fitness_level": current_user.fitness_level,
-            "weekly_workouts": current_user.weekly_workouts,
-            "dietary_restrictions": current_user.dietary_restrictions,
-        }
+        user_data = get_mock_user_data(current_user.id)
         result = generate_plan(user_data, plan_type)
 
-        # If generator returned no content — try to use mock_plan (generate_plan should fallback).
         if not result.get("plan_content_string"):
             return jsonify({"message": f"Error generating plan via AI: {result.get('error', 'Unknown error')}"}), 500
 
         content_string = result["plan_content_string"]
-        # Ensure stored content is a JSON string
         if isinstance(content_string, (dict, list)):
             content_string = json.dumps(content_string)
 
@@ -108,7 +121,6 @@ def create_plan(current_user):
             status_code = 201
             message = "Plan created successfully"
 
-        # return both plan (single) and all plans so frontend can re-sync both workout & diet tabs
         user_plans = Plan.query.filter_by(user_id=current_user.id).all()
         return jsonify({
             "message": message,
@@ -118,8 +130,7 @@ def create_plan(current_user):
 
     except Exception as e:
         db.session.rollback()
-        import traceback
-        traceback.print_exc()
+        print(f"Error creating plan: {e}")
         return jsonify({"message": "Error creating plan"}), 500
 
 
@@ -165,9 +176,6 @@ def update_plan(plan_id, current_user):
 def toggle_checkbox(plan_id, current_user):
     """
     Toggle checkbox for workout day or diet meal.
-    Request body examples:
-      {"type":"workout_day","day":3,"field":"completed","value":true}
-      {"type":"diet_meal","day":2,"meal":"breakfast","value":true}
     """
     payload = request.get_json() or {}
     plan = Plan.query.filter_by(id=plan_id, user_id=current_user.id).first()
@@ -192,13 +200,13 @@ def toggle_checkbox(plan_id, current_user):
 
         elif t == "diet_meal":
             day = int(payload.get("day"))
-            meal = payload.get("meal")  # breakfast/lunch/dinner
+            meal = payload.get("meal")
             value = bool(payload.get("value", True))
             meals = content.get("meals", [])
             target = next((m for m in meals if int(m.get("day")) == day), None)
             if not target:
                 return jsonify({"message": "Day not found"}), 404
-            key = f"{meal}_consumed"
+            key = f"{meal}_completed"  # Ezt a kulcsot várja a Taskbar a frontendben!
             target[key] = value
 
         else:
