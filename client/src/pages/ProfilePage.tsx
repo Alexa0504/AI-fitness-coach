@@ -9,7 +9,7 @@ export default function ProfilePage() {
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [message, setMessage] = useState<string | null>(null);
+       const [message, setMessage] = useState<string | null>(null);
     const [profile, setProfile] = useState({
         gender: "",
         height_cm: "",
@@ -104,6 +104,16 @@ export default function ProfilePage() {
 
             {/* Scrollable content */}
             <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-10 py-10 overflow-y-auto">
+
+                {/* Back to dashboard button */}
+                <button
+                    onClick={() => navigate("/dashboard")}
+                    className="mb-6 px-4 py-2 inline-flex items-center gap-2 bg-base-200 dark:bg-base-300 text-base-content rounded-lg shadow hover:bg-base-300 dark:hover:bg-base-400 transition"
+                >
+                    <span className="text-xl">←</span>
+                    Back to Dashboard
+                </button>
+
                 {/* Header */}
                 <h1 className="text-4xl font-extrabold text-white drop-shadow-md text-center sm:text-left mb-10">
                     Your Profile
@@ -120,6 +130,7 @@ export default function ProfilePage() {
                 {/* Profile card */}
                 <div
                     className="bg-base-100/90 dark:bg-base-200/80 border border-base-300 dark:border-base-700 rounded-2xl p-6 space-y-4 shadow-lg transition-colors duration-300">
+
                     {/* Gender select */}
                     <div>
                         <label className="block mb-1 font-semibold text-base-content">Gender</label>
@@ -127,7 +138,7 @@ export default function ProfilePage() {
                             name="gender"
                             value={profile.gender}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 rounded-lg bg-base-200 dark:bg-base-300 text-base-content dark:text-base-content focus:outline-none focus:ring-2 focus:ring-primary appearance-none transition-colors duration-300"
+                            className="w-full px-3 py-2 rounded-lg bg-base-200 dark:bg-base-300 text-base-content focus:outline-none focus:ring-2 focus:ring-primary appearance-none transition-colors duration-300"
                         >
                             <option value="" disabled>Select gender</option>
                             <option value="male">Male</option>
@@ -144,7 +155,7 @@ export default function ProfilePage() {
                             value={profile.height_cm}
                             onChange={handleChange}
                             placeholder="e.g. 180"
-                            className="w-full px-3 py-2 rounded-lg bg-base-200 dark:bg-base-300 text-base-content dark:text-base-content placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-300"
+                            className="w-full px-3 py-2 rounded-lg bg-base-200 dark:bg-base-300 text-base-content placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-300"
                         />
                     </div>
 
@@ -157,7 +168,7 @@ export default function ProfilePage() {
                             value={profile.weight_kg}
                             onChange={handleChange}
                             placeholder="e.g. 75"
-                            className="w-full px-3 py-2 rounded-lg bg-base-200 dark:bg-base-300 text-base-content dark:text-base-content placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-300"
+                            className="w-full px-3 py-2 rounded-lg bg-base-200 dark:bg-base-300 text-base-content placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-300"
                         />
                     </div>
 
@@ -170,9 +181,11 @@ export default function ProfilePage() {
                             value={profile.target_weight_kg}
                             onChange={handleChange}
                             placeholder="e.g. 70"
-                            className="w-full px-3 py-2 rounded-lg bg-base-200 dark:bg-base-300 text-base-content dark:text-base-content placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-300"
+                            className="w-full px-3 py-2 rounded-lg bg-base-200 dark:bg-base-300 text-base-content placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary transition-colors duration-300"
                         />
                     </div>
+
+                    {/* Age input */}
                     <div>
                         <label className="block mb-1 font-semibold text-base-content">Age</label>
                         <input
@@ -185,7 +198,6 @@ export default function ProfilePage() {
                         />
                     </div>
 
-
                     {/* Save button */}
                     <button
                         onClick={handleSave}
@@ -196,7 +208,7 @@ export default function ProfilePage() {
                     </button>
                 </div>
 
-                {/* Bottom spacing so the save button is not hidden on mobile */}
+                {/* Bottom spacing */}
                 <div className="h-16 sm:h-24"/>
             </div>
         </div>
