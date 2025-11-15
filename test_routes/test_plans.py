@@ -80,3 +80,25 @@ def test_delete_plan_not_found(client, auth_header):
     response = client.delete('/api/plans/999999', headers=auth_header)
     assert response.status_code == 404
     assert "Plan not found" in response.get_json()["message"]
+
+
+
+def test_create_plan_invalid_start_date(client, auth_header):
+    response = client.post('/api/plans/', json={"plan_type": "workout", "start_date": "2025-99-99"}, headers=auth_header)
+    assert response.status_code == 400
+    assert "Invalid start_date format" in response.get_json()["message"]
+
+def test_update_plan_invalid_start_date(client, auth_header, create_plan):
+    plan_id = create_plan
+    response = client.put(f'/api/plans/{plan_id}', json={"start_date": "abcd"}, headers=auth_header)
+    assert response.status_code == 400
+    assert "Invalid start_date format" in response.get_json()["message"]
+
+def test_update_plan_type_changes_score(client, auth_header, create_plan):
+    plan_id = create_plan
+    old_response = client.get(f'/api/plans/{plan_id}', headers=auth_header)
+    old_score = old_response.get_json()["score"]
+    response = client.put(f'/api/plans/{plan_id}', json={"plan_type": "nutrition"}, headers=auth_header)
+    assert response.status_code == 200
+    new_score = response.get_json()["plan"]["score"]
+    assert new_score != old_score
