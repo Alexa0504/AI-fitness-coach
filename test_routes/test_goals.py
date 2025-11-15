@@ -135,3 +135,64 @@ def test_access_with_invalid_token(client):
     response = client.get('/api/goals/', headers={"Authorization": "Bearer invalidtoken"})
     assert response.status_code == 401
     assert "message" in response.get_json()
+
+# -----------------------
+# WEEKLY GOALS
+# -----------------------
+def test_create_weekly_goal_success(client, auth_header):
+    response = client.post('/api/goals/weekly', json={
+        "goal_name": "Workout 3 times"
+    }, headers=auth_header)
+
+    assert response.status_code == 201
+    data = response.get_json()
+    assert data["message"] == "Weekly goal created"
+    assert data["goal"]["goal_name"] == "Workout 3 times"
+    assert "week_start" in data["goal"]
+
+
+def test_create_weekly_goal_missing_field(client, auth_header):
+    response = client.post('/api/goals/weekly', json={}, headers=auth_header)
+
+    assert response.status_code == 400
+    assert "goal_name is required" in response.get_json()["message"]
+
+
+def test_get_weekly_goals(client, auth_header):
+    # first create
+    client.post('/api/goals/weekly', json={
+        "goal_name": "Run 10km"
+    }, headers=auth_header)
+
+    # then fetch
+    response = client.get('/api/goals/weekly', headers=auth_header)
+
+    assert response.status_code == 200
+    goals = response.get_json()
+    assert isinstance(goals, list)
+    assert any(g["goal_name"] == "Run 10km" for g in goals)
+
+
+def test_toggle_weekly_goal(client, auth_header):
+    # create weekly goal
+    create_resp = client.post('/api/goals/weekly', json={
+        "goal_name": "Drink more water"
+    }, headers=auth_header)
+
+    goal_id = create_resp.get_json()["goal"]["id"]
+
+    # toggle
+    toggle_resp = client.patch(f'/api/goals/weekly/{goal_id}/toggle', headers=auth_header)
+    assert toggle_resp.status_code == 200
+    assert "completed" in toggle_resp.get_json()["message"].lower()
+
+    # toggle again
+    toggle_resp = client.patch(f'/api/goals/weekly/{goal_id}/toggle', headers=auth_header)
+    assert toggle_resp.status_code == 200
+    assert "pending" in toggle_resp.get_json()["message"].lower()
+
+
+def test_toggle_weekly_goal_not_found(client, auth_header):
+    response = client.patch('/api/goals/weekly/9999/toggle', headers=auth_header)
+    assert response.status_code == 404
+    assert response.get_json()["message"] == "Weekly goal not found"

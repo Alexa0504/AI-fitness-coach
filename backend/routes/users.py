@@ -41,6 +41,12 @@ def update_user_profile(current_user):
         if "target_weight_kg" in data and data["target_weight_kg"] is not None:
             current_user.target_weight_kg = float(data["target_weight_kg"])
 
+        if "age" in data and data["age"] is not None:
+            try:
+                current_user.age = int(data["age"])
+            except ValueError:
+                return jsonify({"message": "Age must be a number."}), 400
+
         db.session.commit()
 
         return jsonify({

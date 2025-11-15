@@ -15,6 +15,7 @@ class User(db.Model):
     height_cm = db.Column(db.Float, nullable=True)
     weight_kg = db.Column(db.Float, nullable=True)
     target_weight_kg = db.Column(db.Float, nullable=True)
+    age = db.Column(db.Integer, nullable=True)
 
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
@@ -34,6 +35,7 @@ class User(db.Model):
             "height_cm": self.height_cm,
             "weight_kg": self.weight_kg,
             "target_weight_kg": self.target_weight_kg,
+            "age": self.age
         }
 
 

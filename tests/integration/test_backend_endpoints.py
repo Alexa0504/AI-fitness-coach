@@ -92,3 +92,29 @@ def test_protected_route_requires_token(client):
     response = client.get("/api/goals/")
     assert response.status_code == 401
     assert "Token is missing" in response.get_json()["message"]
+
+def test_create_get_toggle_weekly_goal(client, auth_header):
+    # CREATE
+    response = client.post("/api/goals/weekly", headers=auth_header, json={"goal_name": "3x workout"})
+    assert response.status_code == 201
+    goal = response.get_json()["goal"]
+    goal_id = goal["id"]
+
+    # GET
+    response = client.get("/api/goals/weekly", headers=auth_header)
+    assert response.status_code == 200
+    assert any(g["id"] == goal_id for g in response.get_json())
+
+    # TOGGLE
+    response = client.patch(f"/api/goals/weekly/{goal_id}/toggle", headers=auth_header)
+    assert response.status_code == 200
+    toggled_goal = response.get_json()["goal"]
+    assert toggled_goal["is_completed"] is True
+
+    # TOGGLE BACK
+    response = client.patch(f"/api/goals/weekly/{goal_id}/toggle", headers=auth_header)
+    assert response.status_code == 200
+    toggled_goal = response.get_json()["goal"]
+    assert toggled_goal["is_completed"] is False
+
+

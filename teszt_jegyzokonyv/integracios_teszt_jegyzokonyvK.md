@@ -26,6 +26,7 @@ A tesztek valós HTTP kéréseket szimulálnak a Flask `test_client()` használa
 | IT03 | test_create_get_update_delete_goal | Goal CRUD műveletek | Minden lépés megfelelő státuszkóddal fut | CRUD folyamat hibamentes | Sikeres |
 | IT04 | test_create_get_update_delete_plan | Plan CRUD műveletek | Minden lépés megfelelő státuszkóddal fut | CRUD folyamat hibamentes | Sikeres |
 | IT05 | test_protected_route_requires_token | Token nélküli elérés | 401: „Token is missing” | 401 hibaüzenet visszaadva | Sikeres |
+| IT06 | test_create_get_toggle_weekly_goal | Weekly goal létrehozás és toggle | Goal létrejön, toggle változtatja az `is_completed` státuszt | Goal létrejött, toggle működik | Sikeres |
 
 ---
 
