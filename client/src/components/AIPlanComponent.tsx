@@ -36,7 +36,7 @@ export interface Plan {
     days?: Day[];
     meals?: MealDay[];
     note?: string;
-    progress?: number;
+    progress?: number; // <--- hozzáadva, hogy a progress is tárolódjon
 }
 
 interface ApiPlanResponse {
@@ -59,7 +59,6 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
     const [error, setError] = useState<string | null>(null);
     const token = localStorage.getItem("authToken");
 
-
     const calculateProgress = (plan: Plan): number => {
         if (plan.plan_type === "workout" && plan.days) {
             const total = plan.days.length;
@@ -78,7 +77,6 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
         return 0;
     };
 
-
     useEffect(() => {
         const fetchLatestPlans = async () => {
             if (!token) return;
@@ -90,11 +88,12 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
                 const loadedPlans: { workout?: Plan; diet?: Plan } = {};
                 data.plans?.forEach((p) => {
                     const parsed = typeof p.content === "string" ? JSON.parse(p.content) : p.content;
-                    const fullPlan: Plan = { ...p, ...parsed, progress: 0 };
+                    const fullPlan: Plan = { ...p, ...parsed };
+
+                    // KULCS: progress kiszámolása itt, betöltéskor
                     fullPlan.progress = calculateProgress(fullPlan);
 
-                    if (p.plan_type === "workout") loadedPlans.workout = fullPlan;
-                    else if (p.plan_type === "diet") loadedPlans.diet = fullPlan;
+                    loadedPlans[p.plan_type] = fullPlan;
                 });
 
                 setPlans(loadedPlans);
@@ -135,8 +134,7 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
         }
     };
 
-
-    const handleToggle = (day: number, meal?: "breakfast" | "lunch" | "dinner") => {
+    const handleToggle = async (day: number, meal?: "breakfast" | "lunch" | "dinner") => {
         const plan = plans[activeType];
         if (!plan) return;
 
@@ -155,10 +153,32 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
         updatedPlan.progress = calculateProgress(updatedPlan);
 
         setPlans((prev) => ({ ...prev, [activeType]: updatedPlan }));
-
         onPlanUpdate?.(updatedPlan, activeType);
-    };
 
+        const newValue =
+            activeType === "workout"
+                ? !plan.days?.find((d) => d.day === day)?.completed
+                : !plan.meals?.find((m) => m.day === day)?.[`${meal}_completed` as keyof MealDay];
+
+        try {
+            await fetch(`${API_URL}${plan.id}/toggle`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    type: activeType === "workout" ? "workout_day" : "diet_meal",
+                    day,
+                    meal,
+                    value: newValue,
+                    field: activeType === "workout" ? "completed" : undefined,
+                }),
+            });
+        } catch (e) {
+            console.error("Failed to persist toggle", e);
+        }
+    };
 
     const defaultPlans = {
         workout: {
@@ -192,10 +212,10 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
     };
 
     const plan: Plan = plans[activeType] || defaultPlans[activeType];
+    const currentProgress = plan.progress ?? 0;
 
     return (
         <div className="space-y-6">
-
             {error && (
                 <div className="p-3 rounded-lg bg-red-500/20 text-red-300 border border-red-500/40">
                     {error}
@@ -217,27 +237,37 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
                 </button>
             </div>
 
-            {}
-
             <div className="bg-base-200/70 p-4 rounded-xl border border-base-300 shadow-md text-base-content space-y-4">
                 <h3 className="text-xl font-bold">{plan.plan_name}</h3>
                 <p className="text-sm opacity-80">Duration: {plan.duration_days} days</p>
+
+                {/* Progress Bar */}
+                <div className="progress w-full">
+                    <div className="progress-bar" style={{ width: `${currentProgress}%` }}></div>
+                </div>
 
                 {activeType === "workout" && plan.days && (
                     <div className="space-y-3">
                         {plan.days.map((day, idx) => (
                             <div key={idx} className="p-3 rounded-lg bg-base-300/60 border border-base-300">
                                 <div className="flex items-center justify-between">
-                                    <h4 className="font-semibold">Day {day.day}: {day.title}</h4>
+                                    <h4 className="font-semibold">
+                                        Day {day.day}: {day.title}
+                                    </h4>
                                     <label className="flex items-center gap-2">
-                                        <input type="checkbox" checked={day.completed} onChange={() => handleToggle(day.day)} />
+                                        <input
+                                            type="checkbox"
+                                            checked={day.completed}
+                                            onChange={() => handleToggle(day.day)}
+                                        />
                                         Done
                                     </label>
                                 </div>
                                 <ul className="mt-2 space-y-1 text-sm">
                                     {day.exercises?.map((ex, i) => (
                                         <li key={i}>
-                                            {ex.name} — {ex.sets || ""}x{ex.reps || ""} {ex.duration_min && `(${ex.duration_min} min)`}
+                                            {ex.name} — {ex.sets || ""}x{ex.reps || ""}{" "}
+                                            {ex.duration_min && `(${ex.duration_min} min)`}
                                         </li>
                                     ))}
                                 </ul>
@@ -254,9 +284,13 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
                                 <div className="mt-1 text-sm space-y-1">
                                     {(["breakfast", "lunch", "dinner"] as const).map((meal) => (
                                         <label key={meal} className="flex items-center justify-between">
-                      <span>
-                        🍽️ <span className="font-medium">{meal.charAt(0).toUpperCase() + meal.slice(1)}:</span> {day[meal]}
-                      </span>
+                                            <span>
+                                                🍽️{" "}
+                                                <span className="font-medium">
+                                                    {meal.charAt(0).toUpperCase() + meal.slice(1)}:
+                                                </span>{" "}
+                                                {day[meal]}
+                                            </span>
                                             <input
                                                 type="checkbox"
                                                 checked={day[`${meal}_completed`]}

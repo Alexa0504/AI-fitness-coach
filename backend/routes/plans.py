@@ -86,7 +86,6 @@ def create_plan(current_user):
     plan_start_date = None
     if start_date_str:
         try:
-
             plan_start_date = date.fromisoformat(start_date_str)
         except ValueError:
             return jsonify({"message": "Invalid start_date format. Use YYYY-MM-DD."}), 400
@@ -100,6 +99,15 @@ def create_plan(current_user):
         content_string = result["plan_content_string"]
         if isinstance(content_string, (dict, list)):
             content_string = json.dumps(content_string)
+
+        # ✅ Reset completed flags for diet plan
+        if plan_type == "diet":
+            content_dict = json.loads(content_string)
+            for meal_day in content_dict.get("meals", []):
+                meal_day["breakfast_completed"] = False
+                meal_day["lunch_completed"] = False
+                meal_day["dinner_completed"] = False
+            content_string = json.dumps(content_dict)
 
         score = calculate_mock_score(plan_type)
 

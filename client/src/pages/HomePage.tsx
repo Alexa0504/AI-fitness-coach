@@ -8,8 +8,6 @@ import GoalsCard from "../components/GoalsComponent.tsx";
 import Taskbar from "../components/Taskbar.tsx";
 import { motion } from "framer-motion";
 
-
-
 const ProgressIndicator: React.FC<{ title: string; progress: number }> = ({ title, progress }) => {
     return (
         <div className="w-full">
@@ -44,7 +42,6 @@ const HeaderBar: React.FC = () => {
                 navigate("/login");
             }
         } catch (error) {
-
             console.error("Logout error:", error);
         }
     };
@@ -76,10 +73,7 @@ const HeaderBar: React.FC = () => {
     );
 };
 
-const DashboardSection: React.FC<{
-    title: string;
-    children: React.ReactNode;
-}> = ({ title, children }) => (
+const DashboardSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <motion.section
         initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
@@ -89,9 +83,7 @@ const DashboardSection: React.FC<{
         <h2 className="text-2xl font-bold text-base-content mb-4 border-b border-base-300 pb-2 transition-colors duration-300">
             {title}
         </h2>
-        <div className="text-base-content transition-colors duration-300">
-            {children}
-        </div>
+        <div className="text-base-content transition-colors duration-300">{children}</div>
     </motion.section>
 );
 
@@ -103,40 +95,64 @@ const Footer: React.FC = () => (
 
 const HomePage: React.FC = () => {
     const { theme } = useTheme();
-
-
     const [workoutProgress, setWorkoutProgress] = useState(0);
     const [dietProgress, setDietProgress] = useState(0);
     const [overallPerformance, setOverallPerformance] = useState(0);
 
-
     const hasProgress = workoutProgress > 0 || dietProgress > 0 || overallPerformance > 0;
 
-    useEffect(() => {
 
-        const fetchPerformance = async () => {
+    useEffect(() => {
+        const token = localStorage.getItem("authToken");
+        if (!token) return;
+
+        const fetchLatestPlans = async () => {
             try {
-                const res = await fetch("http://localhost:5000/user/stats", {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-                    },
+                const res = await fetch("http://localhost:5000/api/plans/latest", {
+                    headers: { Authorization: `Bearer ${token}` },
                 });
-                if (!res.ok) throw new Error("Failed to fetch stats");
+                if (!res.ok) throw new Error("Failed to fetch plans");
                 const data = await res.json();
 
-                setOverallPerformance(data.performance_percentage || 0);
+                const workoutPlan = data.plans.find((p: Plan) => p.plan_type === "workout");
+                const dietPlan = data.plans.find((p: Plan) => p.plan_type === "diet");
+
+                const calculateProgress = (plan: Plan | undefined) => {
+                    if (!plan) return 0;
+                    if (plan.plan_type === "workout" && plan.days) {
+                        const total = plan.days.length;
+                        const completed = plan.days.filter((d: Day) => d.completed).length;
+                        return total ? Math.round((completed / total) * 100) : 0;
+                    } else if (plan.plan_type === "diet" && plan.meals) {
+                        const total = plan.meals.length * 3;
+                        let completed = 0;
+                        plan.meals.forEach((m: MealDay) => {
+                            if (m.breakfast_completed) completed++;
+                            if (m.lunch_completed) completed++;
+                            if (m.dinner_completed) completed++;
+                        });
+                        return total ? Math.round((completed / total) * 100) : 0;
+                    }
+                    return 0;
+                };
+
+                const wp = calculateProgress(workoutPlan);
+                const dp = calculateProgress(dietPlan);
+                setWorkoutProgress(wp);
+                setDietProgress(dp);
+                setOverallPerformance(Math.round((wp + dp) / 2));
             } catch (err) {
-                console.error("Error fetching performance stats:", err);
+                console.error("Error fetching latest plans:", err);
             }
         };
-        fetchPerformance();
+
+        fetchLatestPlans();
     }, []);
 
 
     const handlePlanUpdate = (plan: Plan, type: "workout" | "diet") => {
         let total = 0;
         let completed = 0;
-
 
         if (type === "workout" && plan.days) {
             total = plan.days.length;
@@ -154,27 +170,16 @@ const HomePage: React.FC = () => {
 
         const calculatedProgress = total > 0 ? Math.round((completed / total) * 100) : 0;
 
+        if (type === "workout") setWorkoutProgress(calculatedProgress);
+        if (type === "diet") setDietProgress(calculatedProgress);
 
-        let wp = workoutProgress;
-        let dp = dietProgress;
-
-        if (type === "workout") {
-            setWorkoutProgress(calculatedProgress);
-            wp = calculatedProgress;
-        } else if (type === "diet") {
-            setDietProgress(calculatedProgress);
-            dp = calculatedProgress;
-        }
-
-
-        const newOverall = Math.round((wp + dp) / 2);
-        setOverallPerformance(newOverall);
+        const wp = type === "workout" ? calculatedProgress : workoutProgress;
+        const dp = type === "diet" ? calculatedProgress : dietProgress;
+        setOverallPerformance(Math.round((wp + dp) / 2));
     };
 
     return (
-        <div
-            className={`relative min-h-screen ${theme} transition-colors duration-500`}
-        >
+        <div className={`relative min-h-screen ${theme} transition-colors duration-500`}>
             <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-blue-500 dark:from-gray-900 dark:via-gray-800 dark:to-black transition-colors duration-500" />
             <div className="absolute inset-0 bg-black/10 dark:bg-black/50 backdrop-blur-[1px] transition-colors duration-500" />
             <div className="relative z-10">
@@ -192,18 +197,17 @@ const HomePage: React.FC = () => {
                         <div className="lg:col-span-2 space-y-8">
                             <DashboardSection title="Your Goals and Progress">
                                 <GoalsCard />
-
                                 <div className="mt-6 pt-6 border-t border-base-300">
-                                    {}
                                     {!hasProgress ? (
-
                                         <div className="text-center py-4 text-base-content/60 italic">
                                             No Plan Progress Yet. Start your workout or log a meal to see your progress!
                                         </div>
                                     ) : (
-
                                         <div className="space-y-4">
-                                            <ProgressIndicator title="Workout Plan Progress" progress={workoutProgress} />
+                                            <ProgressIndicator
+                                                title="Workout Plan Progress"
+                                                progress={workoutProgress}
+                                            />
                                             <ProgressIndicator title="Diet Plan Progress" progress={dietProgress} />
                                             <ProgressIndicator
                                                 title="Overall Combined Progress"
