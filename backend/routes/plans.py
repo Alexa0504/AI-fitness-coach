@@ -100,7 +100,7 @@ def create_plan(current_user):
         if isinstance(content_string, (dict, list)):
             content_string = json.dumps(content_string)
 
-        # ✅ Reset completed flags for diet plan
+       
         if plan_type == "diet":
             content_dict = json.loads(content_string)
             for meal_day in content_dict.get("meals", []):
@@ -182,9 +182,6 @@ def update_plan(plan_id, current_user):
 @plans_bp.route('/<int:plan_id>/toggle', methods=['PATCH'])
 @token_required
 def toggle_checkbox(plan_id, current_user):
-    """
-    Toggle checkbox for workout day or diet meal.
-    """
     payload = request.get_json() or {}
     plan = Plan.query.filter_by(id=plan_id, user_id=current_user.id).first()
     if not plan:
@@ -199,23 +196,22 @@ def toggle_checkbox(plan_id, current_user):
         if t == "workout_day":
             day = int(payload.get("day"))
             field = payload.get("field", "completed")
-            value = bool(payload.get("value", True))
             days = content.get("days", [])
             target = next((d for d in days if int(d.get("day")) == day), None)
             if not target:
                 return jsonify({"message": "Day not found"}), 404
-            target[field] = value
+
+            target[field] = True
 
         elif t == "diet_meal":
             day = int(payload.get("day"))
             meal = payload.get("meal")
-            value = bool(payload.get("value", True))
             meals = content.get("meals", [])
             target = next((m for m in meals if int(m.get("day")) == day), None)
             if not target:
                 return jsonify({"message": "Day not found"}), 404
             key = f"{meal}_completed"
-            target[key] = value
+            target[key] = True
 
         else:
             return jsonify({"message": "Unsupported toggle type"}), 400
