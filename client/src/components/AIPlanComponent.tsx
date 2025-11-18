@@ -10,14 +10,14 @@ interface Exercise {
     duration_min?: number;
 }
 
-interface Day {
+export interface Day {
     day: number;
     title?: string;
     exercises?: Exercise[];
     completed: boolean;
 }
 
-interface MealDay {
+export interface MealDay {
     day: number;
     breakfast: string;
     lunch: string;
@@ -28,7 +28,7 @@ interface MealDay {
     dinner_completed: boolean;
 }
 
-interface Plan {
+export interface Plan {
     id?: number;
     plan_name: string;
     plan_type: "workout" | "diet";
@@ -59,14 +59,14 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
     const [error, setError] = useState<string | null>(null);
     const token = localStorage.getItem("authToken");
 
-    // Progress számítása (csak frissítéskor)
+
     const calculateProgress = (plan: Plan): number => {
         if (plan.plan_type === "workout" && plan.days) {
             const total = plan.days.length;
             const completed = plan.days.filter((d) => d.completed).length;
             return total ? Math.round((completed / total) * 100) : 0;
         } else if (plan.plan_type === "diet" && plan.meals) {
-            const total = plan.meals.length * 3;
+            const total = plan.meals.length * 3; // breakfast/lunch/dinner
             let completed = 0;
             plan.meals.forEach((m) => {
                 if (m.breakfast_completed) completed++;
@@ -78,7 +78,7 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
         return 0;
     };
 
-    // Legutóbbi tervek betöltése
+
     useEffect(() => {
         const fetchLatestPlans = async () => {
             if (!token) return;
@@ -105,7 +105,7 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
         fetchLatestPlans();
     }, [token]);
 
-    // Új terv generálása
+
     const handleGenerateNewPlan = async () => {
         if (!token) {
             setError("Please log in first.");
@@ -135,7 +135,7 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
         }
     };
 
-    // Checkbox toggle
+
     const handleToggle = (day: number, meal?: "breakfast" | "lunch" | "dinner") => {
         const plan = plans[activeType];
         if (!plan) return;
@@ -153,11 +153,13 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
         }
 
         updatedPlan.progress = calculateProgress(updatedPlan);
+
         setPlans((prev) => ({ ...prev, [activeType]: updatedPlan }));
+
         onPlanUpdate?.(updatedPlan, activeType);
     };
 
-    // Alapértelmezett terv
+
     const defaultPlans = {
         workout: {
             plan_name: "7-Day Beginner Workout Plan",
@@ -193,7 +195,12 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
 
     return (
         <div className="space-y-6">
-            {error && <div className="p-3 rounded-lg bg-red-500/20 text-red-300 border border-red-500/40">{error}</div>}
+
+            {error && (
+                <div className="p-3 rounded-lg bg-red-500/20 text-red-300 border border-red-500/40">
+                    {error}
+                </div>
+            )}
 
             <div className="flex gap-3">
                 <button
@@ -210,22 +217,18 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate }) => {
                 </button>
             </div>
 
+            {}
+
             <div className="bg-base-200/70 p-4 rounded-xl border border-base-300 shadow-md text-base-content space-y-4">
                 <h3 className="text-xl font-bold">{plan.plan_name}</h3>
                 <p className="text-sm opacity-80">Duration: {plan.duration_days} days</p>
-                <div className="mb-2">
-                    <span className="text-sm font-medium">Progress: </span>
-                    <span>{plan.progress}%</span>
-                </div>
 
                 {activeType === "workout" && plan.days && (
                     <div className="space-y-3">
                         {plan.days.map((day, idx) => (
                             <div key={idx} className="p-3 rounded-lg bg-base-300/60 border border-base-300">
                                 <div className="flex items-center justify-between">
-                                    <h4 className="font-semibold">
-                                        Day {day.day}: {day.title}
-                                    </h4>
+                                    <h4 className="font-semibold">Day {day.day}: {day.title}</h4>
                                     <label className="flex items-center gap-2">
                                         <input type="checkbox" checked={day.completed} onChange={() => handleToggle(day.day)} />
                                         Done

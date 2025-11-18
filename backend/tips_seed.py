@@ -1,4 +1,4 @@
-from backend.models import db, Tip
+from .models import db, Tip
 from backend.app import create_app
 
 tips = [

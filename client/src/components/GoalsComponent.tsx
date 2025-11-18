@@ -111,9 +111,8 @@ const GoalsComponent: React.FC = () => {
                 toggleDay={toggleWeeklyGoal}
             />
 
-            {!loading && longGoals.length === 0 && weeklyGoals.length === 0 && !error && (
-                <div className="text-center text-base-content/70">You don’t have any goals yet.</div>
-            )}
+            {}
+            {}
         </div>
     );
 };

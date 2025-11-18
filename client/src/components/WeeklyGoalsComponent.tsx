@@ -24,7 +24,8 @@ interface WeeklyGoalsProps {
 }
 
 const WeeklyGoals: React.FC<WeeklyGoalsProps> = ({ goals, toggleDay }) => {
-  if (!goals.length) return <div>No weekly goals yet.</div>;
+
+    if (!goals.length) return null;
 
     return (
         <div className="space-y-4">
