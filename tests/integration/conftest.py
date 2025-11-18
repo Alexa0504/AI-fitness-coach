@@ -44,3 +44,22 @@ def seeded_user(app):
 def auth_header(seeded_user):
     token = generate_auth_token(str(seeded_user))
     return {"Authorization": f"Bearer {token}"}
+
+from backend.models import Tip
+
+@pytest.fixture
+def seed_tips(app):
+    """Seed sample tips for /stats/tips endpoint tests"""
+    with app.app_context():
+        tips = [
+            Tip(category="general", text="Drink 8 glasses of water daily."),
+            Tip(category="general", text="Eat more vegetables"),
+            Tip(category="workout", text="Do 10 pushups"),
+            Tip(category="workout", text="Stretch daily"),
+            Tip(category="sleep", text="Sleep 8 hours")
+        ]
+        db.session.add_all(tips)
+        db.session.commit()
+        yield tips
+        db.session.query(Tip).delete()
+        db.session.commit()

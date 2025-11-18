@@ -11,6 +11,8 @@ from backend.routes.auth import auth_bp
 from backend.routes.plans import plans_bp
 from backend.routes.goals import goals_bp
 from backend.routes.users import users_bp
+from backend.routes.tips import tips_bp
+from backend.routes.stats import stats_bp
 
 migrate = Migrate()
 
@@ -31,6 +33,12 @@ def create_app(test_config=None):
             "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
             "allow_headers": ["Authorization", "Content-Type"],
             "supports_credentials": True
+        },
+        r"/tips/*": {
+            "origins": ["http://localhost:5173"],
+            "methods": ["GET", "OPTIONS"],
+            "allow_headers": ["Content-Type"],
+            "supports_credentials": True
         }
     })
 
@@ -41,6 +49,8 @@ def create_app(test_config=None):
     app.register_blueprint(plans_bp)
     app.register_blueprint(goals_bp)
     app.register_blueprint(users_bp)
+    app.register_blueprint(tips_bp)
+    app.register_blueprint(stats_bp)
 
     @app.route("/")
     def index():
