@@ -32,11 +32,17 @@ const HeaderBar: React.FC = () => {
     } catch {}
   };
   return (
-    <header className="sticky top-0 z-20 w-full bg-base-100/70 dark:bg-base-300/50 backdrop-blur-lg shadow-md border-b border-base-300 transition-colors duration-300">
+    <header
+      className="sticky top-0 z-20 w-full bg-base-100/70 dark:bg-base-300/50 backdrop-blur-lg
+     shadow-md border-b border-base-300 transition-colors duration-300"
+    >
            {" "}
       <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center px-4 sm:px-6 py-3 gap-3">
                {" "}
-        <h1 className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-purple-500 to-pink-400 bg-clip-text text-transparent drop-shadow-md dark:from-purple-300 dark:to-pink-200 transition-colors duration-300">
+        <h1
+          className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-purple-500 to-pink-400 bg-clip-text 
+        text-transparent drop-shadow-md dark:from-purple-300 dark:to-pink-200 transition-colors duration-300"
+        >
                     AI Fitness Coach        {" "}
         </h1>
                {" "}

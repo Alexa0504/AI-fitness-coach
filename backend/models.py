@@ -22,6 +22,7 @@ class User(db.Model):
     plans = db.relationship("Plan", backref="user", lazy=True)
     goals = db.relationship("Goal", backref="user", lazy=True)
     user_goals = db.relationship("UserGoal", backref="user", lazy=True)
+
     def __repr__(self):
         return f"<User {self.username}>"
 
@@ -69,8 +70,6 @@ class Goal(db.Model):
     unit = db.Column(db.String(20), nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-
-
     def __repr__(self):
         return f"<Goal {self.goal_type} for User {self.user_id}>"
 
@@ -95,8 +94,6 @@ class Plan(db.Model):
     score = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-
-
     def __repr__(self):
         return f"<Plan {self.plan_type} for User {self.user_id}>"
 
@@ -111,11 +108,29 @@ class Plan(db.Model):
             "created_at": self.created_at.isoformat(),
         }
 
-class TokenBlacklist(db.Model):
-     __tablename__ = "token_blacklist"
-     id = db.Column(db.Integer, primary_key=True)
-     token = db.Column(db.String(500), unique=True, nullable=False)
-     blacklisted_on = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-     def __repr__(self):
+class TokenBlacklist(db.Model):
+    __tablename__ = "token_blacklist"
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(500), unique=True, nullable=False)
+    blacklisted_on = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def __repr__(self):
         return f"<TokenBlacklist {self.token}>"
+
+
+class Tip(db.Model):
+    __tablename__ = "tips"
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(50), nullable=False)
+    text = db.Column(db.Text, nullable=False)
+
+    def __repr__(self):
+        return f"<Tip {self.text[:20]}>"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "category": self.category,
+            "text": self.text
+        }

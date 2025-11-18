@@ -63,7 +63,6 @@ def test_token_generation_and_decoding_success():
     assert isinstance(token, str)
     assert token != ""
 
-    # Check decoding
     decoded_user_id = security_utils.decode_auth_token(token)
 
     assert decoded_user_id == user_id

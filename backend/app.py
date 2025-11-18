@@ -11,6 +11,7 @@ from backend.routes.auth import auth_bp
 from backend.routes.plans import plans_bp
 from backend.routes.goals import goals_bp
 from backend.routes.users import users_bp
+from backend.routes.tips import tips_bp
 
 migrate = Migrate()
 
@@ -41,6 +42,7 @@ def create_app(test_config=None):
     app.register_blueprint(plans_bp)
     app.register_blueprint(goals_bp)
     app.register_blueprint(users_bp)
+    app.register_blueprint(tips_bp)
 
     @app.route("/")
     def index():

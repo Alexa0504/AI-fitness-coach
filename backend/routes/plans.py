@@ -206,7 +206,7 @@ def toggle_checkbox(plan_id, current_user):
             target = next((m for m in meals if int(m.get("day")) == day), None)
             if not target:
                 return jsonify({"message": "Day not found"}), 404
-            key = f"{meal}_completed"  # Ezt a kulcsot várja a Taskbar a frontendben!
+            key = f"{meal}_completed"
             target[key] = value
 
         else:
