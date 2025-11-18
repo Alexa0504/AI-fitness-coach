@@ -24,7 +24,7 @@ interface WeeklyGoalsProps {
 }
 
 const WeeklyGoals: React.FC<WeeklyGoalsProps> = ({ goals, toggleDay }) => {
-    if (!goals.length) return <div>No weekly goals yet.</div>;
+  if (!goals.length) return <div>No weekly goals yet.</div>;
 
     return (
         <div className="space-y-4">
@@ -49,7 +49,7 @@ const WeeklyGoals: React.FC<WeeklyGoalsProps> = ({ goals, toggleDay }) => {
                         />
                     </div>
                     <div className="grid grid-cols-7 gap-2">
-                        {(["mon","tue","wed","thu","fri","sat","sun"] as const).map((day) => (
+                        {(["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const).map((day) => (
                             <label key={day} className="flex flex-col items-center">
                                 <input
                                     type="checkbox"
