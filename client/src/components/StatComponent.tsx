@@ -47,21 +47,22 @@ const NextGoalsTips: React.FC = () => {
   );
 };
 
-const GamificationCard: React.FC = () => {
+interface GamificationCardProps {
+  performance: number;
+}
+
+const GamificationCard: React.FC<GamificationCardProps> = ({ performance }) => {
   return (
     <div className="flex flex-col space-y-4">
-      <div
-        className="p-4 bg-yellow-100 dark:bg-yellow-900/50 border border-yellow-300
-                 dark:border-yellow-700 rounded-xl text-center shadow-lg transition duration-300 hover:shadow-xl"
-      >
+      <div className="p-4 bg-yellow-100 dark:bg-yellow-900/50 border border-yellow-300 dark:border-yellow-700 rounded-xl text-center shadow-lg transition duration-300 hover:shadow-xl">
         <span className="text-5xl" role="img" aria-label="Star">
           ⭐
         </span>
         <p className="text-xl font-bold text-yellow-800 dark:text-yellow-300 mt-2">
-          Performance: 85%
+          Performance: {performance}%
         </p>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          You have achieved 85% of your weekly goals!
+          You have achieved {performance}% of your weekly goals!
         </p>
       </div>
 
