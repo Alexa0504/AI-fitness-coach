@@ -32,6 +32,12 @@ def create_app(test_config=None):
             "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
             "allow_headers": ["Authorization", "Content-Type"],
             "supports_credentials": True
+        },
+        r"/tips/*": {
+            "origins": ["http://localhost:5173"],
+            "methods": ["GET", "OPTIONS"],
+            "allow_headers": ["Content-Type"],
+            "supports_credentials": True
         }
     })
 

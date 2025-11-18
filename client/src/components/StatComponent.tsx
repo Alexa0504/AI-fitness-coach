@@ -1,4 +1,51 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+
+interface Tip {
+  id: number;
+  category: string;
+  text: string;
+}
+
+const NextGoalsTips: React.FC = () => {
+  const [tips, setTips] = useState<Tip[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchTips = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/tips/general/weekly");
+        if (!res.ok) throw new Error("Failed to fetch tips.");
+        const data: Tip[] = await res.json();
+        setTips(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTips();
+  }, []);
+
+  if (loading) return <p>Loading tips...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+
+  return (
+    <ul className="space-y-3">
+      {tips.map((tip) => (
+        <li
+          key={tip.id}
+          className="flex items-center p-3 bg-gray-50 dark:bg-gray-800/60 rounded-lg"
+        >
+          <span className="w-3 h-3 mr-3 bg-purple-500 rounded-full flex-shrink-0"></span>
+          <span className="font-medium text-gray-900 dark:text-gray-100">
+            {tip.text}
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+};
 
 const GamificationCard: React.FC = () => {
   return (
@@ -31,46 +78,10 @@ const GamificationCard: React.FC = () => {
       </div>
 
       <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-        <h3
-          className="text-2xl font-bold text-base-content mb-4 border-b border-gray-200
-                 dark:border-gray-700 pb-2 transition-colors duration-300"
-        >
+        <h3 className="text-2xl font-bold text-base-content mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
           Next Goals
         </h3>
-        <ul className="space-y-3">
-          <li
-            className="flex items-center p-3 bg-gray-50 dark:bg-gray-800/60 rounded-lg 
-                    transition-colors duration-300"
-          >
-            <span className="w-3 h-3 mr-3 bg-purple-500 rounded-full flex-shrink-0"></span>
-            <span className="font-medium text-gray-900 dark:text-gray-100">
-              Running:
-            </span>
-            <span className="ml-1 text-gray-800 dark:text-gray-200">
-              Complete 10 km (0/1)
-            </span>
-          </li>
-
-          <li className="flex items-center p-3 bg-gray-50 dark:bg-gray-800/60 rounded-lg transition-colors duration-300">
-            <span className="w-3 h-3 mr-3 bg-purple-500 rounded-full flex-shrink-0"></span>
-            <span className="font-medium text-gray-900 dark:text-gray-100">
-              Water Intake:
-            </span>
-            <span className="ml-1 text-gray-800 dark:text-gray-200">
-              Drink 2L water (3/7 days)
-            </span>
-          </li>
-
-          <li className="flex items-center p-3 bg-gray-50 dark:bg-gray-800/60 rounded-lg transition-colors duration-300">
-            <span className="w-3 h-3 mr-3 bg-purple-500 rounded-full flex-shrink-0"></span>
-            <span className="font-medium text-gray-900 dark:text-gray-100">
-              Rest:
-            </span>
-            <span className="ml-1 text-gray-800 dark:text-gray-200">
-              Sleep 8 hours (6/7 days)
-            </span>
-          </li>
-        </ul>
+        <NextGoalsTips />
       </div>
     </div>
   );
