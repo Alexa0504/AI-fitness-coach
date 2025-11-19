@@ -11,6 +11,14 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
 
+    xp = db.Column(db.Integer, default=0, nullable=False)
+    level = db.Column(db.Integer, default=1, nullable=False)
+    try:
+        progress_saved_state = db.Column(JSONB, default=dict)
+    except Exception:
+        progress_saved_state = db.Column(db.Text, default="{}")
+    last_progress_update = db.Column(db.DateTime, nullable=True)
+
     gender = db.Column(db.String(10), nullable=True)
     height_cm = db.Column(db.Float, nullable=True)
     weight_kg = db.Column(db.Float, nullable=True)
@@ -23,6 +31,22 @@ class User(db.Model):
     goals = db.relationship("Goal", backref="user", lazy=True)
     user_goals = db.relationship("UserGoal", backref="user", lazy=True)
 
+    def get_progress_state(self):
+        if isinstance(self.progress_saved_state, str):
+            import json
+            try:
+                return json.loads(self.progress_saved_state)
+            except Exception:
+                return {}
+        return self.progress_saved_state or {}
+
+    def set_progress_state(self, obj):
+        if isinstance(self.progress_saved_state, str):
+            import json
+            self.progress_saved_state = json.dumps(obj)
+        else:
+            self.progress_saved_state = obj
+
     def __repr__(self):
         return f"<User {self.username}>"
 
@@ -31,6 +55,10 @@ class User(db.Model):
             "id": self.id,
             "username": self.username,
             "email": self.email,
+            "xp": self.xp,
+            "level": self.level,
+            "progress_saved_state": self.get_progress_state(),
+            "last_progress_update": self.last_progress_update.isoformat() if self.last_progress_update else None,
             "created_at": self.created_at.isoformat(),
             "gender": self.gender,
             "height_cm": self.height_cm,
