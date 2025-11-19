@@ -68,14 +68,14 @@ def progress_route_logic(
         return {"message": "Error saving progress", "error": str(e)}, 500
 
 
-def test_1_logic_updates_user_state(mock_user, mock_db, mock_datetime_now):
+def test_logic_updates_user_state(mock_user, mock_db, mock_datetime_now):
     """Test 1: Ensures the user's setter method is called with the input data."""
     test_data = {"steps": 8500, "distance_km": 6.2}
     progress_route_logic(mock_user, test_data, mock_db, mock_datetime_now)
     mock_user.set_progress_state.assert_called_once_with(test_data)
 
 
-def test_2_logic_commits_on_success(mock_user, mock_db, mock_datetime_now):
+def test_logic_commits_on_success(mock_user, mock_db, mock_datetime_now):
     """Test 2: Ensures the database commit is called after successful operation."""
     test_data = {"calories": 500}
     progress_route_logic(mock_user, test_data, mock_db, mock_datetime_now)
@@ -83,33 +83,33 @@ def test_2_logic_commits_on_success(mock_user, mock_db, mock_datetime_now):
     mock_db.session.rollback.assert_not_called()
 
 
-def test_3_logic_returns_success_status_code(mock_user, mock_db, mock_datetime_now):
+def test_logic_returns_success_status_code(mock_user, mock_db, mock_datetime_now):
     """Test 3: Checks that the success status code (200) is returned."""
     test_data = {"duration_min": 30}
     _, status = progress_route_logic(mock_user, test_data, mock_db, mock_datetime_now)
     assert status == 200
 
 
-def test_4_logic_updates_last_progress_update(mock_user, mock_db, mock_datetime_now):
+def test_logic_updates_last_progress_update(mock_user, mock_db, mock_datetime_now):
     """Test 4: Verifies the user's last_progress_update attribute is updated."""
     progress_route_logic(mock_user, {"weight_kg": 75}, mock_db, mock_datetime_now)
     assert mock_user.last_progress_update == mock_datetime_now.now.return_value
 
 
-def test_5_logic_returns_user_state(mock_user, mock_db, mock_datetime_now):
+def test_logic_returns_user_state(mock_user, mock_db, mock_datetime_now):
     """Test 5: Checks that the current state from the user getter is returned in the response."""
     response, _ = progress_route_logic(mock_user, {"temp": 1}, mock_db, mock_datetime_now)
     assert response["progress"] == mock_user.get_progress_state.return_value
 
 
-def test_6_logic_returns_correct_timestamp_format(mock_user, mock_db, mock_datetime_now):
+def test_logic_returns_correct_timestamp_format(mock_user, mock_db, mock_datetime_now):
     """Test 6: Ensures the returned timestamp is in the correct ISO format."""
     response, _ = progress_route_logic(mock_user, {"test": 1}, mock_db, mock_datetime_now)
     expected_iso = mock_datetime_now.now.return_value.isoformat()
     assert response["last_update"] == expected_iso
 
 
-def test_7_logic_handles_empty_data_fail(mock_user, mock_db, mock_datetime_now):
+def test_logic_handles_empty_data_fail(mock_user, mock_db, mock_datetime_now):
     """Test 7: Ensures the logic handles an empty input dictionary correctly."""
     response, status = progress_route_logic(mock_user, {}, mock_db, mock_datetime_now)
     assert status == 400
@@ -117,7 +117,7 @@ def test_7_logic_handles_empty_data_fail(mock_user, mock_db, mock_datetime_now):
     mock_db.session.commit.assert_not_called()
 
 
-def test_8_logic_handles_exception_rollback(mock_user, mock_db, mock_datetime_now):
+def test_logic_handles_exception_rollback(mock_user, mock_db, mock_datetime_now):
     """Test 8: Confirms that a rollback is called when an exception occurs."""
     mock_user.set_progress_state.side_effect = ValueError("Invalid data")
 
@@ -127,7 +127,7 @@ def test_8_logic_handles_exception_rollback(mock_user, mock_db, mock_datetime_no
     mock_db.session.commit.assert_not_called()
 
 
-def test_9_logic_returns_server_error_on_exception(mock_user, mock_db, mock_datetime_now):
+def test_logic_returns_server_error_on_exception(mock_user, mock_db, mock_datetime_now):
     """Test 9: Verifies that a 500 status code and error message are returned on failure."""
     error_message = "Database is offline"
     mock_db.session.commit.side_effect = Exception(error_message)
@@ -139,7 +139,7 @@ def test_9_logic_returns_server_error_on_exception(mock_user, mock_db, mock_date
     assert error_message in response["error"]
 
 
-def test_10_logic_accepts_mixed_data_types(mock_user, mock_db, mock_datetime_now):
+def test_logic_accepts_mixed_data_types(mock_user, mock_db, mock_datetime_now):
     """Test 10: Ensures complex data with mixed types can be passed successfully."""
     mixed_data = {"note": "Long run done", "is_complete": True, "rating": 4.5}
     response, status = progress_route_logic(mock_user, mixed_data, mock_db, mock_datetime_now)
