@@ -1,87 +1,85 @@
-import json
-from datetime import datetime, timedelta
-from backend.models import User
+import pytest
+from unittest.mock import MagicMock, patch
+from backend.routes import xp, progress
+from backend.services import xp_service
+from datetime import datetime, timezone
 
+class TestXPService:
+    @pytest.fixture
+    def mock_user(self):
+        user = MagicMock()
+        user.user_goals = []
+        user.xp = 0
+        user.level = 1
+        return user
 
-def test_xp_add_basic(app, client, user, auth_header):
-    user.xp = 0
-    user.level = 1
+    def test_update_weekly_xp_no_goals(self, mock_user):
+        success, message = xp_service.update_weekly_xp(mock_user)
+        assert not success
+        assert message == "No weekly goals completed."
 
-    rv = client.patch("/api/xp/update", headers=auth_header, json={"xp_gain": 300})
-    assert rv.status_code == 200
-    data = rv.get_json()
+    def test_update_weekly_xp_with_completed_goal(self, mock_user):
+        mock_user.user_goals = [MagicMock(is_completed=True)]
+        with patch('backend.models.db.session.commit') as commit_mock:
+            success, message = xp_service.update_weekly_xp(mock_user)
+            assert success
+            assert message == "XP updated."
+            commit_mock.assert_called_once()
 
-    assert data["xp"] == 300
-    assert data["level"] == 1
+    def test_check_level_up_exact_level(self, mock_user):
+        mock_user.xp = 1200
+        leveled_up = xp_service.check_level_up(mock_user)
+        assert leveled_up
+        assert mock_user.level == 2
+        assert mock_user.xp == 0
 
+    def test_check_level_up_multiple_levels(self, mock_user):
+        mock_user.xp = 2500
+        leveled_up = xp_service.check_level_up(mock_user)
+        assert leveled_up
+        assert mock_user.level == 3
+        assert mock_user.xp == 100
 
-def test_xp_levelup(app, client, user, auth_header):
-    user.xp = 1000
-    user.level = 1
+    def test_check_level_up_no_level(self, mock_user):
+        mock_user.xp = 500
+        leveled_up = xp_service.check_level_up(mock_user)
+        assert not leveled_up
+        assert mock_user.level == 1
+        assert mock_user.xp == 500
 
-    rv = client.patch("/api/xp/update", headers=auth_header, json={"xp_gain": 300})
-    assert rv.status_code == 200
-    data = rv.get_json()
+    def test_get_xp_status(self, mock_user):
+        mock_user.xp = 100
+        mock_user.level = 2
+        status = xp_service.get_xp_status(mock_user)
+        assert status['xp'] == 100
+        assert status['level'] == 2
+        assert status['xp_to_next_level'] == 1100
 
-    assert data["level"] == 2
-    assert data["xp"] == 100
+    def test_update_weekly_xp_multiple_goals(self, mock_user):
+        mock_user.user_goals = [MagicMock(is_completed=True), MagicMock(is_completed=True)]
+        with patch('backend.models.db.session.commit') as commit_mock:
+            success, message = xp_service.update_weekly_xp(mock_user)
+            assert success
+            assert message == "XP updated."
 
+    def test_update_weekly_xp_level_up(self, mock_user):
+        mock_user.user_goals = [MagicMock(is_completed=True)]
+        mock_user.xp = 1000
+        with patch('backend.models.db.session.commit') as commit_mock:
+            success, _ = xp_service.update_weekly_xp(mock_user)
+            assert success
+            assert mock_user.level == 2
 
-def test_xp_multiple_levelups(app, client, user, auth_header):
-    user.xp = 1100
-    user.level = 1
+    def test_get_xp_status_after_level_up(self, mock_user):
+        mock_user.xp = 1250
+        mock_user.level = 1
+        xp_service.check_level_up(mock_user)
+        status = xp_service.get_xp_status(mock_user)
+        assert status['level'] == 2
+        assert status['xp_to_next_level'] == 1200 - mock_user.xp
 
-    rv = client.patch("/api/xp/update", headers=auth_header, json={"xp_gain": 2500})
-    assert rv.status_code == 200
-    data = rv.get_json()
-
-    assert data["level"] == 4
-    assert data["xp"] == 0
-
-
-def test_xp_status_endpoint(app, client, user, auth_header):
-    rv = client.get("/api/xp/status", headers=auth_header)
-    assert rv.status_code == 200
-    data = rv.get_json()
-
-    assert "xp" in data
-    assert "level" in data
-    assert "xp_to_next_level" in data
-
-
-def test_xp_negative_gain(app, client, user, auth_header):
-    rv = client.patch("/api/xp/update", headers=auth_header, json={"xp_gain": -10})
-    assert rv.status_code == 400
-
-
-def test_xp_missing_field(app, client, user, auth_header):
-    rv = client.patch("/api/xp/update", headers=auth_header, json={})
-    assert rv.status_code == 400
-
-
-def test_level_does_not_drop(app, client, user, auth_header):
-    user.xp = 50
-    user.level = 3
-    rv = client.patch("/api/xp/update", headers=auth_header, json={"xp_gain": 0})
-    data = rv.get_json()
-    assert data["level"] == 3
-
-
-def test_xp_carry_over_correct(app, client, user, auth_header):
-    user.xp = 1199
-    user.level = 1
-    rv = client.patch("/api/xp/update", headers=auth_header, json={"xp_gain": 10})
-    data = rv.get_json()
-
-    assert data["level"] == 2
-    assert data["xp"] == 9
-
-
-def test_xp_large_value_no_error(app, client, user, auth_header):
-    rv = client.patch("/api/xp/update", headers=auth_header, json={"xp_gain": 100000})
-    assert rv.status_code == 200
-
-
-def test_xp_update_requires_auth(client):
-    rv = client.patch("/api/xp/update", json={"xp_gain": 100})
-    assert rv.status_code == 401
+    def test_update_weekly_xp_rollback_on_error(self, mock_user):
+        mock_user.user_goals = [MagicMock(is_completed=True)]
+        with patch('backend.models.db.session.commit', side_effect=Exception("DB Error")):
+            with pytest.raises(Exception):
+                xp_service.update_weekly_xp(mock_user)
