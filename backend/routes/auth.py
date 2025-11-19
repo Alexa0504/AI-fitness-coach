@@ -84,7 +84,13 @@ def login():
 @auth_bp.route('/logout', methods=['POST'])
 @token_required
 def logout(current_user):
-    """Logs out the user by blacklisting the current token."""
+    data = request.get_json() or {}
+    if "progress" in data:
+        current_user.set_progress(data["progress"])
+        current_user.last_progress_update = datetime.utcnow()
+        db.session.commit()
+
+    # blacklisting token
     token = request.headers['Authorization'].split(" ")[1]
     if add_token_to_blacklist(token):
         return jsonify({"message": "Logout successful."}), 200
