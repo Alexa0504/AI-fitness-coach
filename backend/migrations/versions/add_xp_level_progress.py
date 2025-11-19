@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 
 # revision identifiers
 revision = 'add_xp_level_progress'
-down_revision = 'your_prev_revision_id_here'
+down_revision = 'efb995addc9e'
 branch_labels = None
 depends_on = None
 
