@@ -1,23 +1,18 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify
 from backend.utils.auth_decorator import token_required
-from backend.services.xp_service import add_xp, xp_status, WEEKLY_GOAL_XP
+from backend.services.xp_service import update_weekly_xp, get_xp_status
 
 xp_bp = Blueprint("xp", __name__, url_prefix="/api/xp")
 
+
 @xp_bp.route("/update", methods=["POST"])
 @token_required
-def update_xp(current_user):
-    data = request.get_json() or {}
-    amount = data.get("amount")
-
-    if amount is None:
-        return jsonify({"message": "Missing XP amount"}), 400
-
-    result = add_xp(current_user, int(amount))
-    return jsonify(result), 200
+def xp_update(current_user):
+    success, message = update_weekly_xp(current_user)
+    return jsonify({"success": success, "message": message}), (200 if success else 400)
 
 
 @xp_bp.route("/status", methods=["GET"])
 @token_required
-def get_status(current_user):
-    return jsonify(xp_status(current_user)), 200
+def xp_status(current_user):
+    return jsonify(get_xp_status(current_user)), 200

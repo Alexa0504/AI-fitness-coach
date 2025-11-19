@@ -4,6 +4,8 @@ from backend.utils.auth_decorator import token_required
 from backend.utils.security_utils import hash_password, check_password, generate_auth_token
 from backend.utils.token_blacklist import add_token_to_blacklist
 
+from utils.auto_progress import auto_save_progress
+
 # Create the Blueprint for authentication routes
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
@@ -84,11 +86,7 @@ def login():
 @auth_bp.route('/logout', methods=['POST'])
 @token_required
 def logout(current_user):
-    data = request.get_json() or {}
-    if "progress" in data:
-        current_user.set_progress(data["progress"])
-        current_user.last_progress_update = datetime.utcnow()
-        db.session.commit()
+    auto_save_progress(current_user, {"auto": True})
 
     # blacklisting token
     token = request.headers['Authorization'].split(" ")[1]

@@ -1,27 +1,33 @@
 from flask import Blueprint, request, jsonify
-from datetime import datetime
-from backend.models import db, User
 from backend.utils.auth_decorator import token_required
+from backend.models import db
+from datetime import datetime, timezone
 
 progress_bp = Blueprint("progress", __name__, url_prefix="/api/progress")
+
 
 @progress_bp.route("/save", methods=["PATCH"])
 @token_required
 def save_progress(current_user):
-    data = request.get_json() or {}
+    """Saves workout/diet progress for the user."""
+    data = request.get_json()
 
-    if "progress" not in data:
-        return jsonify({"message": "Missing progress object"}), 400
+    if not data:
+        return jsonify({"message": "No progress data sent"}), 400
 
-    progress = data["progress"]
+    try:
+        current_user.set_progress_state(data)
+        current_user.last_progress_update = datetime.now(timezone.utc)
 
-    current_user.set_progress(progress)
-    current_user.last_progress_update = datetime.utcnow()
+        db.session.commit()
 
-    db.session.commit()
+        return jsonify({
+            "message": "Progress saved successfully",
+            "progress": current_user.get_progress_state(),
+            "last_update": current_user.last_progress_update.isoformat()
+        }), 200
 
-    return jsonify({
-        "message": "Progress saved",
-        "progress": current_user.get_progress(),
-        "last_progress_update": current_user.last_progress_update.isoformat()
-    }), 200
+    except Exception as e:
+        print("Progress save error:", e)
+        db.session.rollback()
+        return jsonify({"message": "Error saving progress"}), 500

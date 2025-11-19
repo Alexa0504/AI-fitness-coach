@@ -1,27 +1,38 @@
-from backend.models import db
+from backend.models import db, User
 
-LEVEL_XP_THRESHOLD = 1200
-WEEKLY_GOAL_XP = 300
+XP_PER_WEEK = 300
+XP_FOR_LEVEL_UP = 1200
 
-def add_xp(user, amount):
-    new_xp = user.xp + amount
 
-    # Level up loop
+def update_weekly_xp(user: User):
+    """Adds XP if weekly goals were completed."""
+    completed_goals = [g for g in user.user_goals if g.is_completed]
+
+    if len(completed_goals) == 0:
+        return False, "No weekly goals completed."
+
+    user.xp += XP_PER_WEEK
+    check_level_up(user)
+
+    db.session.commit()
+    return True, "XP updated."
+
+
+def check_level_up(user: User):
+    """Increases level when XP reaches threshold."""
     leveled_up = False
-    while new_xp >= LEVEL_XP_THRESHOLD:
-        new_xp -= LEVEL_XP_THRESHOLD
+
+    while user.xp >= XP_FOR_LEVEL_UP:
         user.level += 1
+        user.xp -= XP_FOR_LEVEL_UP
         leveled_up = True
 
-    user.xp = new_xp
-    db.session.commit()
-
-    return {"xp": user.xp, "level": user.level, "leveled_up": leveled_up}
+    return leveled_up
 
 
-def xp_status(user):
+def get_xp_status(user: User):
     return {
         "xp": user.xp,
         "level": user.level,
-        "xp_to_next": LEVEL_XP_THRESHOLD - user.xp,
+        "xp_to_next_level": XP_FOR_LEVEL_UP - user.xp
     }
