@@ -1,12 +1,11 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import ThemeSwitcher from "../components/ThemeSwitcher.tsx";
-import { useTheme } from "../components/ThemeContext.tsx";
-import AiPlanCard, { type Plan} from "../components/AIPlanComponent.tsx";
-import GamificationCard from "../components/StatComponent.tsx";
-import GoalsCard from "../components/GoalsComponent.tsx";
-import Taskbar from "../components/Taskbar.tsx";
+import ThemeSwitcher from "../components/ThemeSwitcher";
+import { useTheme } from "../components/ThemeContext";
+import AiPlanCard, { type Plan } from "../components/AIPlanComponent";
+import GamificationCard from "../components/StatComponent";
+import GoalsCard from "../components/GoalsComponent";
+import Taskbar from "../components/Taskbar";
 import { motion } from "framer-motion";
 
 const ProgressIndicator: React.FC<{ title: string; progress: number }> = ({ title, progress }) => (
@@ -24,14 +23,22 @@ const HeaderBar: React.FC = () => {
     const handleLogout = async () => {
         const token = localStorage.getItem("authToken");
         if (!token) { navigate("/login"); return; }
+
         try {
             const res = await fetch("http://localhost:5000/api/auth/logout", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             });
-            if (res.ok) { localStorage.removeItem("authToken"); localStorage.removeItem("user"); navigate("/login"); }
-        } catch (error) { console.error("Logout error:", error); }
+            if (res.ok) {
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("user");
+                navigate("/login");
+            }
+        } catch {
+            console.error("Logout error");
+        }
     };
+
     return (
         <header className="sticky top-0 z-20 w-full bg-base-100/70 dark:bg-base-300/50 backdrop-blur-lg shadow-md border-b border-base-300 transition-colors duration-300">
             <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center px-4 sm:px-6 py-3 gap-3">
@@ -53,22 +60,71 @@ const DashboardSection: React.FC<{ title: string; children: React.ReactNode }> =
     </motion.section>
 );
 
-const Footer: React.FC = () => <footer className="py-6 text-center text-sm text-white/80 dark:text-gray-400 mt-10 transition-colors duration-300">© {new Date().getFullYear()} AI Planner. All rights reserved.</footer>;
+const Footer: React.FC = () => (
+    <footer className="py-6 text-center text-sm text-white/80 dark:text-gray-400 mt-10 transition-colors duration-300">
+        © {new Date().getFullYear()} AI Planner. All rights reserved.
+    </footer>
+);
 
 const HomePage: React.FC = () => {
     const { theme } = useTheme();
-    const [workoutProgress, setWorkoutProgress] = useState(0);
-    const [dietProgress, setDietProgress] = useState(0);
-    const [overallPerformance, setOverallPerformance] = useState(0);
+    const [workoutProgress, setWorkoutProgress] = useState<number>(0);
+    const [dietProgress, setDietProgress] = useState<number>(0);
+    const [overallPerformance, setOverallPerformance] = useState<number>(0);
+    const [xp, setXp] = useState<number>(0);
+    const [level, setLevel] = useState<number>(1);
+    const [xpToNext, setXpToNext] = useState<number>(0);
+
+    const fetchBackendStats = async () => {
+        const token = localStorage.getItem("authToken");
+        if (!token) return;
+
+        try {
+            const xpRes = await fetch("http://localhost:5000/api/xp/status", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (xpRes.ok) {
+                const data = await xpRes.json();
+                setXp(data.xp || 0);
+                setLevel(data.level || 1);
+                setXpToNext(data.xpToNext || 0);
+            }
+        } catch { console.error("Failed to load XP stats"); }
+
+        try {
+            const progRes = await fetch("http://localhost:5000/api/progress/status", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (progRes.ok) {
+                const data = await progRes.json();
+                setWorkoutProgress(data.workoutProgress || 0);
+                setDietProgress(data.dietProgress || 0);
+                setOverallPerformance(data.overallPerformance || 0);
+            }
+        } catch { console.error("Failed to load progress stats"); }
+    };
+
+    useEffect(() => { fetchBackendStats(); }, []);
 
     const handlePlanUpdate = (plan: Plan, type: "workout" | "diet") => {
         let total = 0, completed = 0;
-        if (type === "workout" && plan.days) { total = plan.days.length; completed = plan.days.filter(d => d.completed).length; }
-        else if (type === "diet" && plan.meals) { total = plan.meals.length * 3; completed = plan.meals.reduce((sum, day) => sum + (day.breakfast_completed ? 1 : 0) + (day.lunch_completed ? 1 : 0) + (day.dinner_completed ? 1 : 0), 0); }
-        const calculatedProgress = total > 0 ? Math.round((completed / total) * 100) : 0;
-        if (type === "workout") setWorkoutProgress(calculatedProgress);
-        else setDietProgress(calculatedProgress);
-        setOverallPerformance(Math.round((type === "workout" ? calculatedProgress + dietProgress : workoutProgress + calculatedProgress) / 2));
+        if (type === "workout" && plan.days) {
+            total = plan.days.length;
+            completed = plan.days.filter(d => d.completed).length;
+        } else if (type === "diet" && plan.meals) {
+            total = plan.meals.length * 3;
+            completed = plan.meals.reduce((sum, day) =>
+                sum + (day.breakfast_completed ? 1 : 0) + (day.lunch_completed ? 1 : 0) + (day.dinner_completed ? 1 : 0), 0
+            );
+        }
+        const calculated = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        const newWorkoutProgress = type === "workout" ? calculated : workoutProgress;
+        const newDietProgress = type === "diet" ? calculated : dietProgress;
+
+        setWorkoutProgress(newWorkoutProgress);
+        setDietProgress(newDietProgress);
+        setOverallPerformance(Math.round((newWorkoutProgress + newDietProgress) / 2));
     };
 
     const handlePlansLoaded = (loadedPlans: { workout?: Plan; diet?: Plan }) => {
@@ -82,17 +138,29 @@ const HomePage: React.FC = () => {
         <div className={`relative min-h-screen ${theme} transition-colors duration-500`}>
             <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-pink-500 to-blue-500 dark:from-gray-900 dark:via-gray-800 dark:to-black transition-colors duration-500" />
             <div className="absolute inset-0 bg-black/10 dark:bg-black/50 backdrop-blur-[1px] transition-colors duration-500" />
+
             <div className="relative z-10">
                 <HeaderBar />
+
                 <main className="max-w-7xl mx-auto px-6 py-10">
-                    <motion.h1 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="text-4xl font-extrabold text-white dark:text-gray-100 mb-10 text-center sm:text-left drop-shadow-[0_3px_5px_rgba(0,0,0,0.3)] transition-colors duration-500">Dashboard</motion.h1>
+                    <motion.h1
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.7 }}
+                        className="text-4xl font-extrabold text-white dark:text-gray-100 mb-10 text-center sm:text-left drop-shadow-[0_3px_5px_rgba(0,0,0,0.3)] transition-colors duration-500"
+                    >
+                        Dashboard
+                    </motion.h1>
+
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div className="lg:col-span-2 space-y-8">
                             <DashboardSection title="Your Goals and Progress">
                                 <GoalsCard />
                                 <div className="mt-6 pt-6 border-t border-base-300">
                                     {!hasProgress ? (
-                                        <div className="text-center py-4 text-base-content/60 italic">No Plan Progress Yet. Start your workout or log a meal to see your progress!</div>
+                                        <div className="text-center py-4 text-base-content/60 italic">
+                                            No Plan Progress Yet. Start your workout or log a meal to see your progress!
+                                        </div>
                                     ) : (
                                         <div className="space-y-4">
                                             <ProgressIndicator title="Workout Plan Progress" progress={workoutProgress} />
@@ -102,17 +170,20 @@ const HomePage: React.FC = () => {
                                     )}
                                 </div>
                             </DashboardSection>
+
                             <DashboardSection title="AI Workout and Diet Plan">
                                 <AiPlanCard onPlanUpdate={handlePlanUpdate} onPlansLoaded={handlePlansLoaded} />
                             </DashboardSection>
                         </div>
+
                         <aside className="lg:col-span-1 space-y-8">
                             <DashboardSection title="Statistics and Score">
-                                <GamificationCard performance={overallPerformance} />
+                                <GamificationCard performance={overallPerformance} xp={xp} level={level} xpToNext={xpToNext} />
                             </DashboardSection>
                         </aside>
                     </div>
                 </main>
+
                 <Footer />
             </div>
         </div>

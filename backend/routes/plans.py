@@ -100,7 +100,7 @@ def create_plan(current_user):
         if isinstance(content_string, (dict, list)):
             content_string = json.dumps(content_string)
 
-       
+
         if plan_type == "diet":
             content_dict = json.loads(content_string)
             for meal_day in content_dict.get("meals", []):

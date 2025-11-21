@@ -10,9 +10,9 @@ export interface Plan { id?: number; plan_name: string; plan_type: "workout" | "
 
 interface ApiPlanResponse { id?: number; plan_type: "workout" | "diet"; content: string | { days?: Day[]; meals?: MealDay[]; note?: string }; plan_name?: string; duration_days?: number; note?: string }
 type PlanDraft = Omit<Plan, 'plan_name' | 'duration_days'> & Partial<Pick<Plan, 'plan_name' | 'duration_days'>>
-interface AiPlanCardProps { onPlanUpdate?: (plan: Plan, type: "workout" | "diet") => void; onPlansLoaded?: (plans: { workout?: Plan; diet?: Plan }) => void }
+interface AiPlanCardProps { onPlanUpdate?: (plan: Plan, type: "workout" | "diet") => void; onPlansLoaded?: (plans: { workout?: Plan; diet?: Plan }) => void; onXpUpdate?: (xp: number, level: number, xpToNext: number) => void; }
 
-const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate, onPlansLoaded }) => {
+const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate, onPlansLoaded, onXpUpdate }) => {
     const [plans, setPlans] = useState<{ workout?: Plan; diet?: Plan }>({});
     const [activeType, setActiveType] = useState<"workout" | "diet">("workout");
     const [loading, setLoading] = useState(false);
@@ -44,11 +44,18 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate, onPlansLoaded }) 
                 data.plans?.forEach(p => {
                     const parsed = typeof p.content === "string" ? JSON.parse(p.content) : p.content;
                     const fullPlanDraft: PlanDraft = { ...p, ...parsed };
-                    const fullPlan: Plan = { ...fullPlanDraft, plan_name: fullPlanDraft.plan_name || `Default ${p.plan_type} Plan`, duration_days: fullPlanDraft.duration_days || 7 } as Plan;
+                    const fullPlan: Plan = {
+                        ...fullPlanDraft,
+                        plan_name: fullPlanDraft.plan_name || `Default ${p.plan_type} Plan`,
+                        duration_days: fullPlanDraft.duration_days || 7
+                    } as Plan;
                     fullPlan.progress = calculateProgress(fullPlan);
                     loadedPlans[p.plan_type] = fullPlan;
                 });
-                setPlans(loadedPlans);
+                setPlans(prev => ({
+                    workout: prev.workout || loadedPlans.workout,
+                    diet: prev.diet || loadedPlans.diet
+                }));
                 onPlansLoaded?.(loadedPlans);
             } catch (e: unknown) { setError(e instanceof Error ? e.message : String(e)); }
         };
@@ -59,50 +66,97 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate, onPlansLoaded }) 
         if (!token) { setError("Please log in first."); return; }
         setLoading(true); setError(null);
         try {
-            const res = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ plan_type: activeType }) });
+            const res = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ plan_type: activeType })
+            });
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.message || "Error generating plan.");
+            }
             const data: { plan: ApiPlanResponse } = await res.json();
-            if (!res.ok) throw new Error(data.plan ? JSON.stringify(data.plan) : "Error generating plan.");
             const contentObject = typeof data.plan.content === "string" ? JSON.parse(data.plan.content) : data.plan.content;
             const parsedContent = contentObject as { days?: Day[]; meals?: MealDay[]; note?: string; plan_name?: string; duration_days?: number };
-            if (parsedContent.days) parsedContent.days = parsedContent.days.map(d => ({ ...d, completed: false }));
-            if (parsedContent.meals) parsedContent.meals = parsedContent.meals.map(m => ({ ...m, breakfast_completed: false, lunch_completed: false, dinner_completed: false }));
-            data.plan.content = JSON.stringify(parsedContent);
+
             const fullPlanDraft: PlanDraft = { ...data.plan, ...parsedContent };
-            const fullPlan: Plan = { ...fullPlanDraft, plan_name: fullPlanDraft.plan_name || `New ${activeType} Plan`, duration_days: fullPlanDraft.duration_days || 7 } as Plan;
-            fullPlan.progress = calculateProgress(fullPlan);
+            const fullPlan: Plan = {
+                ...fullPlanDraft,
+                plan_name: fullPlanDraft.plan_name || `New ${activeType} Plan`,
+                duration_days: fullPlanDraft.duration_days || 7,
+                days: parsedContent.days?.map(d => ({ ...d, completed: false })),
+                meals: parsedContent.meals?.map(m => ({
+                    ...m,
+                    breakfast_completed: false,
+                    lunch_completed: false,
+                    dinner_completed: false
+                })) || Array.from({ length: 7 }, (_, i) => ({
+                    day: i + 1,
+                    breakfast: "",
+                    lunch: "",
+                    dinner: "",
+                    snack: "",
+                    breakfast_completed: false,
+                    lunch_completed: false,
+                    dinner_completed: false
+                })),
+                progress: 0
+            } as Plan;
+
             setPlans(prev => ({ ...prev, [activeType]: fullPlan }));
-            onPlanUpdate?.(fullPlan, activeType);
+            onPlanUpdate?.({ ...fullPlan, progress: 0 }, activeType);
         } catch (err: unknown) { setError(err instanceof Error ? err.message : String(err)); }
         finally { setLoading(false); }
     };
 
     const handleToggle = async (day: number, meal?: "breakfast" | "lunch" | "dinner") => {
         const plan = plans[activeType];
-        if (!plan || !plan.id) return;
-        let isAlreadyCompleted = false;
-        if (activeType === "workout" && plan.days) isAlreadyCompleted = Boolean(plan.days.find(d => d.day === day)?.completed);
-        else if (activeType === "diet" && plan.meals && meal) isAlreadyCompleted = Boolean(plan.meals.find(m => m.day === day)?.[`${meal}_completed` as keyof MealDay]);
-        if (isAlreadyCompleted) return;
+        if (!plan) return;
+
         const updatedPlan: Plan = { ...plan };
-        const newValue: boolean = true;
-        if (activeType === "workout" && plan.days) updatedPlan.days = plan.days.map(d => d.day === day ? { ...d, completed: newValue } : d);
-        else if (activeType === "diet" && plan.meals && meal) updatedPlan.meals = updatedPlan.meals?.map(m => {
-            if (m.day !== day) return m;
-            const key = `${meal}_completed` as keyof MealDay;
-            return { ...m, [key]: newValue };
-        }) as MealDay[];
+
+        if (activeType === "workout" && plan.days) {
+            updatedPlan.days = plan.days.map(d => {
+                if (d.day !== day) return d;
+                if (d.completed) return d;
+                return { ...d, completed: true };
+            });
+        } else if (activeType === "diet" && plan.meals && meal) {
+            updatedPlan.meals = updatedPlan.meals?.map(m => {
+                if (m.day !== day) return m;
+                const key = `${meal}_completed` as keyof MealDay;
+                if (m[key]) return m;
+                return { ...m, [key]: true };
+            }) as MealDay[];
+        }
+
         updatedPlan.progress = calculateProgress(updatedPlan);
         setPlans(prev => ({ ...prev, [activeType]: updatedPlan }));
         onPlanUpdate?.(updatedPlan, activeType);
-        let toggleType: "workout_day" | "diet_meal" | undefined;
-        let mealKey: string | undefined = undefined;
-        if (activeType === "workout") toggleType = "workout_day";
-        else if (activeType === "diet" && meal) { toggleType = "diet_meal"; mealKey = meal; }
-        if (toggleType) {
-            try {
-                await fetch(`${API_URL}${plan.id}/toggle`, { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ type: toggleType, day, meal: mealKey, value: newValue }) });
-            } catch (e) { console.error(`Error saving ${activeType} progress to backend:`, e); }
-        }
+
+        if (!plan.id) return;
+        const toggleType: "workout_day" | "diet_meal" = activeType === "workout" ? "workout_day" : "diet_meal";
+
+        try {
+            await fetch(`${API_URL}${plan.id}/toggle`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({
+                    type: toggleType,
+                    day,
+                    meal,
+                    value: activeType === "workout"
+                        ? updatedPlan.days?.find(d => d.day === day)?.completed
+                        : updatedPlan.meals?.find(m => m.day === day)?.[`${meal}_completed` as keyof MealDay]
+                })
+            });
+
+            const xpRes = await fetch("http://localhost:5000/api/xp/status", { headers: { Authorization: `Bearer ${token}` } });
+            if (xpRes.ok) {
+                const xpData = await xpRes.json();
+                onXpUpdate?.(xpData.xp, xpData.level, xpData.xp_to_next_level);
+            }
+        } catch (e) { console.error("Error updating progress or XP", e); }
     };
 
     const defaultPlans = {
@@ -126,17 +180,19 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate, onPlansLoaded }) 
                 <div className="h-2 w-full bg-base-300 rounded-full overflow-hidden">
                     <div className="h-full bg-gradient-to-r from-pink-500 to-purple-500" style={{ width: `${currentProgress}%` }}></div>
                 </div>
+
                 {activeType === "workout" && plan.days && plan.days.map((day, idx) => (
                     <div key={idx} className="p-3 rounded-lg bg-base-300/60 border border-base-300">
                         <div className="flex items-center justify-between">
                             <h4 className="font-semibold">Day {day.day}: {day.title}</h4>
                             <label className="flex items-center gap-2">
-                                <input type="checkbox" checked={day.completed} onChange={() => handleToggle(day.day)} disabled={day.completed} /> Done
+                                <input type="checkbox" checked={day.completed} onChange={() => handleToggle(day.day)} /> Done
                             </label>
                         </div>
                         <ul className="mt-2 space-y-1 text-sm">{day.exercises?.map((ex, i) => <li key={i}>{ex.name} — {ex.sets || ""}x{ex.reps || ""} {ex.duration_min && `(${ex.duration_min} min)`}</li>)}</ul>
                     </div>
                 ))}
+
                 {activeType === "diet" && plan.meals && plan.meals.map((day, idx) => (
                     <div key={idx} className="p-3 rounded-lg bg-base-300/60 border border-base-300">
                         <h4 className="font-semibold">Day {day.day}</h4>
@@ -144,13 +200,14 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate, onPlansLoaded }) 
                             {(["breakfast", "lunch", "dinner"] as const).map(meal => (
                                 <label key={meal} className="flex items-center justify-between">
                                     <span>🍽️ <span className="font-medium">{meal.charAt(0).toUpperCase() + meal.slice(1)}:</span> {day[meal]}</span>
-                                    <input type="checkbox" checked={Boolean(day[`${meal}_completed`])} onChange={() => handleToggle(day.day, meal)} disabled={day[`${meal}_completed`]} />
+                                    <input type="checkbox" checked={Boolean(day[`${meal}_completed`])} onChange={() => handleToggle(day.day, meal)} />
                                 </label>
                             ))}
                         </div>
                     </div>
                 ))}
             </div>
+
             <button onClick={handleGenerateNewPlan} disabled={loading} className="btn btn-primary w-full max-w-sm text-lg">{loading ? "Generating..." : "Request new AI plan!"}</button>
         </div>
     );
