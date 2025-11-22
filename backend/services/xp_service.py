@@ -34,5 +34,6 @@ def get_xp_status(user: User):
     return {
         "xp": user.xp,
         "level": user.level,
-        "xp_to_next_level": XP_FOR_LEVEL_UP - user.xp
+        "xpToNext": XP_FOR_LEVEL_UP - user.xp
     }
+

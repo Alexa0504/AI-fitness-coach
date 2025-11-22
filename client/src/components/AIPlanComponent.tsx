@@ -138,23 +138,15 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({ onPlanUpdate, onPlansLoaded, on
         const toggleType: "workout_day" | "diet_meal" = activeType === "workout" ? "workout_day" : "diet_meal";
 
         try {
-            await fetch(`${API_URL}${plan.id}/toggle`, {
+            const toggleRes = await fetch(`${API_URL}${plan.id}/toggle`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-                body: JSON.stringify({
-                    type: toggleType,
-                    day,
-                    meal,
-                    value: activeType === "workout"
-                        ? updatedPlan.days?.find(d => d.day === day)?.completed
-                        : updatedPlan.meals?.find(m => m.day === day)?.[`${meal}_completed` as keyof MealDay]
-                })
+                body: JSON.stringify({ type: toggleType, day, meal })
             });
-
-            const xpRes = await fetch("http://localhost:5000/api/xp/status", { headers: { Authorization: `Bearer ${token}` } });
-            if (xpRes.ok) {
-                const xpData = await xpRes.json();
-                onXpUpdate?.(xpData.xp, xpData.level, xpData.xp_to_next_level);
+            if (toggleRes.ok) {
+                const toggleData = await toggleRes.json();
+                const xpData = toggleData.xp;
+                if (xpData) onXpUpdate?.(xpData.xp, xpData.level, xpData.xpToNext);
             }
         } catch (e) { console.error("Error updating progress or XP", e); }
     };

@@ -7,6 +7,7 @@ from backend.utils.score_utils import calculate_mock_score
 from backend.utils.ai_integration import generate_plan, get_mock_user_data
 from datetime import date
 from sqlalchemy import desc
+from backend.services.xp_service import update_weekly_xp, get_xp_status
 
 plans_bp = Blueprint('plans', __name__, url_prefix='/api/plans')
 
@@ -75,13 +76,8 @@ def get_single_plan(plan_id, current_user):
 @plans_bp.route('/', methods=['POST'])
 @token_required
 def create_plan(current_user):
-    """
-    Create/update AI-generated plan. Persist per user + plan_type.
-    Return both "plan" (the created/updated one) and "plans" (all user plans).
-    """
     data = request.get_json() or {}
     plan_type = data.get("plan_type", "workout")
-
     start_date_str = data.get("start_date")
     plan_start_date = None
     if start_date_str:
@@ -99,7 +95,6 @@ def create_plan(current_user):
         content_string = result["plan_content_string"]
         if isinstance(content_string, (dict, list)):
             content_string = json.dumps(content_string)
-
 
         if plan_type == "diet":
             content_dict = json.loads(content_string)
@@ -145,7 +140,6 @@ def create_plan(current_user):
 @plans_bp.route('/<int:plan_id>', methods=['PUT', 'PATCH'])
 @token_required
 def update_plan(plan_id, current_user):
-    """Update content/score/plan_type. Accepts content dict or JSON-string."""
     data = request.get_json() or {}
     plan = Plan.query.filter_by(id=plan_id, user_id=current_user.id).first()
     if not plan:
@@ -200,7 +194,6 @@ def toggle_checkbox(plan_id, current_user):
             target = next((d for d in days if int(d.get("day")) == day), None)
             if not target:
                 return jsonify({"message": "Day not found"}), 404
-
             target[field] = True
 
         elif t == "diet_meal":
@@ -217,8 +210,15 @@ def toggle_checkbox(plan_id, current_user):
             return jsonify({"message": "Unsupported toggle type"}), 400
 
         plan.content = json.dumps(content)
+        update_weekly_xp(current_user)
         db.session.commit()
-        return jsonify({"message": "Toggle saved", "plan": _plan_to_response(plan)}), 200
+        xp_data = get_xp_status(current_user)
+
+        return jsonify({
+            "message": "Toggle saved",
+            "plan": _plan_to_response(plan),
+            "xp": xp_data
+        }), 200
 
     except Exception as e:
         db.session.rollback()

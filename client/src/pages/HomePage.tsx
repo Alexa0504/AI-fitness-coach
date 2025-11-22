@@ -8,6 +8,10 @@ import GoalsCard from "../components/GoalsComponent";
 import Taskbar from "../components/Taskbar";
 import { motion } from "framer-motion";
 
+
+type WorkoutDay = { completed: boolean };
+type MealDay = { breakfast_completed: boolean; lunch_completed: boolean; dinner_completed: boolean };
+
 const ProgressIndicator: React.FC<{ title: string; progress: number }> = ({ title, progress }) => (
     <div className="w-full">
         <div className="flex justify-between items-center mb-1">
@@ -68,6 +72,8 @@ const Footer: React.FC = () => (
 
 const HomePage: React.FC = () => {
     const { theme } = useTheme();
+    const [workoutDays, setWorkoutDays] = useState<WorkoutDay[]>([]);
+    const [dietMeals, setDietMeals] = useState<MealDay[]>([]);
     const [workoutProgress, setWorkoutProgress] = useState<number>(0);
     const [dietProgress, setDietProgress] = useState<number>(0);
     const [overallPerformance, setOverallPerformance] = useState<number>(0);
@@ -80,59 +86,70 @@ const HomePage: React.FC = () => {
         if (!token) return;
 
         try {
-            const xpRes = await fetch("http://localhost:5000/api/xp/status", {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const xpRes = await fetch("http://localhost:5000/api/xp/status", { headers: { Authorization: `Bearer ${token}` } });
             if (xpRes.ok) {
                 const data = await xpRes.json();
-                setXp(data.xp || 0);
-                setLevel(data.level || 1);
-                setXpToNext(data.xpToNext || 0);
+                setXp(data.xp ?? 0);
+                setLevel(data.level ?? 1);
+                setXpToNext(data.xpToNext ?? 0);
             }
-        } catch { console.error("Failed to load XP stats"); }
+        } catch {
+            console.error("Failed to load XP stats");
+        }
 
         try {
-            const progRes = await fetch("http://localhost:5000/api/progress/status", {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const progRes = await fetch("http://localhost:5000/api/progress/status", { headers: { Authorization: `Bearer ${token}` } });
             if (progRes.ok) {
                 const data = await progRes.json();
-                setWorkoutProgress(data.workoutProgress || 0);
-                setDietProgress(data.dietProgress || 0);
-                setOverallPerformance(data.overallPerformance || 0);
+                setWorkoutDays(data.workoutDays ?? []);
+                setDietMeals(data.dietMeals ?? []);
+                calculateProgress(data.workoutDays ?? [], data.dietMeals ?? []);
             }
-        } catch { console.error("Failed to load progress stats"); }
+        } catch {
+            console.error("Failed to load progress stats");
+        }
     };
 
-    useEffect(() => { fetchBackendStats(); }, []);
+    const calculateProgress = (workoutList: WorkoutDay[] = workoutDays, dietList: MealDay[] = dietMeals) => {
+        const workoutTotal = workoutList.length;
+        const workoutCompleted = workoutList.filter(d => d.completed).length;
 
-    const handlePlanUpdate = (plan: Plan, type: "workout" | "diet") => {
-        let total = 0, completed = 0;
-        if (type === "workout" && plan.days) {
-            total = plan.days.length;
-            completed = plan.days.filter(d => d.completed).length;
-        } else if (type === "diet" && plan.meals) {
-            total = plan.meals.length * 3;
-            completed = plan.meals.reduce((sum, day) =>
-                sum + (day.breakfast_completed ? 1 : 0) + (day.lunch_completed ? 1 : 0) + (day.dinner_completed ? 1 : 0), 0
-            );
-        }
-        const calculated = total > 0 ? Math.round((completed / total) * 100) : 0;
+        const dietTotal = dietList.length * 3;
+        const dietCompleted = dietList.reduce((sum, day) =>
+            sum + (day.breakfast_completed ? 1 : 0) + (day.lunch_completed ? 1 : 0) + (day.dinner_completed ? 1 : 0), 0
+        );
 
-        const newWorkoutProgress = type === "workout" ? calculated : workoutProgress;
-        const newDietProgress = type === "diet" ? calculated : dietProgress;
+        const newWorkoutProgress = workoutTotal ? Math.round((workoutCompleted / workoutTotal) * 100) : 0;
+        const newDietProgress = dietTotal ? Math.round((dietCompleted / dietTotal) * 100) : 0;
 
         setWorkoutProgress(newWorkoutProgress);
         setDietProgress(newDietProgress);
         setOverallPerformance(Math.round((newWorkoutProgress + newDietProgress) / 2));
     };
 
+    const handlePlanUpdate = (plan: Plan, type: "workout" | "diet") => {
+        if (type === "workout" && plan.days) {
+            setWorkoutDays(plan.days);
+            calculateProgress(plan.days, dietMeals);
+        }
+        if (type === "diet" && plan.meals) {
+            setDietMeals(plan.meals);
+            calculateProgress(workoutDays, plan.meals);
+        }
+        setXp(prev => prev + 10);
+    };
+
     const handlePlansLoaded = (loadedPlans: { workout?: Plan; diet?: Plan }) => {
-        if (loadedPlans.workout) handlePlanUpdate(loadedPlans.workout, "workout");
-        if (loadedPlans.diet) handlePlanUpdate(loadedPlans.diet, "diet");
+        const newWorkout = loadedPlans.workout?.days ?? workoutDays;
+        const newDiet = loadedPlans.diet?.meals ?? dietMeals;
+        setWorkoutDays(newWorkout);
+        setDietMeals(newDiet);
+        calculateProgress(newWorkout, newDiet);
     };
 
     const hasProgress = workoutProgress > 0 || dietProgress > 0 || overallPerformance > 0;
+
+    useEffect(() => { fetchBackendStats(); }, []);
 
     return (
         <div className={`relative min-h-screen ${theme} transition-colors duration-500`}>
