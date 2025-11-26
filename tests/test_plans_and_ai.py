@@ -9,29 +9,23 @@ from backend.utils.mock_data import get_mock_plan
 from backend.models import Plan, db
 
 
-# ============================================================
 #  AI INTEGRATION TESTS
-# ============================================================
 
-# 1. Parse dict content
 def test_parse_plan_content_field_dict():
     data = {"a": 1}
     assert _parse_plan_content_field(data) == data
 
 
-# 2. Parse valid JSON string
 def test_parse_plan_content_field_json_string():
     s = '{"x": 123}'
     assert _parse_plan_content_field(s) == {"x": 123}
 
 
-# 3. Invalid JSON should return original string
 def test_parse_plan_content_field_invalid_json():
     s = "{invalid-json}"
     assert _parse_plan_content_field(s) == s
 
 
-# 4. _plan_to_response should parse internal content JSON
 class DummyPlan:
     def __init__(self):
         self.content = '{"days":[{"day":1}]}'
@@ -48,10 +42,8 @@ def test_plan_to_response_parses_content():
     assert out["content"]["days"][0]["day"] == 1
 
 
-# 5. generate_plan should fall back to mock when API fails
 def test_generate_plan_returns_mock_on_failure(monkeypatch):
 
-    # Force failure: remove genai import
     monkeypatch.setattr("backend.utils.ai_integration.client", None)
 
     user_data = {
@@ -71,11 +63,8 @@ def test_generate_plan_returns_mock_on_failure(monkeypatch):
     assert parsed == get_mock_plan("workout")
 
 
-# ============================================================
 #  ROUTE TESTS
-# ============================================================
 
-# 6. GET /plans/latest returns mock plans when user has none
 def test_get_latest_returns_mock_when_empty(client, auth_header):
     res = client.get("/api/plans/latest", headers=auth_header)
     assert res.status_code == 200
@@ -85,7 +74,6 @@ def test_get_latest_returns_mock_when_empty(client, auth_header):
     assert len(data["plans"]) == 2  # workout + diet
 
 
-# 7. GET /plans/latest returns real stored plans
 def test_get_latest_returns_real_plans(client, auth_header, test_user):
     plan = Plan(
         user_id=test_user.id,
@@ -102,7 +90,6 @@ def test_get_latest_returns_real_plans(client, auth_header, test_user):
     assert data["plans"][0]["content"]["days"][0]["day"] == 1
 
 
-# 8. PATCH toggle workout day completed = True
 def test_toggle_workout_day(client, auth_header, test_user):
     plan = Plan(
         user_id=test_user.id,
@@ -120,7 +107,6 @@ def test_toggle_workout_day(client, auth_header, test_user):
     assert updated["days"][0]["completed"] is True
 
 
-# 9. PATCH toggle diet meal completed = True
 def test_toggle_diet_meal(client, auth_header, test_user):
     plan = Plan(
         user_id=test_user.id,
@@ -138,7 +124,6 @@ def test_toggle_diet_meal(client, auth_header, test_user):
     assert updated["meals"][0]["breakfast_completed"] is True
 
 
-# 10. Toggle nonexistent plan returns 404
 def test_toggle_nonexistent_plan(client, auth_header):
     res = client.patch(
         "/api/plans/999/toggle",
