@@ -5,7 +5,7 @@ from backend.utils.mock_data import get_mock_plan
 from backend.utils.auth_decorator import token_required
 from backend.utils.score_utils import calculate_mock_score
 from backend.utils.ai_integration import generate_plan, get_mock_user_data
-from datetime import date
+from datetime import date, datetime
 from sqlalchemy import desc
 from backend.services.xp_service import update_weekly_xp, get_xp_status
 
@@ -59,7 +59,6 @@ def get_latest_plans(current_user):
 @plans_bp.route('/', methods=['GET'])
 @token_required
 def get_user_plans(current_user):
-    """Return all plans for the current user (parsed content)."""
     user_plans = Plan.query.filter_by(user_id=current_user.id).all()
     return jsonify([_plan_to_response(plan) for plan in user_plans]), 200
 
@@ -96,40 +95,38 @@ def create_plan(current_user):
         if isinstance(content_string, (dict, list)):
             content_string = json.dumps(content_string)
 
-        if plan_type == "diet":
-            content_dict = json.loads(content_string)
+        content_dict = json.loads(content_string)
+
+
+        if plan_type == "workout":
+            for day in content_dict.get("days", []):
+                day["completed"] = False
+        elif plan_type == "diet":
             for meal_day in content_dict.get("meals", []):
                 meal_day["breakfast_completed"] = False
                 meal_day["lunch_completed"] = False
                 meal_day["dinner_completed"] = False
-            content_string = json.dumps(content_dict)
 
+        content_string = json.dumps(content_dict)
         score = calculate_mock_score(plan_type)
 
-        existing_plan = Plan.query.filter_by(user_id=current_user.id, plan_type=plan_type).first()
-        if existing_plan:
-            existing_plan.content = content_string
-            existing_plan.score = score
-            if plan_start_date:
-                existing_plan.start_date = plan_start_date
-            db.session.commit()
-            plan_obj = existing_plan
-            status_code = 200
-            message = "Plan updated successfully"
-        else:
-            new_plan = Plan(user_id=current_user.id, plan_type=plan_type, content=content_string, score=score)
-            db.session.add(new_plan)
-            db.session.commit()
-            plan_obj = new_plan
-            status_code = 201
-            message = "Plan created successfully"
+
+        new_plan = Plan(
+            user_id=current_user.id,
+            plan_type=plan_type,
+            content=content_string,
+            score=score,
+            start_date=plan_start_date or datetime.utcnow()
+        )
+        db.session.add(new_plan)
+        db.session.commit()
 
         user_plans = Plan.query.filter_by(user_id=current_user.id).all()
         return jsonify({
-            "message": message,
-            "plan": _plan_to_response(plan_obj),
+            "message": "New plan created successfully",
+            "plan": _plan_to_response(new_plan),
             "plans": [_plan_to_response(p) for p in user_plans]
-        }), status_code
+        }), 201
 
     except Exception as e:
         db.session.rollback()
@@ -146,9 +143,8 @@ def update_plan(plan_id, current_user):
         return jsonify({"message": "Plan not found"}), 404
 
     if "start_date" in data:
-        start_date_str = data["start_date"]
         try:
-            plan.start_date = date.fromisoformat(start_date_str)
+            plan.start_date = date.fromisoformat(data["start_date"])
         except ValueError:
             return jsonify({"message": "Invalid start_date format. Use YYYY-MM-DD."}), 400
 
@@ -156,13 +152,11 @@ def update_plan(plan_id, current_user):
         new_content = data["content"]
         plan.content = json.dumps(new_content) if isinstance(new_content, (dict, list)) else new_content
 
-    new_plan_type = data.get("plan_type")
-    if new_plan_type and new_plan_type != plan.plan_type:
-        plan.plan_type = new_plan_type
+    if "plan_type" in data and data["plan_type"] != plan.plan_type:
+        plan.plan_type = data["plan_type"]
         plan.score = calculate_mock_score(plan.plan_type)
-    else:
-        if "score" in data:
-            plan.score = data.get("score")
+    elif "score" in data:
+        plan.score = data["score"]
 
     try:
         db.session.commit()
@@ -190,8 +184,7 @@ def toggle_checkbox(plan_id, current_user):
         if t == "workout_day":
             day = int(payload.get("day"))
             field = payload.get("field", "completed")
-            days = content.get("days", [])
-            target = next((d for d in days if int(d.get("day")) == day), None)
+            target = next((d for d in content.get("days", []) if int(d.get("day")) == day), None)
             if not target:
                 return jsonify({"message": "Day not found"}), 404
             target[field] = True
@@ -199,13 +192,10 @@ def toggle_checkbox(plan_id, current_user):
         elif t == "diet_meal":
             day = int(payload.get("day"))
             meal = payload.get("meal")
-            meals = content.get("meals", [])
-            target = next((m for m in meals if int(m.get("day")) == day), None)
+            target = next((m for m in content.get("meals", []) if int(m.get("day")) == day), None)
             if not target:
                 return jsonify({"message": "Day not found"}), 404
-            key = f"{meal}_completed"
-            target[key] = True
-
+            target[f"{meal}_completed"] = True
         else:
             return jsonify({"message": "Unsupported toggle type"}), 400
 

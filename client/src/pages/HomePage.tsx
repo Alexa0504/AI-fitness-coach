@@ -7,14 +7,6 @@ import GamificationCard from "../components/StatComponent";
 import GoalsCard from "../components/GoalsComponent";
 import Taskbar from "../components/Taskbar";
 import { motion } from "framer-motion";
-import api from "../api";
-
-type WorkoutDay = { completed: boolean };
-type MealDay = {
-  breakfast_completed: boolean;
-  lunch_completed: boolean;
-  dinner_completed: boolean;
-};
 
 const ProgressIndicator: React.FC<{ title: string; progress: number }> = ({
   title,
@@ -35,14 +27,28 @@ const HeaderBar: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    try {
-      await api.post("/auth/logout");
-    } catch (error) {
-      console.warn("Logout server call failed.");
-    } finally {
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("user");
+    const token = localStorage.getItem("authToken");
+    if (!token) {
       navigate("/login");
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.ok) {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
+    } catch {
+      console.error("Logout error");
     }
   };
 
@@ -52,6 +58,7 @@ const HeaderBar: React.FC = () => {
         <h1 className="text-xl sm:text-2xl font-extrabold bg-gradient-to-r from-purple-500 to-pink-400 bg-clip-text text-transparent drop-shadow-md dark:from-purple-300 dark:to-pink-200 transition-colors duration-300">
           AI Fitness Coach
         </h1>
+
         <div className="flex items-center gap-2 sm:gap-4">
           <button
             onClick={() => navigate("/profile")}
@@ -59,7 +66,11 @@ const HeaderBar: React.FC = () => {
           >
             Profile
           </button>
-          <ThemeSwitcher />
+
+          <div className="flex items-center justify-center">
+            <ThemeSwitcher />
+          </div>
+
           <button
             onClick={handleLogout}
             className="px-3 sm:px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold shadow-md hover:shadow-indigo-400/30 transition-all duration-200 text-sm sm:text-base"
@@ -100,8 +111,9 @@ const Footer: React.FC = () => (
 const HomePage: React.FC = () => {
   const { theme } = useTheme();
 
-  const [workoutDays, setWorkoutDays] = useState<WorkoutDay[]>([]);
-  const [dietMeals, setDietMeals] = useState<MealDay[]>([]);
+  const [workoutPlan, setWorkoutPlan] = useState<Plan | null>(null);
+  const [dietPlan, setDietPlan] = useState<Plan | null>(null);
+
   const [workoutProgress, setWorkoutProgress] = useState<number>(0);
   const [dietProgress, setDietProgress] = useState<number>(0);
   const [overallPerformance, setOverallPerformance] = useState<number>(0);
@@ -115,77 +127,81 @@ const HomePage: React.FC = () => {
     if (!token) return;
 
     try {
-      const xpRes = await api.get("/xp/status");
-      const data = xpRes.data;
-      setXp(data.xp ?? 0);
-      setLevel(data.level ?? 1);
-      setXpToNext(data.xpToNext ?? 0);
-    } catch (e) {
-      console.error("Failed to load XP stats:", e);
-    }
-
-    try {
-      const progRes = await api.get("/progress/status");
-      const data = progRes.data;
-      setWorkoutDays(data.workoutDays ?? []);
-      setDietMeals(data.dietMeals ?? []);
-      calculateProgress(data.workoutDays ?? [], data.dietMeals ?? []);
-    } catch (e) {
-      console.error("Failed to load progress stats:", e);
+      const xpRes = await fetch("http://localhost:5000/api/xp/status", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (xpRes.ok) {
+        const data = await xpRes.json();
+        setXp(data.xp ?? 0);
+        setLevel(data.level ?? 1);
+        setXpToNext(data.xpToNext ?? 0);
+      }
+    } catch {
+      console.error("Failed to load XP stats");
     }
   };
 
-  const calculateProgress = (
-    workoutList: WorkoutDay[] = workoutDays,
-    dietList: MealDay[] = dietMeals
-  ) => {
-    const workoutTotal = workoutList.length;
-    const workoutCompleted = workoutList.filter((d) => d.completed).length;
+  const calculateProgress = (workout?: Plan | null, diet?: Plan | null) => {
+    let w = 0;
+    let d = 0;
 
-    const dietTotal = dietList.length * 3;
-    const dietCompleted = dietList.reduce(
-      (sum, day) =>
-        sum +
-        (day.breakfast_completed ? 1 : 0) +
-        (day.lunch_completed ? 1 : 0) +
-        (day.dinner_completed ? 1 : 0),
-      0
-    );
+    if (workout?.days) {
+      const t = workout.days.length;
+      const c = workout.days.filter((day) => day.completed).length;
+      w = t ? Math.round((c / t) * 100) : 0;
+    }
 
-    const newWorkoutProgress = workoutTotal
-      ? Math.round((workoutCompleted / workoutTotal) * 100)
-      : 0;
-    const newDietProgress = dietTotal
-      ? Math.round((dietCompleted / dietTotal) * 100)
-      : 0;
+    if (diet?.meals) {
+      const t = diet.meals.length * 3;
+      let c = 0;
+      diet.meals.forEach((m) => {
+        if (m.breakfast_completed) c++;
+        if (m.lunch_completed) c++;
+        if (m.dinner_completed) c++;
+      });
+      d = t ? Math.round((c / t) * 100) : 0;
+    }
 
-    setWorkoutProgress(newWorkoutProgress);
-    setDietProgress(newDietProgress);
-    setOverallPerformance(
-      Math.round((newWorkoutProgress + newDietProgress) / 2)
-    );
+    setWorkoutProgress(w);
+    setDietProgress(d);
+    setOverallPerformance(Math.round((w + d) / 2));
   };
 
   const handlePlanUpdate = (plan: Plan, type: "workout" | "diet") => {
-    if (type === "workout" && plan.days) {
-      setWorkoutDays(plan.days);
-      calculateProgress(plan.days, dietMeals);
-    }
-    if (type === "diet" && plan.meals) {
-      setDietMeals(plan.meals);
-      calculateProgress(workoutDays, plan.meals);
-    }
-    setXp((prev) => prev + 10);
+    if (type === "workout") setWorkoutPlan(plan);
+    if (type === "diet") setDietPlan(plan);
+
+    setTimeout(() => {
+      calculateProgress(
+        type === "workout" ? plan : workoutPlan,
+        type === "diet" ? plan : dietPlan
+      );
+    }, 0);
   };
 
   const handlePlansLoaded = (loadedPlans: { workout?: Plan; diet?: Plan }) => {
-    setTimeout(() => {
-      const newWorkout = loadedPlans.workout?.days ?? workoutDays;
-      const newDiet = loadedPlans.diet?.meals ?? dietMeals;
-      setWorkoutDays(newWorkout);
-      setDietMeals(newDiet);
-      calculateProgress(newWorkout, newDiet);
-    }, 0);
+    if (loadedPlans.workout) setWorkoutPlan(loadedPlans.workout);
+    if (loadedPlans.diet) setDietPlan(loadedPlans.diet);
+    calculateProgress(
+      loadedPlans.workout || workoutPlan,
+      loadedPlans.diet || dietPlan
+    );
+  };
+
+  const addXp = (amount: number) => {
+    let newXp = xp + amount;
+    let newLevel = level;
+    let nextXp = xpToNext;
+
+    while (nextXp > 0 && newXp >= nextXp) {
+      newXp -= nextXp;
+      newLevel++;
+      nextXp = 1200;
+    }
+
+    setXp(newXp);
+    setLevel(newLevel);
+    setXpToNext(nextXp);
   };
 
   const hasProgress =
@@ -246,8 +262,11 @@ const HomePage: React.FC = () => {
 
               <DashboardSection title="AI Workout and Diet Plan">
                 <AiPlanCard
+                  workoutPlan={workoutPlan}
+                  dietPlan={dietPlan}
                   onPlanUpdate={handlePlanUpdate}
                   onPlansLoaded={handlePlansLoaded}
+                  addXp={addXp}
                 />
               </DashboardSection>
             </div>
