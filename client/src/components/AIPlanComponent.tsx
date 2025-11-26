@@ -1,9 +1,9 @@
-// AIPlanComponent.tsx (Javított verzió)
+
 import React, { useState, useEffect } from "react";
 
 const API_URL = "http://localhost:5000/api/plans/";
 const API_LATEST_URL = "http://localhost:5000/api/plans/latest";
-// Töröltük az API_XP_STATUS-t, mivel a HomePage kezeli a betöltést.
+
 
 interface Exercise {
     name: string;
@@ -66,7 +66,7 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
                                                    onPlanUpdate,
                                                    onPlansLoaded,
                                                    addXp,
-                                                 
+
                                                }) => {
     const [activeType, setActiveType] = useState<"workout" | "diet">("workout");
     const [loading, setLoading] = useState(false);
@@ -74,6 +74,7 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
     const token = localStorage.getItem("authToken");
 
     const calculateProgress = (plan: Plan): number => {
+        if (!plan) return 0;
         if (plan.plan_type === "workout" && plan.days) {
             const total = plan.days.length;
             const completed = plan.days.filter((d) => d.completed).length;
@@ -96,7 +97,7 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
 
         const fetchData = async () => {
             try {
-                // Töröltük az XP lekérdezést, csak a terveket töltjük be
+
                 const [plansRes] = await Promise.all([
                     fetch(API_LATEST_URL, { headers: { Authorization: `Bearer ${token}` } }),
                 ]);
@@ -246,14 +247,12 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
     };
 
     const plan: Plan = activeType === "workout" ? workoutPlan || defaultPlans.workout : dietPlan || defaultPlans.diet;
-    const currentProgress = plan.progress ?? 0;
+
 
     return (
         <div className="space-y-6">
 
-            {/* Eltávolított/Kommentezett rész az XP és Level megjelenítéséhez */}
-            {/* Az XP és Level adatok most már csak a jobb oldali Statistics sávban látszódnak,
-               ahogy a HomePage komponensben át vannak adva a GamificationCard-nak. */}
+            {}
 
             {error && (
                 <div className="p-3 rounded-lg bg-red-500/20 text-red-300 border border-red-500/40">{error}</div>
@@ -275,9 +274,9 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
             <div className="bg-base-200/70 p-4 rounded-xl border border-base-300 shadow-md text-base-content space-y-4">
                 <h3 className="text-xl font-bold">{plan.plan_name}</h3>
                 <p className="text-sm opacity-80">Duration: {plan.duration_days} days</p>
-                <div className="h-2 w-full bg-base-300 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-pink-500 to-purple-500" style={{ width: `${currentProgress}%` }}></div>
-                </div>
+
+                {}
+                {}
 
                 {activeType === "workout" &&
                     plan.days?.map((day, idx) => (

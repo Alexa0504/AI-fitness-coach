@@ -1,4 +1,4 @@
-// HomePage.tsx (Javított verzió)
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ThemeSwitcher from "../components/ThemeSwitcher";
@@ -148,8 +148,7 @@ const HomePage: React.FC = () => {
     }, []);
 
     const addXp = async (amount: number) => {
-        // Törölve a helyi XP frissítési logika.
-        // A frissítés mostantól a backend hívás után történik a fetchBackendStats() segítségével.
+
 
         if (token) {
             try {
@@ -159,7 +158,7 @@ const HomePage: React.FC = () => {
                     body: JSON.stringify({ amount }),
                 });
 
-                // Új XP hozzáadása után újra lekérjük a teljes XP státuszt a szinkronizáció érdekében.
+
                 await fetchBackendStats();
 
             } catch {
@@ -255,8 +254,8 @@ const HomePage: React.FC = () => {
                                     onPlanUpdate={handlePlanUpdate}
                                     onPlansLoaded={handlePlansLoaded}
                                     addXp={addXp}
-                                    xp={xp} // Hozzáadva a központi XP átadásához
-                                    level={level} // Hozzáadva a központi szint átadásához
+                                    xp={xp}
+                                    level={level}
                                 />
                             </DashboardSection>
                         </div>
