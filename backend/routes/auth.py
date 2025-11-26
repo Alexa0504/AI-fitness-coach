@@ -88,9 +88,14 @@ def login():
 def logout(current_user):
     auto_save_progress(current_user, {"auto": True})
 
-    # blacklisting token
-    token = request.headers['Authorization'].split(" ")[1]
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"message": "Missing or invalid Authorization header"}), 400
+
+    token = auth_header.split(" ")[1]
+
     if add_token_to_blacklist(token):
         return jsonify({"message": "Logout successful."}), 200
     else:
         return jsonify({"message": "Failed to blacklist token."}), 500
+

@@ -30,7 +30,7 @@ def create_app(test_config=None):
         app.config.update(test_config)
 
     CORS(app, resources={
-        r"/api/*": {
+        r"^/api/.*": {
             "origins": ["http://localhost:5173"],
             "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
             "allow_headers": ["Authorization", "Content-Type"],
