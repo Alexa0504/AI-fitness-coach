@@ -9,14 +9,12 @@ interface Exercise {
   reps?: number;
   duration_min?: number;
 }
-
 export interface Day {
   day: number;
   title?: string;
   exercises?: Exercise[];
   completed: boolean;
 }
-
 export interface MealDay {
   day: number;
   breakfast: string;
@@ -27,7 +25,6 @@ export interface MealDay {
   lunch_completed: boolean;
   dinner_completed: boolean;
 }
-
 export interface Plan {
   id?: number;
   plan_name: string;
@@ -47,7 +44,8 @@ interface ApiPlanResponse {
   duration_days?: number;
   note?: string;
 }
-
+type PlanDraft = Omit<Plan, "plan_name" | "duration_days"> &
+  Partial<Pick<Plan, "plan_name" | "duration_days">>;
 interface AiPlanCardProps {
   onPlanUpdate?: (plan: Plan, type: "workout" | "diet") => void;
   onPlansLoaded?: (plans: { workout?: Plan; diet?: Plan }) => void;
@@ -59,40 +57,7 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
   onPlansLoaded,
   onXpUpdate,
 }) => {
-  const defaultPlans: { workout: Plan; diet: Plan } = {
-    workout: {
-      plan_name: "7-Day Beginner Workout Plan",
-      plan_type: "workout",
-      duration_days: 7,
-      days: Array.from({ length: 7 }, (_, i) => ({
-        day: i + 1,
-        title: `Workout Day ${i + 1}`,
-        exercises: [],
-        completed: false,
-      })),
-      progress: 0,
-    },
-    diet: {
-      plan_name: "7-Day Sample Diet Plan",
-      plan_type: "diet",
-      duration_days: 7,
-      meals: Array.from({ length: 7 }, (_, i) => ({
-        day: i + 1,
-        breakfast: "",
-        lunch: "",
-        dinner: "",
-        snack: "",
-        breakfast_completed: false,
-        lunch_completed: false,
-        dinner_completed: false,
-      })),
-      progress: 0,
-    },
-  };
-
-  const [plans, setPlans] = useState<{ workout: Plan; diet: Plan }>(
-    defaultPlans
-  );
+  const [plans, setPlans] = useState<{ workout?: Plan; diet?: Plan }>({});
   const [activeType, setActiveType] = useState<"workout" | "diet">("workout");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -117,45 +82,106 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
   };
 
   useEffect(() => {
-    if (!token) return;
-
     const fetchLatestPlans = async () => {
+      if (!token) return;
       try {
         const res = await fetch(API_LATEST_URL, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!res.ok) return;
-        const data = await res.json();
-
+        if (!res.ok) throw new Error("Failed to load latest plans.");
+        const data: { plans: ApiPlanResponse[] } = await res.json();
         const loadedPlans: { workout?: Plan; diet?: Plan } = {};
-        data.plans?.forEach((p: ApiPlanResponse) => {
+        data.plans?.forEach((p) => {
           const parsed =
             typeof p.content === "string" ? JSON.parse(p.content) : p.content;
+          const fullPlanDraft: PlanDraft = { ...p, ...parsed };
           const fullPlan: Plan = {
-            ...p,
-            ...parsed,
-            plan_name: p.plan_name || `Default ${p.plan_type} Plan`,
-            duration_days: p.duration_days || 7,
-          };
+            ...fullPlanDraft,
+            plan_name: fullPlanDraft.plan_name || `Default ${p.plan_type} Plan`,
+            duration_days: fullPlanDraft.duration_days || 7,
+          } as Plan;
           fullPlan.progress = calculateProgress(fullPlan);
           loadedPlans[p.plan_type] = fullPlan;
         });
-
-        setPlans((prevPlans) => {
-          const mergedPlans = {
-            workout: loadedPlans.workout ?? prevPlans.workout,
-            diet: loadedPlans.diet ?? prevPlans.diet,
-          };
-          onPlansLoaded?.(mergedPlans);
-          return mergedPlans;
-        });
-      } catch (err) {
-        console.error("Error fetching latest plans:", err);
+        setPlans((prev) => ({
+          workout: prev.workout || loadedPlans.workout,
+          diet: prev.diet || loadedPlans.diet,
+        }));
+        onPlansLoaded?.(loadedPlans);
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : String(e));
       }
     };
-
     fetchLatestPlans();
   }, [token, onPlansLoaded]);
+
+  const handleGenerateNewPlan = async () => {
+    if (!token) {
+      setError("Please log in first.");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ plan_type: activeType }),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || "Error generating plan.");
+      }
+      const data: { plan: ApiPlanResponse } = await res.json();
+      const contentObject =
+        typeof data.plan.content === "string"
+          ? JSON.parse(data.plan.content)
+          : data.plan.content;
+      const parsedContent = contentObject as {
+        days?: Day[];
+        meals?: MealDay[];
+        note?: string;
+        plan_name?: string;
+        duration_days?: number;
+      };
+
+      const fullPlanDraft: PlanDraft = { ...data.plan, ...parsedContent };
+      const fullPlan: Plan = {
+        ...fullPlanDraft,
+        plan_name: fullPlanDraft.plan_name || `New ${activeType} Plan`,
+        duration_days: fullPlanDraft.duration_days || 7,
+        days: parsedContent.days?.map((d) => ({ ...d, completed: false })),
+        meals:
+          parsedContent.meals?.map((m) => ({
+            ...m,
+            breakfast_completed: false,
+            lunch_completed: false,
+            dinner_completed: false,
+          })) ||
+          Array.from({ length: 7 }, (_, i) => ({
+            day: i + 1,
+            breakfast: "",
+            lunch: "",
+            dinner: "",
+            snack: "",
+            breakfast_completed: false,
+            lunch_completed: false,
+            dinner_completed: false,
+          })),
+        progress: 0,
+      } as Plan;
+
+      setPlans((prev) => ({ ...prev, [activeType]: fullPlan }));
+      onPlanUpdate?.({ ...fullPlan, progress: 0 }, activeType);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleToggle = async (
     day: number,
@@ -164,53 +190,82 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
     const plan = plans[activeType];
     if (!plan) return;
 
+    const updatedPlan: Plan = { ...plan };
+
     if (activeType === "workout" && plan.days) {
-      const updatedDays = plan.days.map((d) =>
-        d.day === day && !d.completed ? { ...d, completed: true } : d
-      );
-      const updatedPlan = {
-        ...plan,
-        days: updatedDays,
-        progress: calculateProgress({ ...plan, days: updatedDays }),
-      };
-      setPlans((prev) => ({ ...prev, [activeType]: updatedPlan }));
-      onPlanUpdate?.(updatedPlan, activeType);
+      updatedPlan.days = plan.days.map((d) => {
+        if (d.day !== day) return d;
+        if (d.completed) return d;
+        return { ...d, completed: true };
+      });
     } else if (activeType === "diet" && plan.meals && meal) {
-      const updatedMeals = plan.meals.map((m) =>
-        m.day === day && !m[`${meal}_completed`]
-          ? { ...m, [`${meal}_completed`]: true }
-          : m
-      );
-      const updatedPlan = {
-        ...plan,
-        meals: updatedMeals,
-        progress: calculateProgress({ ...plan, meals: updatedMeals }),
-      };
-      setPlans((prev) => ({ ...prev, [activeType]: updatedPlan }));
-      onPlanUpdate?.(updatedPlan, activeType);
+      updatedPlan.meals = updatedPlan.meals?.map((m) => {
+        if (m.day !== day) return m;
+        const key = `${meal}_completed` as keyof MealDay;
+        if (m[key]) return m;
+        return { ...m, [key]: true };
+      }) as MealDay[];
     }
 
-    if (!plan.id) return;
+    updatedPlan.progress = calculateProgress(updatedPlan);
+    setPlans((prev) => ({ ...prev, [activeType]: updatedPlan }));
+    onPlanUpdate?.(updatedPlan, activeType);
 
+    if (!plan.id) return;
     const toggleType: "workout_day" | "diet_meal" =
       activeType === "workout" ? "workout_day" : "diet_meal";
 
     try {
-      await fetch(`${API_URL}${plan.id}/toggle`, {
+      const toggleRes = await fetch(`${API_URL}${plan.id}/toggle`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        credentials: "include",
         body: JSON.stringify({ type: toggleType, day, meal }),
       });
+      if (toggleRes.ok) {
+        const toggleData = await toggleRes.json();
+        const xpData = toggleData.xp;
+        if (xpData) onXpUpdate?.(xpData.xp, xpData.level, xpData.xpToNext);
+      }
     } catch (e) {
       console.error("Error updating progress or XP", e);
     }
   };
 
-  const plan = plans[activeType];
+  const defaultPlans = {
+    workout: {
+      plan_name: "7-Day Beginner Workout Plan",
+      plan_type: "workout" as const,
+      duration_days: 7,
+      days: Array.from({ length: 7 }, (_, i) => ({
+        day: i + 1,
+        title: `Workout Day ${i + 1}`,
+        exercises: [],
+        completed: false,
+      })),
+      progress: 0,
+    },
+    diet: {
+      plan_name: "7-Day Sample Diet Plan",
+      plan_type: "diet" as const,
+      duration_days: 7,
+      meals: Array.from({ length: 7 }, (_, i) => ({
+        day: i + 1,
+        breakfast: "",
+        lunch: "",
+        dinner: "",
+        snack: "",
+        breakfast_completed: false,
+        lunch_completed: false,
+        dinner_completed: false,
+      })),
+      progress: 0,
+    },
+  };
+
+  const plan: Plan = plans[activeType] || defaultPlans[activeType];
   const currentProgress = plan.progress ?? 0;
 
   return (
@@ -251,23 +306,27 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
         </div>
 
         {activeType === "workout" &&
-          plan.days?.map((d) => (
+          plan.days &&
+          plan.days.map((day, idx) => (
             <div
-              key={d.day}
+              key={idx}
               className="p-3 rounded-lg bg-base-300/60 border border-base-300"
             >
               <div className="flex items-center justify-between">
                 <h4 className="font-semibold">
-                  Day {d.day}: {d.title}
+                  Day {day.day}: {day.title}
                 </h4>
-                <input
-                  type="checkbox"
-                  checked={d.completed}
-                  onChange={() => handleToggle(d.day)}
-                />
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={day.completed}
+                    onChange={() => handleToggle(day.day)}
+                  />{" "}
+                  Done
+                </label>
               </div>
               <ul className="mt-2 space-y-1 text-sm">
-                {d.exercises?.map((ex, i) => (
+                {day.exercises?.map((ex, i) => (
                   <li key={i}>
                     {ex.name} — {ex.sets || ""}x{ex.reps || ""}{" "}
                     {ex.duration_min && `(${ex.duration_min} min)`}
@@ -278,12 +337,13 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
           ))}
 
         {activeType === "diet" &&
-          plan.meals?.map((m) => (
+          plan.meals &&
+          plan.meals.map((day, idx) => (
             <div
-              key={m.day}
+              key={idx}
               className="p-3 rounded-lg bg-base-300/60 border border-base-300"
             >
-              <h4 className="font-semibold">Day {m.day}</h4>
+              <h4 className="font-semibold">Day {day.day}</h4>
               <div className="mt-1 text-sm space-y-1">
                 {(["breakfast", "lunch", "dinner"] as const).map((meal) => (
                   <label
@@ -295,12 +355,12 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
                       <span className="font-medium">
                         {meal.charAt(0).toUpperCase() + meal.slice(1)}:
                       </span>{" "}
-                      {m[meal]}
+                      {day[meal]}
                     </span>
                     <input
                       type="checkbox"
-                      checked={Boolean(m[`${meal}_completed`])}
-                      onChange={() => handleToggle(m.day, meal)}
+                      checked={Boolean(day[`${meal}_completed`])}
+                      onChange={() => handleToggle(day.day, meal)}
                     />
                   </label>
                 ))}
@@ -308,6 +368,14 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
             </div>
           ))}
       </div>
+
+      <button
+        onClick={handleGenerateNewPlan}
+        disabled={loading}
+        className="btn btn-primary w-full max-w-sm text-lg"
+      >
+        {loading ? "Generating..." : "Request new AI plan!"}
+      </button>
     </div>
   );
 };

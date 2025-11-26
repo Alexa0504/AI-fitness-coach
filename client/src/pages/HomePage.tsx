@@ -7,8 +7,8 @@ import GamificationCard from "../components/StatComponent";
 import GoalsCard from "../components/GoalsComponent";
 import Taskbar from "../components/Taskbar";
 import { motion } from "framer-motion";
+import api from "../api";
 
-// --- Típusok ---
 type WorkoutDay = { completed: boolean };
 type MealDay = {
   breakfast_completed: boolean;
@@ -35,35 +35,14 @@ const HeaderBar: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
     try {
-      const res = await fetch("http://localhost:5000/api/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: "include",
-      });
-
-      if (res.ok) {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("user");
-        navigate("/login");
-      } else {
-        console.error(
-          "Logout failed with status:",
-          res.status,
-          await res.text()
-        );
-      }
+      await api.post("/auth/logout");
     } catch (error) {
-      console.error("Logout network or unexpected error:", error);
+      console.warn("Logout server call failed.");
+    } finally {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("user");
+      navigate("/login");
     }
   };
 
@@ -130,36 +109,29 @@ const HomePage: React.FC = () => {
   const [xp, setXp] = useState<number>(0);
   const [level, setLevel] = useState<number>(1);
   const [xpToNext, setXpToNext] = useState<number>(0);
+
   const fetchBackendStats = async () => {
     const token = localStorage.getItem("authToken");
     if (!token) return;
 
     try {
-      const xpRes = await fetch("http://localhost:5000/api/xp/status", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (xpRes.ok) {
-        const data = await xpRes.json();
-        setXp(data.xp ?? 0);
-        setLevel(data.level ?? 1);
-        setXpToNext(data.xpToNext ?? 0);
-      }
-    } catch {
-      console.error("Failed to load XP stats");
+      const xpRes = await api.get("/xp/status");
+      const data = xpRes.data;
+      setXp(data.xp ?? 0);
+      setLevel(data.level ?? 1);
+      setXpToNext(data.xpToNext ?? 0);
+    } catch (e) {
+      console.error("Failed to load XP stats:", e);
     }
 
     try {
-      const progRes = await fetch("http://localhost:5000/api/progress/status", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (progRes.ok) {
-        const data = await progRes.json();
-        setWorkoutDays(data.workoutDays ?? []);
-        setDietMeals(data.dietMeals ?? []);
-        calculateProgress(data.workoutDays ?? [], data.dietMeals ?? []);
-      }
-    } catch {
-      console.error("Failed to load progress stats");
+      const progRes = await api.get("/progress/status");
+      const data = progRes.data;
+      setWorkoutDays(data.workoutDays ?? []);
+      setDietMeals(data.dietMeals ?? []);
+      calculateProgress(data.workoutDays ?? [], data.dietMeals ?? []);
+    } catch (e) {
+      console.error("Failed to load progress stats:", e);
     }
   };
 
