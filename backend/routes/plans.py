@@ -97,7 +97,7 @@ def create_plan(current_user):
 
         content_dict = json.loads(content_string)
 
-        
+
         if plan_type == "workout":
             for day in content_dict.get("days", []):
                 day["completed"] = False
