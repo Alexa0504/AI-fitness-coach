@@ -64,45 +64,49 @@ const LoginPage: React.FC = () => {
     ];
 
     return (
-        <>
-            <ThemeSwitcher/>
-            <AuthForm
-                title="Welcome Back 👋"
-                buttonText="Login"
-                onSubmit={handleLogin}
-                fields={fields}
-                footer={
-                    <div className="space-y-2">
-                        {success && (
-                            <div className="alert alert-success shadow-lg">
-                                <div>
-                                    <span className="text-white">{success}</span>
-                                </div>
-                            </div>
-                        )}
+    <div className="relative min-h-screen">
+        <div className="absolute top-4 right-4 z-50">
+            <ThemeSwitcher />
+        </div>
 
-                        {error && (
-                            <div className="alert alert-error shadow-lg">
-                                <div>
-                                    <span>{error}</span>
-                                </div>
+        <AuthForm
+            title="Welcome Back 👋"
+            buttonText="Login"
+            onSubmit={handleLogin}
+            fields={fields}
+            footer={
+                <div className="space-y-2">
+                    {success && (
+                        <div className="alert alert-success shadow-lg">
+                            <div>
+                                <span className="text-white">{success}</span>
                             </div>
-                        )}
+                        </div>
+                    )}
 
-                        <p className="text-white text-center mt-2">
-                            Don’t have an account?{" "}
-                            <button
-                                onClick={() => navigate("/register")}
-                                className="btn btn-outline btn-accent w-full mt-2"
-                            >
-                                Register
-                            </button>
-                        </p>
-                    </div>
-                }
-            />
-        </>
-    );
+                    {error && (
+                        <div className="alert alert-error shadow-lg">
+                            <div>
+                                <span>{error}</span>
+                            </div>
+                        </div>
+                    )}
+
+                    <p className="text-white text-center mt-2">
+                        Don’t have an account?{" "}
+                        <button
+                            onClick={() => navigate("/register")}
+                            className="btn btn-outline btn-accent w-full mt-2"
+                        >
+                            Register
+                        </button>
+                    </p>
+                </div>
+            }
+        />
+    </div>
+);
+
 };
 
 export default LoginPage;
