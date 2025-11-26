@@ -1,5 +1,7 @@
 from datetime import datetime, timezone, date
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.postgresql import JSONB
+import json
 
 db = SQLAlchemy()
 
@@ -13,38 +15,43 @@ class User(db.Model):
 
     xp = db.Column(db.Integer, default=0, nullable=False)
     level = db.Column(db.Integer, default=1, nullable=False)
+
+
     try:
         progress_saved_state = db.Column(JSONB, default=dict)
     except Exception:
         progress_saved_state = db.Column(db.Text, default="{}")
+
     last_progress_update = db.Column(db.DateTime, nullable=True)
+
 
     gender = db.Column(db.String(10), nullable=True)
     height_cm = db.Column(db.Float, nullable=True)
     weight_kg = db.Column(db.Float, nullable=True)
     target_weight_kg = db.Column(db.Float, nullable=True)
     age = db.Column(db.Integer, nullable=True)
-
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     plans = db.relationship("Plan", backref="user", lazy=True)
     goals = db.relationship("Goal", backref="user", lazy=True)
     user_goals = db.relationship("UserGoal", backref="user", lazy=True)
 
+
     def get_progress_state(self):
         if isinstance(self.progress_saved_state, str):
-            import json
             try:
                 return json.loads(self.progress_saved_state)
             except Exception:
                 return {}
         return self.progress_saved_state or {}
 
+
     def set_progress_state(self, obj):
+
         if isinstance(self.progress_saved_state, str):
-            import json
             self.progress_saved_state = json.dumps(obj)
         else:
+
             self.progress_saved_state = obj
 
     def __repr__(self):

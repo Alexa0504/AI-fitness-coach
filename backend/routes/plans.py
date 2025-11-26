@@ -7,7 +7,7 @@ from backend.utils.score_utils import calculate_mock_score
 from backend.utils.ai_integration import generate_plan, get_mock_user_data
 from datetime import date, datetime
 from sqlalchemy import desc
-from backend.services.xp_service import update_weekly_xp, get_xp_status
+from backend.services.xp_service import update_weekly_xp, get_xp_status, XP_FOR_LEVEL_UP
 
 plans_bp = Blueprint('plans', __name__, url_prefix='/api/plans')
 
@@ -179,15 +179,19 @@ def toggle_checkbox(plan_id, current_user):
     if not isinstance(content, dict):
         return jsonify({"message": "Plan content invalid JSON"}), 400
 
+    t = payload.get("type")
+    xp_gained = 0
+
     try:
-        t = payload.get("type")
         if t == "workout_day":
             day = int(payload.get("day"))
             field = payload.get("field", "completed")
             target = next((d for d in content.get("days", []) if int(d.get("day")) == day), None)
             if not target:
                 return jsonify({"message": "Day not found"}), 404
-            target[field] = True
+            if not target.get(field, False):
+                target[field] = True
+                xp_gained = 100
 
         elif t == "diet_meal":
             day = int(payload.get("day"))
@@ -195,25 +199,40 @@ def toggle_checkbox(plan_id, current_user):
             target = next((m for m in content.get("meals", []) if int(m.get("day")) == day), None)
             if not target:
                 return jsonify({"message": "Day not found"}), 404
-            target[f"{meal}_completed"] = True
+            field_name = f"{meal}_completed"
+            if not target.get(field_name, False):
+                target[field_name] = True
+                xp_gained = 50
+
         else:
             return jsonify({"message": "Unsupported toggle type"}), 400
 
         plan.content = json.dumps(content)
-        update_weekly_xp(current_user)
-        db.session.commit()
-        xp_data = get_xp_status(current_user)
 
+
+        current_user.xp += xp_gained
+        leveled_up = False
+        while current_user.xp >= XP_FOR_LEVEL_UP:
+            current_user.level += 1
+            current_user.xp -= XP_FOR_LEVEL_UP
+            leveled_up = True
+
+        db.session.commit()
+
+        xp_data = get_xp_status(current_user)
         return jsonify({
             "message": "Toggle saved",
             "plan": _plan_to_response(plan),
-            "xp": xp_data
+            "xp": xp_data,
+            "xpGained": xp_gained,
+            "leveledUp": leveled_up
         }), 200
 
     except Exception as e:
         db.session.rollback()
         print(f"Error toggling checkbox: {e}")
         return jsonify({"message": "Error toggling checkbox"}), 500
+
 
 
 @plans_bp.route('/<int:plan_id>', methods=['DELETE'])

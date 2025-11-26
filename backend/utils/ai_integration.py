@@ -3,6 +3,17 @@ import time
 import random
 from backend.utils.mock_data import get_mock_plan
 
+try:
+    from google import genai
+    from dotenv import load_dotenv
+    import os
+
+    load_dotenv()
+    GEMINI_MODEL = "gemini-2.5-flash"
+    client = genai.Client()
+except ImportError:
+    client = None
+
 def get_mock_user_data(current_user_id: int) -> dict:
     return {
         "user_id": current_user_id,
@@ -17,17 +28,7 @@ def get_mock_user_data(current_user_id: int) -> dict:
     }
 
 def generate_plan(user_data: dict, plan_type: str) -> dict:
-    try:
-        from google import genai
-        from dotenv import load_dotenv
-        import os
-
-        load_dotenv()
-        GEMINI_MODEL = "gemini-2.5-flash"
-        client = genai.Client()
-    except Exception as e:
-        client = None
-
+    global client
     is_workout = plan_type.lower() == "workout"
 
     prompt_data = {
