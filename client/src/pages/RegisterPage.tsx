@@ -101,8 +101,10 @@ const RegisterPage: React.FC = () => {
   ];
 
   return (
-    <>
-      <ThemeSwitcher />
+    <div className="relative min-h-screen">
+        <div className="absolute top-4 right-4 z-50">
+            <ThemeSwitcher />
+        </div>
       <AuthForm
         title="Create Your Account"
         buttonText="Register"
@@ -120,7 +122,7 @@ const RegisterPage: React.FC = () => {
           </div>
         }
       />
-    </>
+    </div>
   );
 };
 
