@@ -73,6 +73,11 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
     const [error, setError] = useState<string | null>(null);
     const token = localStorage.getItem("authToken");
 
+
+    const [localWorkoutPlan, setLocalWorkoutPlan] = useState<Plan | null>(workoutPlan || null);
+    const [localDietPlan, setLocalDietPlan] = useState<Plan | null>(dietPlan || null);
+
+
     const calculateProgress = (plan: Plan): number => {
         if (!plan) return 0;
         if (plan.plan_type === "workout" && plan.days) {
@@ -92,12 +97,19 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
         return 0;
     };
 
+
+    useEffect(() => {
+        setLocalWorkoutPlan(workoutPlan ?? null);
+        setLocalDietPlan(dietPlan ?? null);
+    }, [workoutPlan, dietPlan]);
+
+
+
     useEffect(() => {
         if (!token) return;
 
         const fetchData = async () => {
             try {
-
                 const [plansRes] = await Promise.all([
                     fetch(API_LATEST_URL, { headers: { Authorization: `Bearer ${token}` } }),
                 ]);
@@ -109,7 +121,7 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
                 const loadedPlans: { workout?: Plan; diet?: Plan } = {};
                 plansData.plans?.forEach((p) => {
                     const parsed = typeof p.content === "string" ? JSON.parse(p.content) : p.content;
-                    loadedPlans[p.plan_type] = {
+                    const calculatedPlan: Plan = {
                         id: p.id,
                         plan_type: p.plan_type,
                         plan_name: p.plan_name || `Default ${p.plan_type} Plan`,
@@ -126,7 +138,12 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
                             meals: parsed?.meals,
                         }),
                     };
+                    loadedPlans[p.plan_type] = calculatedPlan;
                 });
+
+
+                if (loadedPlans.workout) setLocalWorkoutPlan(loadedPlans.workout);
+                if (loadedPlans.diet) setLocalDietPlan(loadedPlans.diet);
 
                 onPlansLoaded?.(loadedPlans);
             } catch (e: unknown) {
@@ -170,6 +187,10 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
                 progress: 0,
             };
 
+
+            if (activeType === "workout") setLocalWorkoutPlan(fullPlan);
+            if (activeType === "diet") setLocalDietPlan(fullPlan);
+
             onPlanUpdate?.(fullPlan, activeType);
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : String(err));
@@ -179,20 +200,27 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
     };
 
     const handleToggle = async (day: number, meal?: "breakfast" | "lunch" | "dinner") => {
-        const plan = activeType === "workout" ? workoutPlan : dietPlan;
-        if (!plan || !plan.id || !token) return;
+        const currentPlan = activeType === "workout" ? localWorkoutPlan : localDietPlan;
+        if (!currentPlan || !currentPlan.id || !token) return;
 
-        const updatedPlan: Plan = { ...plan };
 
-        if (activeType === "workout" && plan.days) {
-            updatedPlan.days = plan.days.map(d => d.day === day ? { ...d, completed: true } : d);
-        } else if (activeType === "diet" && plan.meals && meal) {
-            updatedPlan.meals = plan.meals.map(m =>
+        const updatedPlan: Plan = { ...currentPlan };
+
+        if (activeType === "workout" && currentPlan.days) {
+            updatedPlan.days = currentPlan.days.map(d => d.day === day ? { ...d, completed: true } : d);
+        } else if (activeType === "diet" && currentPlan.meals && meal) {
+            updatedPlan.meals = currentPlan.meals.map(m =>
                 m.day === day ? { ...m, [`${meal}_completed`]: true } : m
             );
         }
 
+
+        if (activeType === "workout") setLocalWorkoutPlan(updatedPlan);
+        if (activeType === "diet") setLocalDietPlan(updatedPlan);
+
+
         onPlanUpdate?.(updatedPlan, activeType);
+
 
         try {
             const res = await fetch(`${API_URL}${updatedPlan.id}/toggle`, {
@@ -212,6 +240,7 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
             }
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : String(err));
+
         }
     };
 
@@ -246,13 +275,12 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
         },
     };
 
-    const plan: Plan = activeType === "workout" ? workoutPlan || defaultPlans.workout : dietPlan || defaultPlans.diet;
+
+    const plan: Plan = activeType === "workout" ? localWorkoutPlan || defaultPlans.workout : localDietPlan || defaultPlans.diet;
 
 
     return (
         <div className="space-y-6">
-
-            {}
 
             {error && (
                 <div className="p-3 rounded-lg bg-red-500/20 text-red-300 border border-red-500/40">{error}</div>
@@ -274,9 +302,6 @@ const AiPlanCard: React.FC<AiPlanCardProps> = ({
             <div className="bg-base-200/70 p-4 rounded-xl border border-base-300 shadow-md text-base-content space-y-4">
                 <h3 className="text-xl font-bold">{plan.plan_name}</h3>
                 <p className="text-sm opacity-80">Duration: {plan.duration_days} days</p>
-
-                {}
-                {}
 
                 {activeType === "workout" &&
                     plan.days?.map((day, idx) => (
