@@ -7,7 +7,7 @@ const ThemeSwitcher: React.FC = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="btn btn-sm btn-outline btn-accent absolute top-4 right-4 z-50"
+      className="btn btn-sm btn-outline btn-accent"
     >
       Theme
     </button>
