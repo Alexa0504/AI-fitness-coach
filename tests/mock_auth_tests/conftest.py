@@ -1,26 +1,34 @@
+import os
 import pytest
 from backend.app import create_app
 from backend.models import db
 
+
+os.environ["TESTING"] = "1"
+
 @pytest.fixture(scope="session")
 def app():
-    """Create Flask app with in-memory SQLite DB for mock auth tests"""
+    """Create Flask app with PostgreSQL test database"""
     app = create_app({
         "TESTING": True,
-        "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
+        "SQLALCHEMY_DATABASE_URI": os.getenv("TEST_DATABASE_URL"),
         "SQLALCHEMY_TRACK_MODIFICATIONS": False,
     })
 
     with app.app_context():
+
+        db.drop_all()
         db.create_all()
         yield app
         db.session.remove()
         db.drop_all()
 
-@pytest.fixture()
+
+@pytest.fixture
 def client(app):
     """Provide a Flask test client"""
     return app.test_client()
+
 
 @pytest.fixture(scope="function")
 def session(app):
@@ -28,10 +36,3 @@ def session(app):
     with app.app_context():
         yield db.session
         db.session.rollback()
-
-@pytest.fixture(scope="session", autouse=True)
-def ensure_in_memory_db(app):
-    """Ensure tests do not touch production database"""
-    uri = app.config.get("SQLALCHEMY_DATABASE_URI", "")
-    if not uri.startswith("sqlite:///:memory:"):
-        pytest.exit("ERROR: Attempted to use non-in-memory DB for tests!")

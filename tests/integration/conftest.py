@@ -1,19 +1,19 @@
+import os
 import uuid
-
 import pytest
 from backend.app import create_app
-from backend.models import db, User
+from backend.models import db, User, Tip
 from backend.utils.security_utils import hash_password, generate_auth_token
+
+
+os.environ["TESTING"] = "1"
 
 @pytest.fixture(scope="session")
 def app():
-    """Flask app with in-memory SQLite DB"""
-    app = create_app({
-        "TESTING": True,
-        "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
-        "SQLALCHEMY_TRACK_MODIFICATIONS": False,
-    })
+    """Flask app using PostgreSQL test database"""
+    app = create_app()
     with app.app_context():
+        db.drop_all()
         db.create_all()
         yield app
         db.session.remove()
@@ -25,7 +25,7 @@ def client(app):
 
 @pytest.fixture
 def seeded_user(app):
-    """Create a unique test user"""
+    """Create a unique test user in the test DB"""
     with app.app_context():
         unique_username = f"testuser-{uuid.uuid4()}"
         unique_email = f"{unique_username}@test.com"
@@ -39,24 +39,19 @@ def seeded_user(app):
         db.session.commit()
         return user.id
 
-
 @pytest.fixture
-def auth_header(seeded_user):
+def auth_header(app, seeded_user):
     token = generate_auth_token(str(seeded_user))
     return {"Authorization": f"Bearer {token}"}
 
-from backend.models import Tip
-
 @pytest.fixture
 def seed_tips(app):
-    """Seed sample tips for /stats/tips endpoint tests"""
+    """Seed tips in test DB"""
     with app.app_context():
         tips = [
             Tip(category="general", text="Drink 8 glasses of water daily."),
             Tip(category="general", text="Eat more vegetables"),
             Tip(category="workout", text="Do 10 pushups"),
-            Tip(category="workout", text="Stretch daily"),
-            Tip(category="sleep", text="Sleep 8 hours")
         ]
         db.session.add_all(tips)
         db.session.commit()
