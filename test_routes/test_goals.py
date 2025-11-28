@@ -2,9 +2,10 @@ import uuid
 import pytest
 from backend.models import Goal, User
 from backend.utils.security_utils import generate_auth_token, hash_password
+from backend.models import db
 
 @pytest.fixture
-def auth_header(session):
+def auth_header(app):
     """Create a user with unique username and email for each test and return auth header"""
     unique_id = uuid.uuid4().hex
     user = User(
@@ -12,10 +13,10 @@ def auth_header(session):
         email=f"user_{unique_id}@example.com",
         password_hash=hash_password("pw")
     )
-    session.add(user)
-    session.commit()
-
-    token = generate_auth_token(str(user.id))
+    with app.app_context():
+        db.session.add(user)
+        db.session.commit()
+        token = generate_auth_token(str(user.id))
     return {"Authorization": f"Bearer {token}"}
 
 @pytest.fixture
@@ -47,7 +48,6 @@ def test_create_goal_missing_field(client, auth_header):
 # READ
 # -----------------------
 def test_get_goals(client, auth_header):
-
     client.post('/api/goals/', json={
         "goal_type": "muscle_gain",
         "target_value": 3,
@@ -65,14 +65,12 @@ def test_get_goals(client, auth_header):
 # UPDATE
 # -----------------------
 def test_update_goal_success(client, auth_header):
-
     create_resp = client.post('/api/goals/', json={
         "goal_type": "weight_loss",
         "target_value": 5,
         "unit": "kg"
     }, headers=auth_header)
     goal_id = create_resp.get_json()["goal"]["id"]
-
 
     update_resp = client.put(f'/api/goals/{goal_id}', json={
         "goal_type": "muscle_gain",
@@ -98,7 +96,6 @@ def test_update_goal_not_found(client, auth_header):
 # DELETE
 # -----------------------
 def test_delete_goal_success(client, auth_header):
-
     create_resp = client.post('/api/goals/', json={
         "goal_type": "weight_loss",
         "target_value": 5,
@@ -106,11 +103,9 @@ def test_delete_goal_success(client, auth_header):
     }, headers=auth_header)
     goal_id = create_resp.get_json()["goal"]["id"]
 
-
     delete_resp = client.delete(f'/api/goals/{goal_id}', headers=auth_header)
     assert delete_resp.status_code == 200
     assert delete_resp.get_json()["message"] == "Goal deleted successfully"
-
 
     get_resp = client.get('/api/goals/', headers=auth_header)
     assert all(g["id"] != goal_id for g in get_resp.get_json())
@@ -127,7 +122,7 @@ def test_delete_goal_not_found(client, auth_header):
 # -----------------------
 def test_access_without_token(client):
     response = client.get('/api/goals/')
-    assert response.status_code == 401  # assuming token_required returns 401
+    assert response.status_code == 401
     assert "message" in response.get_json()
 
 
@@ -135,6 +130,7 @@ def test_access_with_invalid_token(client):
     response = client.get('/api/goals/', headers={"Authorization": "Bearer invalidtoken"})
     assert response.status_code == 401
     assert "message" in response.get_json()
+
 
 # -----------------------
 # WEEKLY GOALS
@@ -159,12 +155,10 @@ def test_create_weekly_goal_missing_field(client, auth_header):
 
 
 def test_get_weekly_goals(client, auth_header):
-    # first create
     client.post('/api/goals/weekly', json={
         "goal_name": "Run 10km"
     }, headers=auth_header)
 
-    # then fetch
     response = client.get('/api/goals/weekly', headers=auth_header)
 
     assert response.status_code == 200
@@ -174,19 +168,16 @@ def test_get_weekly_goals(client, auth_header):
 
 
 def test_toggle_weekly_goal(client, auth_header):
-    # create weekly goal
     create_resp = client.post('/api/goals/weekly', json={
         "goal_name": "Drink more water"
     }, headers=auth_header)
 
     goal_id = create_resp.get_json()["goal"]["id"]
 
-    # toggle
     toggle_resp = client.patch(f'/api/goals/weekly/{goal_id}/toggle', headers=auth_header)
     assert toggle_resp.status_code == 200
     assert "completed" in toggle_resp.get_json()["message"].lower()
 
-    # toggle again
     toggle_resp = client.patch(f'/api/goals/weekly/{goal_id}/toggle', headers=auth_header)
     assert toggle_resp.status_code == 200
     assert "pending" in toggle_resp.get_json()["message"].lower()

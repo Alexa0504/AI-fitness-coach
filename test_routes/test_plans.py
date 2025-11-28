@@ -2,9 +2,10 @@ import uuid
 import pytest
 from backend.models import User, Plan
 from backend.utils.security_utils import generate_auth_token, hash_password
+from backend.models import db
 
 @pytest.fixture
-def auth_header(session):
+def auth_header(app):
     """Create a user with unique username and email for each test and return auth header"""
     unique_id = uuid.uuid4().hex
     user = User(
@@ -12,9 +13,10 @@ def auth_header(session):
         email=f"user_{unique_id}@example.com",
         password_hash=hash_password("pw")
     )
-    session.add(user)
-    session.commit()
-    token = generate_auth_token(str(user.id))
+    with app.app_context():
+        db.session.add(user)
+        db.session.commit()
+        token = generate_auth_token(str(user.id))
     return {"Authorization": f"Bearer {token}"}
 
 @pytest.fixture
@@ -22,7 +24,7 @@ def client(app):
     return app.test_client()
 
 @pytest.fixture
-def create_plan(session, auth_header, client):
+def create_plan(app, auth_header, client):
     """Helper fixture to create a plan and return its ID"""
     response = client.post('/api/plans/', json={"plan_type": "workout"}, headers=auth_header)
     return response.get_json()["plan"]["id"]
@@ -34,7 +36,7 @@ def test_create_plan_success(client, auth_header):
     assert response.status_code == 201
     data = response.get_json()
     assert "plan" in data
-    assert "Plan created successfully" in data["message"]
+    assert "New plan created successfully" in data["message"]
 
 def test_get_user_plans(client, auth_header):
     client.post('/api/plans/', json={"plan_type": "nutrition"}, headers=auth_header)
@@ -80,8 +82,6 @@ def test_delete_plan_not_found(client, auth_header):
     response = client.delete('/api/plans/999999', headers=auth_header)
     assert response.status_code == 404
     assert "Plan not found" in response.get_json()["message"]
-
-
 
 def test_create_plan_invalid_start_date(client, auth_header):
     response = client.post('/api/plans/', json={"plan_type": "workout", "start_date": "2025-99-99"}, headers=auth_header)
