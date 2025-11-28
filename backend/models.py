@@ -16,6 +16,10 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
+
+    goals = db.relationship("Goal", backref="user", cascade="all, delete-orphan")
+    plans = db.relationship("Plan", backref="user", cascade="all, delete-orphan")
+
     xp = db.Column(db.Integer, default=0, nullable=False)
     level = db.Column(db.Integer, default=1, nullable=False)
     progress_saved_state = db.Column(JSONColumn, default=dict)
