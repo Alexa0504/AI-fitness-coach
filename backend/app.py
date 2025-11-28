@@ -2,7 +2,6 @@ from flask import Flask
 from flask_migrate import Migrate
 from dotenv import load_dotenv
 from flask_cors import CORS
-
 import os
 
 load_dotenv()
@@ -18,16 +17,20 @@ from backend.routes.xp import xp_bp
 
 migrate = Migrate()
 
-
 def create_app(test_config=None):
     app = Flask(__name__)
 
-    if test_config is None:
+    if os.environ.get("TESTING") == "1":
+        app.config["TESTING"] = True
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("TEST_DATABASE_URL")
+        app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+        app.config["SECRET_KEY"] = "test-secret-key"
+    elif test_config is not None:
+        app.config.update(test_config)
+    else:
         app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
         app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
         app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-    else:
-        app.config.update(test_config)
 
     CORS(app, resources={
         r"/api/*": {
@@ -61,7 +64,6 @@ def create_app(test_config=None):
         return "AI Fitness Coach Backend Running!"
 
     return app
-
 
 app = create_app()
 

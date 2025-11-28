@@ -6,7 +6,7 @@ import random
 
 tips_bp = Blueprint('tips', __name__, url_prefix='/tips')
 
-# Ezt a meglévő endpointot cseréld le ezzel:
+
 @tips_bp.route('/<category>/weekly', methods=['GET'])
 def get_weekly_tips(category):
     all_tips = Tip.query.filter_by(category=category).all()

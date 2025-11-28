@@ -1,5 +1,6 @@
-from .models import db, Tip
+from backend.models import db, Tip
 from backend.app import create_app
+import os
 
 tips = [
     "Drink 8 glasses of water daily.",
@@ -24,14 +25,19 @@ tips = [
     "Practice good posture while sitting."
 ]
 
-def seed_tips():
-    for t in tips:
-        if not db.session.query(Tip).filter_by(text=t).first():
-            db.session.add(Tip(category="general", text=t))
-    db.session.commit()
+def seed_tips(app):
+    with app.app_context():
+        db.create_all()
+        for t in tips:
+            if not db.session.query(Tip).filter_by(text=t).first():
+                db.session.add(Tip(category="general", text=t))
+        db.session.commit()
+        print("✅ Tips seeded successfully!")
 
 if __name__ == "__main__":
-    app = create_app()
-    with app.app_context():
-        seed_tips()
-        print("✅ Tips seeded successfully!")
+    testing = os.environ.get("TESTING") == "1"
+    app = create_app({
+        "TESTING": testing
+    } if testing else None)
+
+    seed_tips(app)
