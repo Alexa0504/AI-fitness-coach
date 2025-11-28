@@ -25,13 +25,42 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
+//
+declare global {
+  namespace Cypress {
+    interface Chainable<Subject> {
+      /**
+       * Mocks the logged-in state by setting a flag in localStorage.
+       * NOTE: You might need to adjust 'isLoggedIn' to match your app's authentication key.
+       */
+      login(): Chainable<void>;
+    }
+  }
+}
+
+
+Cypress.Commands.add('login', () => {
+    cy.window().then((window) => {
+        window.localStorage.setItem('authToken', 'mock_valid_token_12345'); 
+    });
+});
+
+
+
+// ***********************************************************
+// This example support/e2e.ts is processed and
+// loaded automatically before your test files.
+//
+// This is a great place to put global configuration and
+// behavior that modifies Cypress.
+//
+// You can change the location of this file or turn off
+// automatically serving support files with the
+// 'supportFile' configuration option.
+//
+// You can read more here:
+// https://on.cypress.io/configuration
+// ***********************************************************
+
+// Import commands.js using ES2015 syntax:
+import './commands'

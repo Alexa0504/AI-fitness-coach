@@ -90,7 +90,10 @@ const GamificationCard: React.FC<GamificationCardProps> = ({
         </p>
       </div>
 
-      <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+      <div
+        id="next-goals-tips"
+        className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700"
+      >
         <h3 className="text-2xl font-bold text-base-content mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
           Self-Care Checklist
         </h3>
