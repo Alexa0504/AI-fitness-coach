@@ -1,6 +1,6 @@
 # Backend Utility & Auth Decorator Egységteszt Jegyzőkönyv
 **Készítette:** Kovács Kinga-Kendra  
-**Dátum:** 2025.11.05  
+**Dátum:** 2025.11.28  
 **Projekt:** Fitness / Goal Tracking Backend  
 
 ---
@@ -18,7 +18,7 @@ Fő célok:
   - blacklisted tokeneket  
   - nem létező felhasználó esetét  
   - sikeres hozzáférést  
-- Minden teszt **in-memory** adatbázist használ, így az éles adatbázist nem érinti.
+- Minden teszt egy külön tesztadatbázist használ, így az éles adatbázist nem érinti.
 
 ---
 
@@ -45,7 +45,7 @@ Fő célok:
 
 ## 3. Technikai megjegyzések
 - A tesztek **pytest** keretrendszerrel futnak Flask alkalmazáskörnyezetben.  
-- Minden token_blacklist és auth_decorator teszt **in-memory SQLite** adatbázist használ (`sqlite:///:memory:`).  
+- Minden token_blacklist és auth_decorator teszt egy külön PostgreSQL tesztadatbázist használ.  
 - A `mock_data` és `score_utils` modul tesztjei teljesen izoláltak, nem érintik az adatbázist.  
 - A `monkeypatch` használata lehetővé teszi a token dekódolás és blacklist viselkedés szimulálását.
 

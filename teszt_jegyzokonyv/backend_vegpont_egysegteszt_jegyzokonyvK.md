@@ -1,6 +1,6 @@
 # Backend Végpont Egységteszt Jegyzőkönyv
 **Készítette:** Kovács Kinga-Kendra  
-**Dátum:** 2025.11.04  
+**Dátum:** 2025.11.28  
 **Projekt:** Fitness / Goal Tracking Backend  
 
 ---
