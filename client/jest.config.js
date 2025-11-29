@@ -6,7 +6,7 @@ export default {
         '\\.(css|scss)$': 'identity-obj-proxy'
     },
     transform: {
-        '^.+\\.tsx?$': ['ts-jest', { useESM: true }]
+        '^.+\\.tsx?$': ['ts-jest', { useESM: true , tsconfig: './tsconfig.jest.json', }]
     },
     extensionsToTreatAsEsm: ['.ts', '.tsx'],
 };

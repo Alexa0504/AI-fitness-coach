@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Taskbar from "./Taskbar.tsx";
-import WeeklyGoals, { type WeeklyGoal } from "./WeeklyGoalsComponent.tsx";
+import Taskbar from "./Taskbar";
+import WeeklyGoals, { type WeeklyGoal } from "./WeeklyGoalsComponent";
 
 interface Goal {
     id: number;
