@@ -88,6 +88,8 @@ def create_plan(current_user):
         user_data = get_mock_user_data(current_user.id)
         result = generate_plan(user_data, plan_type)
 
+        print("AI RESULT:", result)
+
         if not result.get("plan_content_string"):
             return jsonify({"message": f"Error generating plan via AI: {result.get('error', 'Unknown error')}"}), 500
 

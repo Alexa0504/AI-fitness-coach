@@ -11,6 +11,7 @@ try:
     load_dotenv()
     GEMINI_MODEL = "gemini-2.5-flash"
     client = genai.Client()
+
 except ImportError:
     client = None
 
