@@ -1,8 +1,6 @@
 from datetime import datetime, timedelta, timezone
 import jwt
 import os
-from unittest.mock import patch, MagicMock
-
 import pytest
 
 from backend.utils import security_utils
@@ -21,8 +19,6 @@ def set_test_env():
 
 # --- Password Hashing Tests ---
 
-# tests/test_security.py
-
 def test_hash_and_check_password_success():
     """Tests that hashing and checking the password work successfully."""
     password = "MySecurePassword123"
@@ -30,7 +26,6 @@ def test_hash_and_check_password_success():
 
     assert isinstance(hashed, str)
     assert len(hashed) > 40
-
     assert security_utils.check_password(password, hashed) is True
 
 
@@ -40,7 +35,6 @@ def test_hash_and_check_password_failure():
     wrong_password = "WrongPassword456"
     hashed = security_utils.hash_password(password)
 
-    # Check that check_password returns False for the incorrect password
     assert security_utils.check_password(wrong_password, hashed) is False
 
 
@@ -63,19 +57,16 @@ def test_token_generation_and_decoding_success():
     assert isinstance(token, str)
     assert token != ""
 
-    # Check decoding
     decoded_user_id = security_utils.decode_auth_token(token)
-
     assert decoded_user_id == user_id
 
 
-def test_token_expiration_failure(mocker):
+def test_token_expiration_failure():
     """
     Tests that decoding an expired token fails (ExpiredSignatureError).
-    We use Mocker (pytest-mock) to manipulate the time.
+    No mocker needed, we create a token that is already expired.
     """
     user_id = "expired-user"
-    # Create a token that expired in the past
     past_time = datetime.now(timezone.utc) - timedelta(minutes=5)
     expired_payload = {
         'exp': past_time,
@@ -90,14 +81,12 @@ def test_token_expiration_failure(mocker):
     )
 
     decoded = security_utils.decode_auth_token(expired_token)
-
     assert decoded is None
 
 
 def test_token_invalid_signature_failure():
     """Tests that tokens encoded with a wrong secret key are rejected by the system."""
     user_id = "invalid-sig-user"
-
     wrong_key = "THIS-IS-A-WRONG-SECRET-KEY"
 
     payload = {
@@ -112,5 +101,4 @@ def test_token_invalid_signature_failure():
     )
 
     decoded = security_utils.decode_auth_token(invalid_token)
-
     assert decoded is None

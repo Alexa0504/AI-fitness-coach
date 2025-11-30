@@ -18,7 +18,7 @@ if exist backend\requirements.txt (
     pip install -r backend\requirements.txt
 ) else (
     echo No requirements.txt found. Installing basic dependencies...
-    pip install flask flask_sqlalchemy flask_migrate python-dotenv flask-cors bcrypt PyJWT
+    pip install flask flask_sqlalchemy flask_migrate python-dotenv flask-cors bcrypt PyJWT google-genai
 )
 
 echo.

@@ -33,19 +33,11 @@ def _get_secret_key() -> str | None:
 # --- Password Management Functions ---
 
 def hash_password(password: str) -> str:
-    """
-    Safely hashes the given password using the bcrypt algorithm.
-    Returns the hashed password as bytes (this should be stored in the database).
-    """
     password_bytes = password.encode('utf-8')
-    # Generating salt and hashing simultaneously
     return bcrypt.hashpw(password_bytes, bcrypt.gensalt()).decode('utf-8')
 
 
 def check_password(password: str, hashed_password: str) -> bool:
-    """
-    Checks if the provided plain password matches the stored hash.
-    """
     password_bytes = password.encode('utf-8')
     hashed_password_bytes = hashed_password.encode('utf-8')
     return bcrypt.checkpw(password_bytes, hashed_password_bytes)
@@ -54,21 +46,15 @@ def check_password(password: str, hashed_password: str) -> bool:
 # --- Authentication (JWT) Functions ---
 
 def generate_auth_token(user_id: str) -> str | None:
-    """
-    Creates a JWT token with the user identifier.
-    The token is valid for TOKEN_EXPIRY_DAYS (1 day).
-    Returns the token string or None on failure.
-    """
-    # Lazy Load: Get the key only when the function runs.
     SECRET_KEY = _get_secret_key()
     if not SECRET_KEY:
         return None
 
     try:
         payload = {
-            'exp': datetime.now(timezone.utc) + timedelta(days=TOKEN_EXPIRY_DAYS),  # Expiration time
-            'iat': datetime.now(timezone.utc),  # Issued At time
-            'sub': user_id  # Subject - the user identifier
+            'exp': datetime.now(timezone.utc) + timedelta(days=TOKEN_EXPIRY_DAYS),
+            'iat': datetime.now(timezone.utc),
+            'sub': user_id
         }
         token = jwt.encode(
             payload,
@@ -82,11 +68,6 @@ def generate_auth_token(user_id: str) -> str | None:
 
 
 def decode_auth_token(auth_token: str) -> str | None:
-    """
-    Decodes the JWT token, including validity checks.
-    Returns the user identifier (user_id) upon successful decoding, or None on failure.
-    """
-    # Lazy Load: Get the key only when the function runs.
     SECRET_KEY = _get_secret_key()
     if not SECRET_KEY:
         return None
